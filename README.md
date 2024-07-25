@@ -2,7 +2,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+Requirement to run this project is using node version : [nodev21.5.0]
+
+First, clone this reporsitory to your local, then run
+
+```bash
+npm install
+# or
+pnpm install
+# or
+yarn install
+# or
+bun install
+```
+
+Second, run the development server:
 
 ```bash
 npm run dev
@@ -12,6 +26,16 @@ yarn dev
 pnpm dev
 # or
 bun dev
+```
+
+Third, additionaly if you want to run the project in spesific port, you may run:
+```bash
+# for development
+PORT=4000 npm run dev
+# for production
+PORT=4000 npm run start
+# to build the app run
+npm run build
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
