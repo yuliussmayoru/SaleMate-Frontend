@@ -3,19 +3,25 @@ import { useRouter } from 'next/router';
 import { Button } from '../../base/Button'
 import Image from 'next/image';
 import { useSidebar } from './sidebarContext';
+import { useState } from 'react';
 
 export default function SideBar() {
     const router = useRouter();
     const { pathname } = router;
-    const { isCollapsed, toggleSidebar } = useSidebar();
+    const { isCollapsed, toggleSidebar, isProductExpanded, toggleProductExpansion, isReportExpanded, toggleReportExpansion } = useSidebar();
 
-    const getNavLinkClass = (route: string) => (
-        pathname === route ? 'text-purple-1 bg-purple-3 stroke-purple-1' : 'stroke-gray-600 hover:stroke-purple-1 hover:text-purple-1 hover:bg-white text-gray-600'
-    );
+    const isActiveRoute = (route: string) => pathname === route || pathname.startsWith(route);
 
-    // const getNavIconClass = (route: string) => (
-    //     pathname === route ? 'stroke-purple-1' : 'stroke-gray-600 hover:stroke-purple-1'
-    // );
+    const getNavLinkClass = (route: string) => {
+        const baseClass = 'stroke-gray-600 hover:stroke-purple-1 hover:text-purple-1 hover:bg-white text-gray-600';
+        const activeClass = 'text-purple-1 bg-purple-3 stroke-purple-1';
+
+        if (isCollapsed) {
+            return isActiveRoute(route) ? activeClass : baseClass;
+        } else {
+            return pathname === route ? activeClass : baseClass;
+        }
+    };
 
     return (
         <div 
@@ -24,7 +30,7 @@ export default function SideBar() {
         >
             {/* TOP SIDEBAR */}
             <Link
-                href={'/dashboard'}
+                href={'/dashboard/home'}
             >
                 <div 
                     className={`w-full h-[100px] bg-purple-2 p-6 flex gap-2 items-center 
@@ -56,12 +62,14 @@ export default function SideBar() {
             {/* SIDEBAR NAVIGATION */}
             <div className={`text-xl p-6 h-full w-full flex flex-col items-center justify-start}`}>
                 {/* HOME */}
+                {!isCollapsed && 
                 <h1 className='font-bold text-3xl text-gray-2 pb-4'>
-                    {isCollapsed ? '' : 'Home'}
+                    Home
                 </h1>
+                }
 
                 <Link href='/dashboard' className='w-full'>
-                    <div className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 ${getNavLinkClass('/dashboard')}`}>
+                    <div className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 ${getNavLinkClass('/dashboard/home')}`}>
                         <div className='p-1 items-center'>
                             <svg 
                                 width="28" 
@@ -83,14 +91,17 @@ export default function SideBar() {
                 </Link>
 
                 {/* MANAGEMENT */}
+                {!isCollapsed && 
                 <h1 className='font-bold text-3xl text-gray-2 pb-4'>
-                    {isCollapsed ? '' : 'Management'}
+                    Management
                 </h1>
+                }
 
                 <Link href='/dashboard/product' className='w-full'>
                     <div 
                         className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
                         ${getNavLinkClass('/dashboard/product')}`}
+                        onClick={toggleProductExpansion}
                     >
                         <div className='p-1 items-center'>
                             <svg 
@@ -110,7 +121,49 @@ export default function SideBar() {
                             </svg>
                         </div>
                         {!isCollapsed && <span>Product</span>}
+                        {!isCollapsed && (
+                            <div className='w-full flex justify-end items-end'>
+                                <svg
+                                className={`transform transition-transform duration-300 ${isProductExpanded ? 'rotate-0' : 'rotate-90'}`}
+                                width="24" 
+                                height="24" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path 
+                                        d="M19.5 8.25L12 15.75L4.5 8.25" 
+                                        stroke="currentColor" 
+                                        strokeWidth="1.5" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Sub-links */}
+                    {isProductExpanded && !isCollapsed && (
+                        <div className='border-gray-5 border-l-2 ml-6 pl-3'>
+                            <Link href='/dashboard/product/category' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/product/category')}`}
+                                >
+                                    <span>Category</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/product/product' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/product/product')}`}
+                                >
+                                    <span>Product</span>
+                                </div>
+                            </Link>
+                        </div>
+                    )}
                 </Link>
 
                 <Link href='/dashboard/tax' className='w-full'>
@@ -241,7 +294,11 @@ export default function SideBar() {
                     </div>
                 </Link>
 
-                <Link href='/dashboard/report' className='w-full'>
+                <Link 
+                    href='/dashboard/report'
+                    className='w-full'
+                    onClick={toggleReportExpansion}
+                >
                     <div 
                         className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
                         ${getNavLinkClass('/dashboard/report')}`}
@@ -264,7 +321,81 @@ export default function SideBar() {
                             </svg>
                         </div>
                         {!isCollapsed && <span>Report</span>}
+                        {!isCollapsed && (
+                            <div className='w-full flex justify-end items-end'>
+                                <svg
+                                className={`transform transition-transform duration-300 ${isProductExpanded ? 'rotate-0' : 'rotate-90'}`}
+                                width="24" 
+                                height="24" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path 
+                                        d="M19.5 8.25L12 15.75L4.5 8.25" 
+                                        stroke="currentColor" 
+                                        strokeWidth="1.5" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </div>
+                        )}
                     </div>
+
+                    {/* Sub-links */}
+                    {isReportExpanded && !isCollapsed && (
+                        <div className='border-gray-5 border-l-2 ml-6 pl-3'>
+                            <Link href='/dashboard/report/transaction' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/transaction')}`}
+                                >
+                                    <span>Transaction</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/report/payment' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/payment')}`}
+                                >
+                                    <span>Payment</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/report/openclose' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/openclose')}`}
+                                >
+                                    <span>Open/Close</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/report/promo' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/promo')}`}
+                                >
+                                    <span>Promo</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/report/tax' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/tax')}`}
+                                >
+                                    <span>Tax</span>
+                                </div>
+                            </Link>
+                            <Link href='/dashboard/report/driverpartner' className='w-full'>
+                                <div 
+                                    className={`pl-3 p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
+                                    ${getNavLinkClass('/dashboard/report/driverpartner')}`}
+                                >
+                                    <span>Driver Partner</span>
+                                </div>
+                            </Link>
+                        </div>
+                    )}
                 </Link>
 
             </div>
