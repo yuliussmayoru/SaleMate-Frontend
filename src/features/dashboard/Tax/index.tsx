@@ -38,7 +38,7 @@ export default function TaxPage() {
                         <h2 className="text-xl font-bold">Tax</h2>
                         <p>Check your store taxes, you can add, edit and delete</p>
                     </div>
-                    <Button className="bg-orange-500 text-white py-2 px-4 rounded">+ Add Tax</Button>
+                    <Button className="bg-orange-500 text-white py-1 px-2 rounded">+ Add Tax</Button>
                 </div>
                 <div className="p-4 bg-white rounded shadow-md">
                     <div className="flex justify-between items-center mb-4">
