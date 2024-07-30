@@ -297,11 +297,11 @@ export default function SideBar() {
                 <Link 
                     href='/dashboard/report'
                     className='w-full'
-                    onClick={toggleReportExpansion}
                 >
                     <div 
                         className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 
                         ${getNavLinkClass('/dashboard/report')}`}
+                        onClick={toggleReportExpansion}
                     >
                         <div className='p-1 items-center'>
                             <svg 
@@ -324,7 +324,7 @@ export default function SideBar() {
                         {!isCollapsed && (
                             <div className='w-full flex justify-end items-end'>
                                 <svg
-                                className={`transform transition-transform duration-300 ${isProductExpanded ? 'rotate-0' : 'rotate-90'}`}
+                                className={`transform transition-transform duration-300 ${isReportExpanded ? 'rotate-0' : 'rotate-90'}`}
                                 width="24" 
                                 height="24" 
                                 viewBox="0 0 24 24" 
