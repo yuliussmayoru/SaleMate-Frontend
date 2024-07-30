@@ -13,7 +13,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className='flex'>
             <SideBar />
             <main
-                className={`p-[20px] transition-all duration-700 ${isCollapsed ? 'ml-[100px]' : 'ml-[300px]'}`}
+                className={`flex-1 p-[20px] transition-all duration-700 ${isCollapsed ? 'ml-[100px]' : 'ml-[300px]'}`}
             >
                 {children}
             </main>
