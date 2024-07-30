@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { Button } from '../../base/Button'
 import Image from 'next/image';
 import { useSidebar } from './sidebarContext';
-import { useState } from 'react';
 
 export default function SideBar() {
     const router = useRouter();
@@ -68,7 +67,7 @@ export default function SideBar() {
                 </h1>
                 }
 
-                <Link href='/dashboard' className='w-full'>
+                <Link href='/dashboard/home' className='w-full'>
                     <div className={`p-2 flex items-center gap-2 w-auto rounded-xl transition-transform duration-1000 ${getNavLinkClass('/dashboard/home')}`}>
                         <div className='p-1 items-center'>
                             <svg 
