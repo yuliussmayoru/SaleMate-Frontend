@@ -32,13 +32,13 @@ export default function PromoPage() {
 
     return (
         <div className="w-full min-h-screen p-4 bg-gray-100 flex flex-col items-center">
-            <div className="w-full max-w-screen-2xl">
+            <div className="w-full">
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h1 className="text-xl font-bold">Promo</h1>
                         <p>Check your promo details, you can add, edit and update</p>
                     </div>
-                    <Button className="bg-orange-500 text-white py-1 px-2 rounded">+ Add Promo</Button>
+                    <Button className="bg-orange-500 text-white py-1 px-3 rounded text-sm">+ Add Promo</Button>
                 </div>
                 <div className="p-4 bg-white rounded shadow-md">
                     <div className="flex justify-between items-center mb-4">

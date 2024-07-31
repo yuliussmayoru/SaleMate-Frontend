@@ -31,18 +31,18 @@ export default function TaxPage() {
 
 
     return (
-        <div className="w-full min-h-screen p-4 bg-gray-100 flex flex-col items-center">
-            <div className="w-full max-w-screen-2xl">
+        <div className="w-full min-h-screen p-4 flex flex-col items-center">
+            <div className="w-full">
                 <div className="flex justify-between items-center mb-4">
-                    <div>
-                        <h2 className="text-xl font-bold">Tax</h2>
+                    <div className="mr-10">
+                        <h1 className="text-2xl font-bold">Tax</h1>
                         <p>Check your store taxes, you can add, edit and delete</p>
                     </div>
-                    <Button className="bg-orange-500 text-white py-1 px-2 rounded">+ Add Tax</Button>
+                    <Button className="bg-orange-500 text-white py-4 px-4 rounded font-bold">+ Add Tax</Button>
                 </div>
-                <div className="p-4 bg-white rounded shadow-md">
+                <div className="p-4 bg-white rounded shadow-md outline">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Tax Data</h2>
+                        <h2 className="text-2xl">Tax Data</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-white shadow-md rounded">
