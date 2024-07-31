@@ -12,7 +12,7 @@ export default function SideBar() {
     const isActiveRoute = (route: string) => pathname === route || pathname.startsWith(route);
 
     const getNavLinkClass = (route: string) => {
-        const baseClass = 'stroke-gray-600 hover:stroke-purple-1 hover:text-purple-1 hover:bg-white text-gray-600';
+        const baseClass = 'stroke-gray-600 hover:stroke-purple-1 hover:text-purple-1 hover:bg-white text-gray-3';
         const activeClass = 'text-purple-1 bg-purple-3 stroke-purple-1';
 
         if (isCollapsed) {
@@ -59,7 +59,7 @@ export default function SideBar() {
             </button>
 
             {/* SIDEBAR NAVIGATION */}
-            <div className={`text-xl p-6 h-full w-full flex flex-col items-center justify-start}`}>
+            <div className={`text-xl font-semibold p-6 h-full w-full flex flex-col items-center justify-start}`}>
                 {/* HOME */}
                 {!isCollapsed && 
                 <h1 className='font-bold text-3xl text-gray-2 pb-4'>

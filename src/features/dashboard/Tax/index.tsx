@@ -17,22 +17,22 @@ export default function TaxPage() {
         const [taxes, setTaxes] = useState<Tax[]>([]);
         
         useEffect(() => {
-          const fetchTaxes = async () => {
+        const fetchTaxes = async () => {
             try {
               const response = await axios.get('/api/taxes'); //Masih sementara, menunggu route yang di sediakan oleh BE
-              setTaxes(response.data);
+                setTaxes(response.data);
             } catch (error) {
-              console.error('Error fetching taxes', error);
+                console.error('Error fetching taxes', error);
             }
-          };
-      
-          fetchTaxes();
+        };
+
+            fetchTaxes();
         }, []);
 
 
     return (
         <div className="w-full min-h-screen p-4 bg-gray-100 flex flex-col items-center">
-            <div className="w-full max-w-screen-2xl">
+            <div className="w-full">
                 <div className="flex justify-between items-center mb-4">
                     <div>
                         <h2 className="text-xl font-bold">Tax</h2>
