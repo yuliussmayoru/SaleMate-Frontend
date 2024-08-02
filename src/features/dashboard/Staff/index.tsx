@@ -28,7 +28,7 @@ export default function StaffPage() {
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
-                const response = await axios.get('/api/staffs'); // Replace with your actual endpoint
+                const response = await axios.get('/api/staff'); // Replace with your actual endpoint
                 const staffData = response.data;
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
                 setStaffs(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used

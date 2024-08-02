@@ -117,8 +117,8 @@ export default function DriverPartnerPage() {
 
                 <div className="flex justify-between items-center pt-20 mb-4 gap-6">
                     <div className="text-gray-2">
-                        <h2 className="text-xl font-bold">Staff</h2>
-                        <p className="text-sm">Check your store staff details, you can add, edit and delete</p>
+                        <h2 className="text-xl font-bold">Driver Partner</h2>
+                        <p className="text-sm">Check your store driver partner details, you can add, edit and delete</p>
                     </div>
                     <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Driver Partner</Button>
                 </div>
