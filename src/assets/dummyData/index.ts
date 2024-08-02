@@ -1,4 +1,5 @@
 export interface Staff {
+    store_id: string,
     staff_id: string,
     staff_name: string,
     staff_email: string,
@@ -10,8 +11,16 @@ export interface Staff {
     isDelete: boolean,
 }
 
+export interface DriverPartner {
+    id: string,
+    type: string,
+    name: string,
+    benefit: string,
+}
+
 export const dummyStaffs: Staff[] = [
     {
+        store_id: 'BDG01',
         staff_id: "adm001",
         staff_name: "staff satu",
         staff_email: "staff1@email.com",
@@ -23,6 +32,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm002",
         staff_name: "staff dua",
         staff_email: "staff2@email.com",
@@ -34,6 +44,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm003",
         staff_name: "staff tiga",
         staff_email: "staff3@email.com",
@@ -45,6 +56,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm004",
         staff_name: "staff empat",
         staff_email: "staff4@email.com",
@@ -56,6 +68,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm005",
         staff_name: "staff lima",
         staff_email: "staff5@email.com",
@@ -67,6 +80,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm006",
         staff_name: "staff enam",
         staff_email: "staff6@email.com",
@@ -78,6 +92,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm007",
         staff_name: "staff tujuh",
         staff_email: "staff7@email.com",
@@ -89,6 +104,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm008",
         staff_name: "staff delapan",
         staff_email: "staff8@email.com",
@@ -100,6 +116,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm009",
         staff_name: "staff sembilan",
         staff_email: "staff9@email.com",
@@ -111,6 +128,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm010",
         staff_name: "staff sepuluh",
         staff_email: "staff10@email.com",
@@ -122,6 +140,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm011",
         staff_name: "staff sebelas",
         staff_email: "staff11@email.com",
@@ -132,4 +151,25 @@ export const dummyStaffs: Staff[] = [
         updated_at: "2024-1-1",
         isDelete: false,
     },
+]
+
+export const dummyDriverPartners: DriverPartner[] = [
+    {
+        id: "1",
+        type: "Online Delivery",
+        name: "Gojek",
+        benefit: "20",
+    },
+    {
+        id: "2",
+        type: "Online Delivery",
+        name: "Grab",
+        benefit: "20",
+    },
+    {
+        id: "3",
+        type: "Online Delivery",
+        name: "Shopee",
+        benefit: "20",
+    }
 ]
