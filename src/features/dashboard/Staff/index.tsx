@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/features/base";
 import { Staff, dummyStaffs } from '@/assets'
+import { Modal } from "@/features/base/Modal";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -9,7 +10,17 @@ export default function StaffPage() {
     const [staffs, setStaffs] = useState<Staff[]>(dummyStaffs);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
+    // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
@@ -33,13 +44,41 @@ export default function StaffPage() {
         setStaffs(dummyStaffs.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
     }, [currentPage]);
 
+    
+    // HANDLE POP UP ADD DATA
+    const handleModalOpen = () => {
+        setIsModalOpen(true);
+    };
+    
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+        setIsSecondModalOpen(false);
+    };
+    
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value
+        }));
+    };
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+    
+    const handleConfirm = () => {
+        setIsModalOpen(false);
+        setIsSecondModalOpen(true);
+    };
+    
+    // HANDLE PAGE AND GENERATE PAGE
     const handlePageChange = (newPage: number) => {
         if (newPage > 0 && newPage <= totalPages) {
             setCurrentPage(newPage);
         }
     };
 
-    // Generate page numbers for pagination
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
     
     return (
@@ -50,7 +89,7 @@ export default function StaffPage() {
                         <h2 className="text-xl font-bold">Staff</h2>
                         <p className="text-sm">Check your store staff details, you can add, edit and delete</p>
                     </div>
-                    <Button className="bg-orange-2 h-full w-48 text-white rounded">+ Add Staff</Button>
+                    <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={handleModalOpen}>+ Add Staff</Button>
                 </div>
                 <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
                     <div className="flex justify-between items-center mb-4">
@@ -59,7 +98,7 @@ export default function StaffPage() {
                         <div className="flex items-center gap-2">
                             <svg 
                                 onClick={() => handlePageChange(currentPage - 1)}
-                                className={`cursor-pointer stroke-gray-2 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`cursor-pointer stroke-gray-3 ${currentPage === 1 ? 'opacity-10 cursor-not-allowed' : ''}`}
                                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -68,14 +107,14 @@ export default function StaffPage() {
                                 <button
                                     key={number}
                                     onClick={() => handlePageChange(number)}
-                                    className={`w-8 h-8 flex items-center justify-center rounded ${number === currentPage ? 'bg-gray-5 text-white' : 'bg-gray-200'}`}
+                                    className={`w-6 h-6 flex items-center justify-center rounded ${number === currentPage ? 'bg-orange-2 text-white' : 'bg-gray-6 hover:bg-gray-5'}`}
                                 >
                                     {number}
                                 </button>
                             ))}
                             <svg 
                                 onClick={() => handlePageChange(currentPage + 1)}
-                                className={`cursor-pointer stroke-gray-2 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`cursor-pointer stroke-gray-3 ${currentPage === totalPages ? 'opacity-10 cursor-not-allowed' : ''}`}
                                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -86,7 +125,7 @@ export default function StaffPage() {
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th className="">Store Id</th>
+                                    <th className="">Staff Id</th>
                                     <th className="w-2/6">Full Name</th>
                                     <th className="w-1/6">Username</th>
                                     <th className="">Role</th>
@@ -119,6 +158,189 @@ export default function StaffPage() {
                     </div>
                 </div>
             </div>
+
+            {/* FILL STAFF DATA POP UP */}
+            <Modal isOpen={isModalOpen} onClose={handleModalClose} onConfirm={handleConfirm}>
+                <div className="w-full flex flex-col items-center pb-10">
+                    <h2 className="text-2xl font-bold text-orange-2">Add Staff</h2>
+                    <span className="text-sm text-gray-3">Input all necesary data</span>
+                </div>
+                <form className="w-full text-center mb-6">
+                    <label>Full Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        placeholder="Enter staff name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                    />
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        placeholder="Enter staff email address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                    />
+                    <label>Password</label>
+                    <div className="-mb-6">
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            placeholder="Enter password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                        />
+                        <button
+                            type="button"
+                            onClick={togglePasswordVisibility}
+                            className="relative bottom-12 left-36 text-gray-4"
+                        >
+                            {showPassword ? (
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M12 5C7.455 5 3.435 7.69 1.525 12C3.435 16.31 7.455 19 12 19C16.545 19 20.565 16.31 22.475 12C20.565 7.69 16.545 5 12 5Z"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M12 15C10.343 15 9 13.657 9 12C9 10.343 10.343 9 12 9C13.657 9 15 10.343 15 12C15 13.657 13.657 15 12 15Z"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            ) : (
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M12 5C7.455 5 3.435 7.69 1.525 12C3.435 16.31 7.455 19 12 19C16.545 19 20.565 16.31 22.475 12C20.565 7.69 16.545 5 12 5Z"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                    <path
+                                        d="M12 9C13.657 9 15 10.343 15 12C15 13.657 13.657 15 12 15C10.343 15 9 13.657 9 12C9 10.343 10.343 9 12 9ZM1 1L23 23"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                    <label>Role</label>
+                    <input
+                        type="text"
+                        name="role"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        placeholder="Enter staff role"
+                        value={formData.role}
+                        onChange={handleInputChange}
+                    />
+                </form>
+                <div className="flex justify-between w-full mt-4 gap-2">
+                    <button
+                        className="bg-white border-2 font-semibold w-full border-orange-2 text-orange-2 px-4 py-2 rounded-[10px]"
+                        onClick={handleModalClose}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="bg-orange-2 w-full font-semibold text-white px-4 py-2 rounded-[10px]"
+                        onClick={handleConfirm}
+                    >
+                        Ok
+                    </button>
+                </div>
+            </Modal>
+            <Modal isOpen={isSecondModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
+                <div className="w-full flex flex-col items-center pb-10">
+                    <div className="text-green-2 flex row gap-2 justify-center items-center">
+                        <svg width="24" height="24" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path 
+                                d="M10.3333 15.5417L13.4583 18.6667L18.6667 11.375M27 14.5C27 16.1415 26.6767 17.767 26.0485 19.2835C25.4203 20.8001 24.4996 22.1781 23.3388 23.3388C22.1781 24.4996 20.8001 25.4203 19.2835 26.0485C17.767 26.6767 16.1415 27 14.5 27C12.8585 27 11.233 26.6767 9.71646 26.0485C8.19989 25.4203 6.8219 24.4996 5.66116 23.3388C4.50043 22.1781 3.57969 20.8001 2.95151 19.2835C2.32332 17.767 2 16.1415 2 14.5C2 11.1848 3.31696 8.00537 5.66116 5.66117C8.00537 3.31696 11.1848 2 14.5 2C17.8152 2 20.9946 3.31696 23.3388 5.66117C25.683 8.00537 27 11.1848 27 14.5Z" 
+                                stroke="currentColor" 
+                                stroke-width="4" 
+                                stroke-linecap="round" 
+                                stroke-linejoin="round"/>
+                        </svg>
+                        <h2 className="text-2xl font-bold">Staff Added</h2>
+                    </div>
+                    <span className="text-sm text-gray-3">You can update or delete this data later</span>
+                </div>
+                <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Staff Id</h2>
+                        <span>:</span>
+                        {/* CHANGE INTO STAFF ID LATER */}
+                        <p>cs004</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Full Name</h2>
+                        <span>:</span>
+                        <p>{formData.name}</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Email</h2>
+                        <span>:</span>
+                        <p>{formData.email}</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Password</h2>
+                        <span>:</span>
+                        <p>{formData.password}</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Role</h2>
+                        <span>:</span>
+                        <p>{formData.role}</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Pin</h2>
+                        <span>:</span>
+                        {/* CHANGE INTO STAFF PIN LATER */}
+                        <p>325618</p> 
+                    </div>
+
+                    <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Created at</h2>
+                        <span>:</span>
+                        {/* CHANGE INTO STAFF CREATED DATE LATER */}
+                        <p>7 July 2024</p> 
+                    </div>
+                </div>
+                <button
+                        className="bg-orange-2 w-full font-semibold text-white px-4 py-2 rounded-[10px]"
+                        onClick={handleModalClose}
+                    >
+                        Ok
+                    </button>
+            </Modal>
         </div>
     );
 }
