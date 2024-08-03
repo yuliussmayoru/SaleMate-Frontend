@@ -27,7 +27,7 @@ export default function DriverPartnerPage() {
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
-                const response = await axios.get('/api/driverpartner'); // Replace with your actual endpoint
+                const response = await axios.get('/api/driver-partner'); // Replace with your actual endpoint
                 const staffData = response.data;
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
                 setDriverPartners(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
