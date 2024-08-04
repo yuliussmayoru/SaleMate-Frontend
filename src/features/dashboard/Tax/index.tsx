@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button } from "@/features/base";
+import { Button, CancelButton, DeleteButton } from "@/features/base";
 import { Tax, dummyTax } from "@/assets/dummyTax";
 import { Modal } from "@/features/base/Modal";
 import ToggleSwitch from "@/features/base/toggleSwitch";
@@ -11,18 +11,18 @@ export default function TaxPage() {
     const [taxes, setTaxes] = useState<Tax[]>(dummyTax);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        tax_id: '',
-        tax_type: '',
-        tax_name: '',
-        tax_value: 0,
-        tax_status: true,
-        tax_includeInPrice: true,
-        created_at: '',
-        updated_at: '',
-        isDelete: false,
+        id: '',
+        type: '',
+        title: '',
+        value: 0,
+        status: true,
+        includeInPrice: true,
     });
+    const [selectedTax, setSelectedTax] = useState<Tax | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
     useEffect(() => {
@@ -48,13 +48,33 @@ export default function TaxPage() {
         setTaxes(dummyTax.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
     }, [currentPage]);
 
-    const handleModalOpen = () => {
-        setIsModalOpen(true);
+    // Handle Pop Up Tax
+    const handleModalOpen = (type: string, tax?: Tax) => {
+        if(type === 'add') {
+            setIsAddModalOpen(true);
+        } else if (type === 'edit' && tax) {
+            setSelectedTax(tax); 
+                setFormData({
+                    id: tax.tax_id,
+                    title: tax.tax_name,
+                    type: tax.tax_type,
+                    value: tax.tax_value,
+                    status: tax.tax_status,
+                    includeInPrice: tax.tax_includeInPrice,
+                });
+                setIsEditModalOpen(true);
+        } else if (type === 'delete' && tax) {
+            setSelectedTax(tax);
+            setIsDeleteModalOpen(true);
+        }
     };
 
     const handleModalClose = () => {
-        setIsModalOpen(false);
+        setIsAddModalOpen(false);
         setIsSecondModalOpen(false);
+        setIsEditModalOpen(false);
+        setIsDeleteModalOpen(false);
+        setSelectedTax(null);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,11 +85,21 @@ export default function TaxPage() {
         }));
     };
 
-    const handleConfirm = () => {
-        setIsModalOpen(false);
+    const handleConfirmAdd = () => {
+        setIsAddModalOpen(false);
         setIsSecondModalOpen(true);
     };
 
+    const handleConfirmEdit = () => {
+        // Edit staff logic here
+        handleModalClose();
+    };
+
+    const handleConfirmDelete = () => {
+        handleModalClose();
+    };
+
+    // HANDLE PAGE AND GENERATE PAGE
     const handlePageChange = (newPage: number) => {
         if (newPage > 0 && newPage <= totalPages) {
             setCurrentPage(newPage);
@@ -85,7 +115,7 @@ export default function TaxPage() {
                           <h2 className="text-xl font-bold">Tax</h2>
                           <p className="text-sm">Check your store taxes, you can add, edit and update</p>
                       </div>
-                      <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={handleModalOpen}>+ Add Tax</Button>
+                      <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Tax</Button>
                   </div>
               <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
                   <div className="flex justify-between items-center mb-4">
@@ -130,9 +160,9 @@ export default function TaxPage() {
                                   <th className="w-10">Action</th>
                               </tr>
                           </thead>
-                          <tbody>
-                              {taxes.map((tax, index) => (
-                                  <tr key={index} className="border-b">
+                          <tbody className="text-gray-1">
+                              {taxes.map((tax) => (
+                                  <tr key={tax.tax_id} className="border-b">
                                       <td className="py-2">{tax.tax_id}</td>
                                       <td className="py-2">{tax.tax_name}</td>
                                       <td className="py-2">{tax.tax_type}</td>
@@ -158,16 +188,16 @@ export default function TaxPage() {
                                           </span>
                                       </td>
                                       <td className="py-2 flex space-x-2">
-                                          <Button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center">
-                                              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                  <path d="M13.3491 3.55222L14.6846 2.21589C14.963 1.93748 15.3406 1.78107 15.7344 1.78107C16.1281 1.78107 16.5057 1.93748 16.7841 2.21589C17.0625 2.4943 17.2189 2.87191 17.2189 3.26564C17.2189 3.65937 17.0625 4.03698 16.7841 4.31539L8.37742 12.7221C7.95888 13.1404 7.44275 13.4478 6.87563 13.6167L4.75 14.25L5.38333 12.1244C5.55218 11.5573 5.85963 11.0411 6.27792 10.6226L13.3491 3.55222ZM13.3491 3.55222L15.4375 5.64064M14.25 11.0833V14.8438C14.25 15.3162 14.0623 15.7692 13.7283 16.1033C13.3942 16.4373 12.9412 16.625 12.4688 16.625H4.15625C3.68383 16.625 3.23077 16.4373 2.89672 16.1033C2.56267 15.7692 2.375 15.3162 2.375 14.8438V6.53126C2.375 6.05885 2.56267 5.60578 2.89672 5.27173C3.23077 4.93768 3.68383 4.75001 4.15625 4.75001H7.91667" stroke="#808080" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                              </svg>
-                                          </Button>
-                                          <Button className="w-10 bg-red-200 p-1 rounded hover:bg-red-300 flex justify-center">
-                                              <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                  <path d="M11.6692 7.12499L11.3953 14.25M7.60475 14.25L7.33083 7.12499M15.2222 4.58374C15.4929 4.6249 15.7621 4.66844 16.0313 4.71515M15.2222 4.58374L14.3767 15.5744C14.3422 16.0219 14.14 16.4399 13.8106 16.7447C13.4813 17.0496 13.049 17.2189 12.6002 17.2187H6.39983C5.95103 17.2189 5.51873 17.0496 5.18936 16.7447C4.85999 16.4399 4.65784 16.0219 4.62333 15.5744L3.77783 4.58374M15.2222 4.58374C14.3085 4.4456 13.3901 4.34077 12.4688 4.26944M3.77783 4.58374C3.50708 4.62411 3.23792 4.66765 2.96875 4.71436M3.77783 4.58374C4.69152 4.4456 5.60994 4.34077 6.53125 4.26944M12.4688 4.26944V3.54428C12.4688 2.61011 11.7483 1.83111 10.8142 1.80182C9.93828 1.77382 9.06172 1.77382 8.18583 1.80182C7.25167 1.83111 6.53125 2.6109 6.53125 3.54428V4.26944M12.4688 4.26944C10.4925 4.11671 8.50747 4.11671 6.53125 4.26944" stroke="#F04B4B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                              </svg>
-                                          </Button>
+                                        <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" title="edit" onClick={() => handleModalOpen('edit',tax)}>
+                                            <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M13.3491 3.55222L14.6846 2.21589C14.963 1.93748 15.3406 1.78107 15.7344 1.78107C16.1281 1.78107 16.5057 1.93748 16.7841 2.21589C17.0625 2.4943 17.2189 2.87191 17.2189 3.26564C17.2189 3.65937 17.0625 4.03698 16.7841 4.31539L8.37742 12.7221C7.95888 13.1404 7.44275 13.4478 6.87563 13.6167L4.75 14.25L5.38333 12.1244C5.55218 11.5573 5.85963 11.0411 6.27792 10.6226L13.3491 3.55222ZM13.3491 3.55222L15.4375 5.64064M14.25 11.0833V14.8438C14.25 15.3162 14.0623 15.7692 13.7283 16.1033C13.3942 16.4373 12.9412 16.625 12.4688 16.625H4.15625C3.68383 16.625 3.23077 16.4373 2.89672 16.1033C2.56267 15.7692 2.375 15.3162 2.375 14.8438V6.53126C2.375 6.05885 2.56267 5.60578 2.89672 5.27173C3.23077 4.93768 3.68383 4.75001 4.15625 4.75001H7.91667" stroke="#808080" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </button>
+                                        <button className="w-10 bg-red-200 p-1 rounded hover:bg-red-300 flex justify-center" title="delete" onClick={() => handleModalOpen('delete', tax)}>
+                                            <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M11.6692 7.12499L11.3953 14.25M7.60475 14.25L7.33083 7.12499M15.2222 4.58374C15.4929 4.6249 15.7621 4.66844 16.0313 4.71515M15.2222 4.58374L14.3767 15.5744C14.3422 16.0219 14.14 16.4399 13.8106 16.7447C13.4813 17.0496 13.049 17.2189 12.6002 17.2187H6.39983C5.95103 17.2189 5.51873 17.0496 5.18936 16.7447C4.85999 16.4399 4.65784 16.0219 4.62333 15.5744L3.77783 4.58374M15.2222 4.58374C14.3085 4.4456 13.3901 4.34077 12.4688 4.26944M3.77783 4.58374C3.50708 4.62411 3.23792 4.66765 2.96875 4.71436M3.77783 4.58374C4.69152 4.4456 5.60994 4.34077 6.53125 4.26944M12.4688 4.26944V3.54428C12.4688 2.61011 11.7483 1.83111 10.8142 1.80182C9.93828 1.77382 9.06172 1.77382 8.18583 1.80182C7.25167 1.83111 6.53125 2.6109 6.53125 3.54428V4.26944M12.4688 4.26944C10.4925 4.11671 8.50747 4.11671 6.53125 4.26944" stroke="#F04B4B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                            </svg>
+                                        </button>
                                       </td>
                                   </tr>
                               ))}
@@ -176,8 +206,8 @@ export default function TaxPage() {
                   </div>
               </div>
 
-              {/* FILL STAFF DATA POP UP */}
-              <Modal isOpen={isModalOpen} onClose={handleModalClose} onConfirm={handleConfirm}>
+              {/* FILL TAX DATA POP UP */}
+              <Modal isOpen={isAddModalOpen} onClose={handleModalClose} onConfirm={handleConfirmAdd}>
                   <div className="w-full flex flex-col items-center pb-10">
                       <h2 className="text-2xl font-bold text-orange-2">Add Tax</h2>
                       <span className="text-sm text-gray-3">Input all necesary data</span>
@@ -188,7 +218,7 @@ export default function TaxPage() {
                         type="text"
                         name="tax_name"
                         placeholder="Enter title name"
-                        value={formData.tax_name}
+                        value={formData.title}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                       />
@@ -197,7 +227,7 @@ export default function TaxPage() {
                         type="text"
                         name="tax_type"
                         placeholder="Enter tax type"
-                        value={formData.tax_type}
+                        value={formData.type}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                       />
@@ -206,38 +236,169 @@ export default function TaxPage() {
                         type="number"
                         name="tax_value"
                         placeholder="Enter tax value"
-                        value={formData.tax_value}
+                        value={formData.value}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                       />
                       <div className="flex space-x-16">
                         <ToggleSwitch
-                              checked={formData.tax_status}
-                              onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
+                              checked={formData.status}
+                              onChange={() => setFormData({ ...formData, status: !formData.status })}
                               label="Status"
 
                           />
                           <ToggleSwitch
-                              checked={formData.tax_includeInPrice}
-                              onChange={() => setFormData({ ...formData, tax_includeInPrice: !formData.tax_includeInPrice })}
+                              checked={formData.includeInPrice}
+                              onChange={() => setFormData({ ...formData, includeInPrice: !formData.includeInPrice })}
                               label="Include in Price"
                           />
                       </div>
                   </form>
                   <div className="flex justify-between w-full mt-4 gap-2">
-                      <button
-                          className="bg-white border-2 font-semibold w-full border-orange-2 text-orange-2 px-4 py-2 rounded-[10px]"
+                      <CancelButton
                           onClick={handleModalClose}
                       >
                           Cancel
-                      </button>
-                      <button
-                          className="bg-orange-2 w-full font-semibold text-white px-4 py-2 rounded-[10px]"
-                          onClick={handleConfirm}
+                      </CancelButton>
+                      <Button
+                          onClick={handleConfirmAdd}
                       >
                           Ok
-                      </button>
+                      </Button>
                   </div>
+              </Modal>
+              <Modal isOpen={isSecondModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
+                    <div className="w-full flex flex-col items-center pb-10">
+                        <div className="text-green-2 flex row gap-2 justify-center items-center">
+                            <svg width="24" height="24" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path 
+                                    d="M10.3333 15.5417L13.4583 18.6667L18.6667 11.375M27 14.5C27 16.1415 26.6767 17.767 26.0485 19.2835C25.4203 20.8001 24.4996 22.1781 23.3388 23.3388C22.1781 24.4996 20.8001 25.4203 19.2835 26.0485C17.767 26.6767 16.1415 27 14.5 27C12.8585 27 11.233 26.6767 9.71646 26.0485C8.19989 25.4203 6.8219 24.4996 5.66116 23.3388C4.50043 22.1781 3.57969 20.8001 2.95151 19.2835C2.32332 17.767 2 16.1415 2 14.5C2 11.1848 3.31696 8.00537 5.66116 5.66117C8.00537 3.31696 11.1848 2 14.5 2C17.8152 2 20.9946 3.31696 23.3388 5.66117C25.683 8.00537 27 11.1848 27 14.5Z" 
+                                    stroke="currentColor" 
+                                    strokeWidth="4" 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round"/>
+                            </svg>
+                            <h2 className="text-2xl font-bold">Tax Added</h2>
+                        </div>
+                        <span className="text-sm text-gray-3">You can update or delete this data later</span>
+                    </div>
+                    <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Tax Id</h2>
+                            <span>:</span>
+                            {/* CHANGE INTO STAFF ID LATER */}
+                            <p>{formData.id}</p> 
+                        </div>
+
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Title</h2>
+                            <span>:</span>
+                            <p>{formData.title}</p> 
+                        </div>
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Type</h2>
+                            <span>:</span>
+                            <p>{formData.type}</p> 
+                        </div>
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Value</h2>
+                            <span>:</span>
+                            <p>{formData.value}</p> 
+                        </div>
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Status</h2>
+                            <span>:</span>
+                            <p>{formData.status}</p> 
+                        </div>
+                        <div className="flex flex-row gap-4 justify-start">
+                            <h2 className="w-1/4 font-bold text-gray-3">Include in Price</h2>
+                            <span>:</span>
+                            <p>{formData.includeInPrice}</p> 
+                        </div>
+                    </div>
+                    <Button
+                        onClick={handleModalClose}
+                    >
+                        Ok
+                    </Button>
+              </Modal>
+
+              {/* EDIT */}
+              <Modal isOpen={isEditModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
+                    <div className="w-full flex flex-col items-center pb-10">
+                        <h2 className="text-2xl font-bold text-orange-2">Edit Tax</h2>
+                        <span className="text-sm text-gray-3">Edit necesary data</span>
+                    </div>
+                    <form className="w-full text-center mb-6">
+                      <label>Title</label>
+                      <input
+                        type="text"
+                        name="tax_name"
+                        placeholder="Enter title name"
+                        value={formData.title}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                      />
+                      <label>Type</label>
+                      <input
+                        type="text"
+                        name="tax_type"
+                        placeholder="Enter tax type"
+                        value={formData.type}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                      />
+                      <label>Tax Value (%)</label>
+                      <input
+                        type="number"
+                        name="tax_value"
+                        placeholder="Enter tax value"
+                        value={formData.value}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                      />
+                      <div className="flex space-x-16">
+                        <ToggleSwitch
+                              checked={formData.status}
+                              onChange={() => setFormData({ ...formData, status: !formData.status })}
+                              label="Status"
+
+                          />
+                          <ToggleSwitch
+                              checked={formData.includeInPrice}
+                              onChange={() => setFormData({ ...formData, includeInPrice: !formData.includeInPrice })}
+                              label="Include in Price"
+                          />
+                      </div>
+                  </form>
+                  <div className="flex justify-between w-full mt-4 gap-2">
+                      <Button
+                          onClick={handleConfirmEdit}
+                      >
+                          Ok
+                      </Button>
+                  </div>
+              </Modal>
+
+              {/* DELETE */}
+              <Modal isOpen={isDeleteModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
+                    <div className="w-full flex flex-col items-center">
+                        <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
+                        <span className="text-gray-2">Are you sure you want to delete</span>
+                    </div>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedTax?.tax_name}</h2>
+                    <div className="flex justify-between w-full mt-4 gap-2">
+                        <CancelButton 
+                            onClick={handleModalClose}
+                        >
+                            Cancel
+                        </CancelButton>
+                        <DeleteButton
+                            onClick={handleConfirmDelete}
+                        >
+                            Delete
+                        </DeleteButton>
+                    </div>
               </Modal>
           </div>
       );
