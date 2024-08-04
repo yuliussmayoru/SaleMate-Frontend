@@ -1,4 +1,5 @@
 export interface Staff {
+    store_id: string,
     staff_id: string,
     staff_name: string,
     staff_email: string,
@@ -10,8 +11,22 @@ export interface Staff {
     isDelete: boolean,
 }
 
+export interface DriverPartner {
+    id: string,
+    type: string,
+    name: string,
+    benefit: string,
+}
+
+export interface Payment {
+    id: string,
+    type: string,
+    name: string,
+}
+
 export const dummyStaffs: Staff[] = [
     {
+        store_id: 'BDG01',
         staff_id: "adm001",
         staff_name: "staff satu",
         staff_email: "staff1@email.com",
@@ -23,6 +38,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm002",
         staff_name: "staff dua",
         staff_email: "staff2@email.com",
@@ -34,6 +50,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm003",
         staff_name: "staff tiga",
         staff_email: "staff3@email.com",
@@ -45,6 +62,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm004",
         staff_name: "staff empat",
         staff_email: "staff4@email.com",
@@ -56,6 +74,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm005",
         staff_name: "staff lima",
         staff_email: "staff5@email.com",
@@ -67,6 +86,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm006",
         staff_name: "staff enam",
         staff_email: "staff6@email.com",
@@ -78,6 +98,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm007",
         staff_name: "staff tujuh",
         staff_email: "staff7@email.com",
@@ -89,6 +110,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm008",
         staff_name: "staff delapan",
         staff_email: "staff8@email.com",
@@ -100,6 +122,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm009",
         staff_name: "staff sembilan",
         staff_email: "staff9@email.com",
@@ -111,6 +134,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm010",
         staff_name: "staff sepuluh",
         staff_email: "staff10@email.com",
@@ -122,6 +146,7 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
+        store_id: 'BDG01',
         staff_id: "adm011",
         staff_name: "staff sebelas",
         staff_email: "staff11@email.com",
@@ -131,5 +156,94 @@ export const dummyStaffs: Staff[] = [
         created_at: "2024-1-1",
         updated_at: "2024-1-1",
         isDelete: false,
+    },
+]
+
+export const dummyDriverPartners: DriverPartner[] = [
+    {
+        id: "1",
+        type: "Online Delivery",
+        name: "Gojek",
+        benefit: "20",
+    },
+    {
+        id: "2",
+        type: "Online Delivery",
+        name: "Grab",
+        benefit: "20",
+    },
+    {
+        id: "3",
+        type: "Online Delivery",
+        name: "Shopee",
+        benefit: "20",
+    }
+]
+
+export const dummyPayments: Payment[] = [
+    {
+        id: "1",
+        type: "Bank",
+        name: "BRI",
+    },
+    {
+        id: "2",
+        type: "Bank",
+        name: "BCA",
+    },
+    {
+        id: "3",
+        type: "Bank",
+        name: "Mandiri",
+    },
+    {
+        id: "4",
+        type: "Bank",
+        name: "BNI",
+    },
+    {
+        id: "5",
+        type: "Bank",
+        name: "BTN",
+    },
+    {
+        id: "6",
+        type: "Bank",
+        name: "Bank Danamon",
+    },
+    {
+        id: "7",
+        type: "Bank",
+        name: "OCBC NISP",
+    },
+    {
+        id: "8",
+        type: "E-Payment",
+        name: "OVO",
+    },
+    {
+        id: "9",
+        type: "E-Payment",
+        name: "Gopay",
+    },
+    {
+        id: "10",
+        type: "E-Payment",
+        name: "ShopeePay",
+    },
+    {
+        id: "11",
+        type: "Bank",
+        name: "Jenius",
+    },
+    {
+        id: "12",
+        type: "Bank",
+        name: "Bank Jago",
+    },
+    {
+        id: "13",
+        type: "Bank",
+        name: "Bank DKI",
     },
 ]
