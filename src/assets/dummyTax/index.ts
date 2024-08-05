@@ -10,6 +10,18 @@ export interface Tax {
     isDelete: boolean,
 }
 
+export interface Promo {
+    promo_id: string;
+    product_id: string;
+    promo_type: 'price' | 'precentage';
+    promo_value: number;
+    start_date: string;
+    end_date: string;
+    // created_at: string;
+    // updated_at: string;
+    // isDelete: boolean;
+}
+
 export const dummyTax: Tax[] = [
     {
         tax_id: 'BDG01',
@@ -143,4 +155,103 @@ export const dummyTax: Tax[] = [
         updated_at: '2024-01-08',
         isDelete: false,
     },
+]
+
+export const dummyPromos: Promo[] = [
+    {
+        product_id: 'BDG01',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG02',
+        promo_id: "Gojek Diskon 30%",
+        promo_type: "precentage",
+        promo_value: 30,
+        start_date: "27/07/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG03',
+        promo_id: "Promo Beli 2 Potongan 5.000",
+        promo_type: "price",
+        promo_value: 5000,
+        start_date: "06/06/2024",
+        end_date: "-",
+    },
+    {
+        product_id: 'BDG04',
+        promo_id: "Grab Diskon 15%",
+        promo_type: "precentage",
+        promo_value: 15,
+        start_date: "20/07/2024",
+        end_date: "27/07/2024",
+    },
+    {
+        product_id: 'BDG05',
+        promo_id: "Diskon 30.000 Veteran Perang",
+        promo_type: "price",
+        promo_value: 30000,
+        start_date: "15/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG06',
+        promo_id: "Promo Kemerdekaan 75.000",
+        promo_type: "price",
+        promo_value: 75000,
+        start_date: "15/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG07',
+        promo_id: "Diskon Lebaran 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "30/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG08',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG09',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG010',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG011',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    },
+    {
+        product_id: 'BDG012',
+        promo_id: "Diskon 10%",
+        promo_type: "precentage",
+        promo_value: 10,
+        start_date: "08/08/2024",
+        end_date: "18/08/2024",
+    }
 ]
