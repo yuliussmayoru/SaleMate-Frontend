@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, CancelButton, DeleteButton } from "@/features/base";
+import { Button, CancelButton, Card, DeleteButton } from "@/features/base";
 import { Payment, dummyPayments } from '@/assets'
 import { Modal } from "@/features/base/Modal";
 
@@ -121,9 +121,9 @@ export default function PaymentPage() {
                     <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Payment</Button>
                 </div>
 
-                <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
+                <Card>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl text-gray-2 font-semibold">Staff Data</h2>
+                        <h2 className="text-xl text-gray-2 font-semibold">Payment Data</h2>
                         
                         {/* PAGE */}
                         <div className="flex items-center gap-2">
@@ -186,7 +186,7 @@ export default function PaymentPage() {
                         </table>
                     </div>
 
-                </div>
+                </Card>
             </div>
 
             {/* FILL STAFF DATA POP UP */}
