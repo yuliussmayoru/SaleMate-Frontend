@@ -1,5 +1,6 @@
 export interface Staff {
-    staff_id: string,
+    id: string,
+    store_id: string,
     staff_name: string,
     staff_email: string,
     staff_password: string,
@@ -10,9 +11,46 @@ export interface Staff {
     isDelete: boolean,
 }
 
+export interface DriverPartner {
+    id: string,
+    type: string,
+    name: string,
+    benefit: string,
+}
+
+export interface Payment {
+    id: string,
+    type: string,
+    name: string,
+}
+
+export interface Transaction {
+    id: string,
+    storeId: string,
+    receipt: string,
+    date: string,
+    subtotal: number,
+    service: number,
+    tax: number,
+    completion: 'complete' | 'not complete',
+    discount: number,
+    grandTotal: number,
+};
+
+export interface PaymentReport {
+    id: string,
+    storeId: string,
+    receipt: string,
+    date: string,
+    grandTotal: number,
+    method: string,
+    type: string,
+}
+
 export const dummyStaffs: Staff[] = [
     {
-        staff_id: "adm001",
+        id: "adm001",
+        store_id: 'BDG01',
         staff_name: "staff satu",
         staff_email: "staff1@email.com",
         staff_password: "staff1",
@@ -23,7 +61,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm002",
+        id: "adm002",
+        store_id: 'BDG01',
         staff_name: "staff dua",
         staff_email: "staff2@email.com",
         staff_password: "staff2",
@@ -34,7 +73,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm003",
+        id: "adm003",
+        store_id: 'BDG01',
         staff_name: "staff tiga",
         staff_email: "staff3@email.com",
         staff_password: "staff3",
@@ -45,7 +85,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm004",
+        id: "adm004",
+        store_id: 'BDG01',
         staff_name: "staff empat",
         staff_email: "staff4@email.com",
         staff_password: "staff4",
@@ -56,7 +97,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm005",
+        id: "adm005",
+        store_id: 'BDG01',
         staff_name: "staff lima",
         staff_email: "staff5@email.com",
         staff_password: "staff5",
@@ -67,7 +109,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm006",
+        id: "adm006",
+        store_id: 'BDG01',
         staff_name: "staff enam",
         staff_email: "staff6@email.com",
         staff_password: "staff6",
@@ -78,7 +121,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm007",
+        id: "adm007",
+        store_id: 'BDG01',
         staff_name: "staff tujuh",
         staff_email: "staff7@email.com",
         staff_password: "staff7",
@@ -89,7 +133,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm008",
+        id: "adm008",
+        store_id: 'BDG01',
         staff_name: "staff delapan",
         staff_email: "staff8@email.com",
         staff_password: "staff8",
@@ -100,7 +145,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm009",
+        id: "adm009",
+        store_id: 'BDG01',
         staff_name: "staff sembilan",
         staff_email: "staff9@email.com",
         staff_password: "staff9",
@@ -111,7 +157,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm010",
+        id: "adm010",
+        store_id: 'BDG01',
         staff_name: "staff sepuluh",
         staff_email: "staff10@email.com",
         staff_password: "staff10",
@@ -122,7 +169,8 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
     {
-        staff_id: "adm011",
+        id: "adm011",
+        store_id: 'BDG01',
         staff_name: "staff sebelas",
         staff_email: "staff11@email.com",
         staff_password: "staff11",
@@ -133,3 +181,279 @@ export const dummyStaffs: Staff[] = [
         isDelete: false,
     },
 ]
+
+export const dummyDriverPartners: DriverPartner[] = [
+    {
+        id: "1",
+        type: "Online Delivery",
+        name: "Gojek",
+        benefit: "20",
+    },
+    {
+        id: "2",
+        type: "Online Delivery",
+        name: "Grab",
+        benefit: "20",
+    },
+    {
+        id: "3",
+        type: "Online Delivery",
+        name: "Shopee",
+        benefit: "20",
+    }
+]
+
+export const dummyPayments: Payment[] = [
+    {
+        id: "1",
+        type: "Bank",
+        name: "BRI",
+    },
+    {
+        id: "2",
+        type: "Bank",
+        name: "BCA",
+    },
+    {
+        id: "3",
+        type: "Bank",
+        name: "Mandiri",
+    },
+    {
+        id: "4",
+        type: "Bank",
+        name: "BNI",
+    },
+    {
+        id: "5",
+        type: "Bank",
+        name: "BTN",
+    },
+    {
+        id: "6",
+        type: "Bank",
+        name: "Bank Danamon",
+    },
+    {
+        id: "7",
+        type: "Bank",
+        name: "OCBC NISP",
+    },
+    {
+        id: "8",
+        type: "E-Payment",
+        name: "OVO",
+    },
+    {
+        id: "9",
+        type: "E-Payment",
+        name: "Gopay",
+    },
+    {
+        id: "10",
+        type: "E-Payment",
+        name: "ShopeePay",
+    },
+    {
+        id: "11",
+        type: "Bank",
+        name: "Jenius",
+    },
+    {
+        id: "12",
+        type: "Bank",
+        name: "Bank Jago",
+    },
+    {
+        id: "13",
+        type: "Bank",
+        name: "Bank DKI",
+    },
+]
+
+// export const dummyTransactions
+export const transactions: Transaction[] = [
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01', 
+        subtotal: 100000, 
+        service: 10000, 
+        tax: 10000, 
+        completion: 'complete', 
+        discount: 20000, 
+        grandTotal: 300000 
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2023-07-02', 
+        subtotal: 150000, 
+        service: 11000, 
+        tax: 12000, 
+        completion: 'complete', 
+        discount: 21000, 
+        grandTotal: 450000
+    },
+];
+
+export const payments: PaymentReport[] = [
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01',
+        grandTotal: 300000,
+        method: 'Cash',
+        type: 'Cash'
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2024-08-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '003', 
+        date: '2024-06-01',
+        grandTotal: 500000,
+        method: 'QRIS',
+        type: 'Bank'
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '004', 
+        date: '2024-10-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
+    },
+];
