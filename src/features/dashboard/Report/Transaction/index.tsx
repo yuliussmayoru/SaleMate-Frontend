@@ -138,9 +138,9 @@ export default function TransactionPage() {
                     {/* Filtered Transactions Table */}
                     <div className="overflow-auto max-h-[38em] scrollbar-thin">
                         <table className="w-full text-center text-gray-2">
-                            <thead className="text-gray-4">
+                            <thead className="text-gray-4 sticky top-0 bg-white">
                                 <tr>
-                                    <th>Store Id</th>
+                                    <th className="p-2">Store Id</th>
                                     <th>Date</th>
                                     <th>Receipt No</th>
                                     <th>Subtotal ( Rp )</th>
