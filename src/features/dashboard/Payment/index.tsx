@@ -158,8 +158,8 @@ export default function PaymentPage() {
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th className="">Type</th>
-                                    <th className="">Name</th>
+                                    <th>Type</th>
+                                    <th>Name</th>
                                     <th className="w-10">Action</th>
                                 </tr>
                             </thead>
