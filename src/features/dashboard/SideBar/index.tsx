@@ -24,7 +24,7 @@ export default function SideBar() {
 
     return (
         <div 
-            className={`fixed top-0 left-0 h-full bg-gray-6 transition-all duration-300
+            className={`fixed top-0 left-0 h-full bg-gray-6 transition-all duration-300 z-50
             ${ isCollapsed ? 'w-[100px]' : 'w-[300px]' }`}
         >
             {/* TOP SIDEBAR */}

@@ -136,7 +136,7 @@ export default function TransactionPage() {
                     </div>
 
                     {/* Filtered Transactions Table */}
-                    <div className="overflow-auto max-h-[38em] scrollbar-thin">
+                    <div className="overflow-auto max-h-[23rem] scrollbar-thin border-t border-gray-5">
                         <table className="w-full text-center text-gray-2">
                             <thead className="text-gray-4 sticky top-0 bg-white">
                                 <tr>
@@ -154,7 +154,7 @@ export default function TransactionPage() {
                             <tbody>
                                 {filteredTransactions.map((transaction) => (
                                     <tr key={transaction.id} className="even:bg-gray-6">
-                                        <td className="p-4">{transaction.storeId}</td>
+                                        <td className="p-2">{transaction.storeId}</td>
                                         <td>{transaction.date}</td>
                                         <td>{transaction.receipt}</td>
                                         <td>{formatCurrency(transaction.subtotal)}</td>

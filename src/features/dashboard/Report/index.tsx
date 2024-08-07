@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function ReportPage() {
     return (
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center ">
             <div className="w-full">
                 <div className="flex justify-between items-center pt-20 mb-4 gap-6">
                     <div className="text-gray-2">
@@ -13,7 +13,7 @@ export default function ReportPage() {
                 </div>
 
                 {/* TRANSACTION CARD */}
-                <Card>
+                <Card className="mb-4">
                     <div className="flex justify-between items-start mb-4">
                         <h2 className="text-xl text-gray-2 font-semibold">Transaction Summary</h2>
                         <div className="flex flex-row gap-2 text-gray-3 text-sm">
@@ -89,7 +89,7 @@ export default function ReportPage() {
                 </Card>
 
                 {/* PAYMENT CARD */}
-                <Card>
+                <Card className="mb-4">
                     <div className="flex justify-between items-start mb-4">
                         <h2 className="text-xl text-gray-2 font-semibold">Payment Summary</h2>
                         <div className="flex flex-row gap-2 text-gray-3 text-sm">
@@ -215,6 +215,84 @@ export default function ReportPage() {
                     </div>
 
                     <Link href={'/dashboard/report/tax'} className="flex justify-end">
+                        <button className="bg-green-4 p-1 justify-end px-8 rounded-[10px] text-white font-bold hover:bg-green-5">
+                            See Details
+                        </button>
+                    </Link>
+                </Card>
+
+                {/* OPEN CLOSE CARD */}
+                <Card className="mb-4">
+                    <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl text-gray-2 font-semibold">Open/Close Summary</h2>
+                        <div className="flex flex-row gap-2 text-gray-3 text-sm">
+                            <span>period :</span>
+                            {/* CHANGE DATE LATER */}
+                            <p>09.00, 24 Jul 2024 - 22.00, 26 Jul 2024 </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row text-gray-2 mb-6">
+
+                        <div className="w-1/2 flex flex-col text-center">
+                            <p>
+                                Total Bills ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                511.000
+                            </h1>
+                        </div>
+
+                        <div className="w-1/2 flex flex-col text-center">
+                            <p>
+                                Total Incomes ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                6.080.500
+                            </h1>
+                        </div>
+                    </div>
+
+                    <Link href={'/dashboard/report/openclose'} className="flex justify-end">
+                        <button className="bg-green-4 p-1 justify-end px-8 rounded-[10px] text-white font-bold hover:bg-green-5">
+                            See Details
+                        </button>
+                    </Link>
+                </Card>
+
+                {/* DRIVER PARTNER CARD */}
+                <Card className="mb-4">
+                    <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl text-gray-2 font-semibold">Driver Partner Summary</h2>
+                        <div className="flex flex-row gap-2 text-gray-3 text-sm">
+                            <span>period :</span>
+                            {/* CHANGE DATE LATER */}
+                            <p>09.00, 24 Jul 2024 - 22.00, 26 Jul 2024 </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row text-gray-2 mb-6">
+
+                        <div className="w-1/2 flex flex-col text-center">
+                            <p>
+                                Total Benefits ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                511.000
+                            </h1>
+                        </div>
+
+                        <div className="w-1/2 flex flex-col text-center">
+                            <p>
+                                Total Incomes ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                6.080.500
+                            </h1>
+                        </div>
+                    </div>
+
+                    <Link href={'/dashboard/report/driverpartner'} className="flex justify-end">
                         <button className="bg-green-4 p-1 justify-end px-8 rounded-[10px] text-white font-bold hover:bg-green-5">
                             See Details
                         </button>

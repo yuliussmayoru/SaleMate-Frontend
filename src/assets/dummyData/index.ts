@@ -37,6 +37,36 @@ export interface Transaction {
     grandTotal: number,
 };
 
+export interface PaymentReport {
+    id: string,
+    storeId: string,
+    receipt: string,
+    date: string,
+    grandTotal: number,
+    method: string,
+    type: string,
+}
+
+export interface OpenClose {
+    id: string,
+    storeId: string,
+    date: string,
+    openBy: string,
+    closeBy: string,
+    billOfQuantity: number,
+    grandTotal: number,
+}
+
+export interface DriverPartnerReport {
+    id: string,
+    storeId: string,
+    date: string,
+    receipt: string,
+    driverPartner: string,
+    benefit: number,
+    grandTotal: number,
+}
+
 export const dummyStaffs: Staff[] = [
     {
         id: "adm001",
@@ -261,7 +291,6 @@ export const dummyPayments: Payment[] = [
     },
 ]
 
-// export const dummyTransactions
 export const transactions: Transaction[] = [
     { 
         id: '1', 
@@ -408,3 +437,102 @@ export const transactions: Transaction[] = [
         grandTotal: 450000
     },
 ];
+
+export const payments: PaymentReport[] = [
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01',
+        grandTotal: 300000,
+        method: 'Cash',
+        type: 'Cash'
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2024-08-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '003', 
+        date: '2024-06-01',
+        grandTotal: 500000,
+        method: 'QRIS',
+        type: 'Bank'
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '004', 
+        date: '2024-10-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
+    },
+];
+
+export const openCloses: OpenClose[] = [
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-07-01',
+        openBy: 'Mutia',
+        closeBy: 'Mutia',
+        billOfQuantity: 1,
+        grandTotal: 3000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 2',
+        date: '2024-08-01',
+        openBy: 'Mutia',
+        closeBy: 'Tuti',
+        billOfQuantity: 1,
+        grandTotal: 4500000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 3',
+        date: '2024-06-01',
+        openBy: 'Vivi',
+        closeBy: 'Mutia',
+        billOfQuantity: 1,
+        grandTotal: 4500000,
+    },
+];
+
+export const driverPartners: DriverPartnerReport[] = [
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-07-01',
+        receipt: '001',
+        driverPartner: 'gojek',
+        benefit: 30000,
+        grandTotal: 3000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-09-01',
+        receipt: '002',
+        driverPartner: 'shopee',
+        benefit: 20000,
+        grandTotal: 6000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-08-01',
+        receipt: '001',
+        driverPartner: 'grab',
+        benefit: 50000,
+        grandTotal: 3500000,
+    },
+]
