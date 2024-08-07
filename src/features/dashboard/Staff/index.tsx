@@ -56,7 +56,7 @@ export default function StaffPage() {
         } else if (type === 'edit' && staff) {
             setSelectedStaff(staff);
             setFormData({
-                id: staff.staff_id,
+                id: staff.id,
                 name: staff.staff_name,
                 email: staff.staff_email,
                 password: '',
@@ -162,21 +162,21 @@ export default function StaffPage() {
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th className="">Store Id</th>
+                                    <th>Store Id</th>
                                     <th className="w-2/6">Full Name</th>
                                     <th className="w-1/6">Username</th>
-                                    <th className="">Role</th>
+                                    <th>Role</th>
                                     <th className="w-10">Action</th>
                                 </tr>
                             </thead>
                             <tbody className=" text-gray-1">
                                 {staffs.map((staff) => (
-                                    <tr key={staff.staff_id} className="even:bg-gray-6">
-                                        <td className="">{staff.store_id}</td>
-                                        <td className="">{staff.staff_name}</td>
-                                        <td className="">{staff.staff_email}</td>
-                                        <td className="">{staff.role}</td>
-                                        <td className="py-4 px-4 flex justify-center items-center gap-1">
+                                    <tr key={staff.id} className="even:bg-gray-6">
+                                        <td>{staff.store_id}</td>
+                                        <td>{staff.staff_name}</td>
+                                        <td>{staff.staff_email}</td>
+                                        <td>{staff.role}</td>
+                                        <td className="p-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" onClick={() => handleModalOpen('edit', staff)}>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M13.3491 3.55222L14.6846 2.21589C14.963 1.93748 15.3406 1.78107 15.7344 1.78107C16.1281 1.78107 16.5057 1.93748 16.7841 2.21589C17.0625 2.4943 17.2189 2.87191 17.2189 3.26564C17.2189 3.65937 17.0625 4.03698 16.7841 4.31539L8.37742 12.7221C7.95888 13.1404 7.44275 13.4478 6.87563 13.6167L4.75 14.25L5.38333 12.1244C5.55218 11.5573 5.85963 11.0411 6.27792 10.6226L13.3491 3.55222ZM13.3491 3.55222L15.4375 5.64064M14.25 11.0833V14.8438C14.25 15.3162 14.0623 15.7692 13.7283 16.1033C13.3942 16.4373 12.9412 16.625 12.4688 16.625H4.15625C3.68383 16.625 3.23077 16.4373 2.89672 16.1033C2.56267 15.7692 2.375 15.3162 2.375 14.8438V6.53126C2.375 6.05885 2.56267 5.60578 2.89672 5.27173C3.23077 4.93768 3.68383 4.75001 4.15625 4.75001H7.91667" stroke="#808080" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -259,6 +259,7 @@ export default function StaffPage() {
                     </Button>
                 </div>
             </Modal>
+
             <Modal isOpen={isSecondModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
                 <div className="w-full flex flex-col items-center pb-10">
                     <div className="text-green-2 flex row gap-2 justify-center items-center">
@@ -297,7 +298,10 @@ export default function StaffPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Password</h2>
                         <span>:</span>
-                        <p>{formData.password}</p> 
+                        <p>{showPassword ? '----------' : (formData.password) }</p>
+                        <button type="button" onClick={togglePasswordVisibility} className="text-gray-4 absolute right-1/3">
+                            {showPassword ? 'Hide' : 'Show'}
+                        </button>
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">

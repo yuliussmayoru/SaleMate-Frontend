@@ -91,7 +91,7 @@ export default function ReportPage() {
                 {/* PAYMENT CARD */}
                 <Card>
                     <div className="flex justify-between items-start mb-4">
-                        <h2 className="text-xl text-gray-2 font-semibold">Transaction Summary</h2>
+                        <h2 className="text-xl text-gray-2 font-semibold">Payment Summary</h2>
                         <div className="flex flex-row gap-2 text-gray-3 text-sm">
                             <span>period :</span>
                             {/* CHANGE DATE LATER */}

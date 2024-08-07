@@ -1,26 +1,12 @@
+import { Transaction, transactions } from "@/assets";
 import { Card, FilterBar } from "@/features/base";
 import { useEffect, useState } from "react";
-
-type Transaction = {
-    id: string;
-    storeId: string;
-    receipt: string;
-    date: string;
-    amount: number;
-};
 
 export default function TransactionPage() {
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
     
-    const transactions: Transaction[] = [
-        // Example transactions
-        { id: '1', storeId: 'Store 1', receipt: '001', date: '2024-07-01', amount: 100 },
-        { id: '2', storeId: 'Store 2', receipt: '002', date: '2023-07-02', amount: 200 },
-        // Add more transactions as needed
-    ];
-
     useEffect(() => {
-        setFilteredTransactions(transactions); // Initialize with all transactions
+        setFilteredTransactions(transactions);
     }, []);
 
     const filtersConfig = [
@@ -45,6 +31,15 @@ export default function TransactionPage() {
         });
     
         setFilteredTransactions(filtered);
+    };
+
+    // IDR CURRENCY FORMAT
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        }).format(value);
     };
 
     return (
@@ -73,27 +68,106 @@ export default function TransactionPage() {
                 </Card>
 
                 <Card>
+                    <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl text-gray-2 font-semibold">Transaction Summary</h2>
+                        <div className="flex flex-row gap-2 text-gray-3 text-sm">
+                            <span>period :</span>
+                            {/* CHANGE DATE LATER */}
+                            <p>09.00, 24 Jul 2024 - 22.00, 26 Jul 2024 </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row text-gray-2 mb-6">
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Sales ( items )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                21
+                            </h1>
+                        </div>
+
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Taxes ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                605.500
+                            </h1>
+                        </div>
+
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Completions
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                7
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-row text-gray-2 mb-4">
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Services ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                70.000
+                            </h1>
+                        </div>
+
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Discounts ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                580.000
+                            </h1>
+                        </div>
+
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Incomes ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                6.080.500
+                            </h1>
+                        </div>
+                    </div>
+
                     {/* Filtered Transactions Table */}
-                    <table className="w-full text-center">
-                        <thead>
-                            <tr>
-                            <th>Store</th>
-                            <th>Receipt</th>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredTransactions.map((transaction) => (
-                            <tr key={transaction.id}>
-                                <td>{transaction.storeId}</td>
-                                <td>{transaction.receipt}</td>
-                                <td>{transaction.date}</td>
-                                <td>{transaction.amount}</td>
-                            </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <div className="overflow-auto max-h-[38em] scrollbar-thin">
+                        <table className="w-full text-center text-gray-2">
+                            <thead className="text-gray-4">
+                                <tr>
+                                    <th>Store Id</th>
+                                    <th>Date</th>
+                                    <th>Receipt No</th>
+                                    <th>Subtotal ( Rp )</th>
+                                    <th>Service</th>
+                                    <th>Tax ( Rp )</th>
+                                    <th>Completion</th>
+                                    <th>Discount ( Rp )</th>
+                                    <th>Grand Total ( Rp )</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredTransactions.map((transaction) => (
+                                    <tr key={transaction.id} className="even:bg-gray-6">
+                                        <td className="p-4">{transaction.storeId}</td>
+                                        <td>{transaction.date}</td>
+                                        <td>{transaction.receipt}</td>
+                                        <td>{formatCurrency(transaction.subtotal)}</td>
+                                        <td>{formatCurrency(transaction.service)}</td>
+                                        <td>{formatCurrency(transaction.tax)}</td>
+                                        <td>{transaction.completion}</td>
+                                        <td>{formatCurrency(transaction.discount)}</td>
+                                        <td>{formatCurrency(transaction.grandTotal)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </Card>
             </div>
         </div>
