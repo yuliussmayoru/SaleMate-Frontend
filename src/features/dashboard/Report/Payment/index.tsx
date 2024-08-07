@@ -119,7 +119,7 @@ export default function PaymentPage() {
                     </div>
 
                     {/* Filtered Transactions Table */}
-                    <div className="overflow-auto max-h-[23rem] scrollbar-thin">
+                    <div className="overflow-auto max-h-[23rem] scrollbar-thin border-t border-gray-5">
                         <table className="w-full text-center text-gray-2">
                             <thead className="text-gray-4 sticky top-0 bg-white">
                                 <tr>
