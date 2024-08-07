@@ -16,3 +16,7 @@
 .scrollbar-thin::-webkit-scrollbar-track {
     background: #F2F2F2; 
 }
+
+.scrollbar-thin::-webkit-scrollbar-button {
+    display: none;
+}

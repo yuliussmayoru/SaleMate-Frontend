@@ -37,6 +37,16 @@ export interface Transaction {
     grandTotal: number,
 };
 
+export interface PaymentReport {
+    id: string,
+    storeId: string,
+    receipt: string,
+    date: string,
+    grandTotal: number,
+    method: string,
+    type: string,
+}
+
 export const dummyStaffs: Staff[] = [
     {
         id: "adm001",
@@ -406,5 +416,44 @@ export const transactions: Transaction[] = [
         completion: 'complete', 
         discount: 21000, 
         grandTotal: 450000
+    },
+];
+
+export const payments: PaymentReport[] = [
+    { 
+        id: '1', 
+        storeId: 'Store 1', 
+        receipt: '001', 
+        date: '2024-07-01',
+        grandTotal: 300000,
+        method: 'Cash',
+        type: 'Cash'
+    },
+    { 
+        id: '2', 
+        storeId: 'Store 2', 
+        receipt: '002', 
+        date: '2024-08-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
+    },
+    { 
+        id: '3', 
+        storeId: 'Store 1', 
+        receipt: '003', 
+        date: '2024-06-01',
+        grandTotal: 500000,
+        method: 'QRIS',
+        type: 'Bank'
+    },
+    { 
+        id: '4', 
+        storeId: 'Store 2', 
+        receipt: '004', 
+        date: '2024-10-01',
+        grandTotal: 500000,
+        method: 'Debit',
+        type: 'Bank'
     },
 ];
