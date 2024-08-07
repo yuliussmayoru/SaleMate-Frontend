@@ -17,10 +17,9 @@ export default function TaxPage() {
     const [formData, setFormData] = useState({
         id: '',
         type: '',
-        title: '',
+        name: '',
         value: 0,
         status: true,
-        includeInPrice: true,
     });
     const [selectedTax, setSelectedTax] = useState<Tax | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
@@ -56,11 +55,10 @@ export default function TaxPage() {
             setSelectedTax(tax); 
                 setFormData({
                     id: tax.tax_id,
-                    title: tax.tax_name,
+                    name: tax.tax_name,
                     type: tax.tax_type,
                     value: tax.tax_value,
                     status: tax.tax_status,
-                    includeInPrice: tax.tax_includeInPrice,
                 });
                 setIsEditModalOpen(true);
         } else if (type === 'delete' && tax) {
@@ -152,12 +150,11 @@ export default function TaxPage() {
                             <table className="min-w-full table-fixed text-center">
                                 <thead className=" text-gray-4">
                                     <tr>
-                                        <th className="">Store Id</th>
-                                        <th className="">Title</th>
+                                        <th className="">Tax Id</th>
+                                        <th className="">Name</th>
                                         <th className="">Type</th>
                                         <th className="">Value ( % )</th>
                                         <th className="">Status</th>
-                                        <th className="">Include in Price</th>
                                         <th className="w-10">Action</th>
                                     </tr>
                                 </thead>
@@ -178,17 +175,7 @@ export default function TaxPage() {
                                                     {tax.tax_status ? 'On' : 'Off'}
                                                 </span>
                                             </td>
-                                            <td className="py-2">
-                                                {/* <svg width="68" height="23" viewBox="0 0 68 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <rect y="0.919983" width="68" height="21.16" rx="5" fill="#97CB85"/>
-                                                    <path d="M20.87 5.36364H22.4837L25.7109 10.7955H25.8473L29.0746 5.36364H30.6882L26.4837 12.2045V17H25.0746V12.2045L20.87 5.36364ZM34.7536 17.1818C33.9126 17.1818 33.1873 16.9962 32.5774 16.625C31.9714 16.25 31.5036 15.7273 31.174 15.0568C30.8482 14.3826 30.6854 13.5985 30.6854 12.7045C30.6854 11.8106 30.8482 11.0227 31.174 10.3409C31.5036 9.6553 31.9619 9.12121 32.549 8.73864C33.1399 8.35227 33.8293 8.15909 34.6172 8.15909C35.0717 8.15909 35.5206 8.23485 35.9638 8.38636C36.407 8.53788 36.8104 8.78409 37.174 9.125C37.5376 9.46212 37.8274 9.90909 38.0433 10.4659C38.2592 11.0227 38.3672 11.7083 38.3672 12.5227V13.0909H31.6399V11.9318H37.0036C37.0036 11.4394 36.9051 11 36.7081 10.6136C36.5149 10.2273 36.2384 9.92235 35.8786 9.69886C35.5225 9.47538 35.102 9.36364 34.6172 9.36364C34.0831 9.36364 33.621 9.49621 33.2308 9.76136C32.8445 10.0227 32.5471 10.3636 32.3388 10.7841C32.1304 11.2045 32.0263 11.6553 32.0263 12.1364V12.9091C32.0263 13.5682 32.1399 14.1269 32.3672 14.5852C32.5982 15.0398 32.9183 15.3864 33.3274 15.625C33.7365 15.8598 34.2119 15.9773 34.7536 15.9773C35.1058 15.9773 35.424 15.928 35.7081 15.8295C35.996 15.7273 36.2441 15.5758 36.4524 15.375C36.6607 15.1705 36.8217 14.9167 36.9354 14.6136L38.2308 14.9773C38.0945 15.4167 37.8653 15.803 37.5433 16.1364C37.2214 16.4659 36.8236 16.7235 36.3501 16.9091C35.8767 17.0909 35.3445 17.1818 34.7536 17.1818ZM46.5888 10.2273L45.3842 10.5682C45.3085 10.3674 45.1967 10.1723 45.049 9.98295C44.9051 9.78977 44.7081 9.63068 44.4581 9.50568C44.2081 9.38068 43.888 9.31818 43.4979 9.31818C42.9638 9.31818 42.5187 9.44129 42.1626 9.6875C41.8104 9.92992 41.6342 10.2386 41.6342 10.6136C41.6342 10.947 41.7554 11.2102 41.9979 11.4034C42.2403 11.5966 42.6191 11.7576 43.1342 11.8864L44.4297 12.2045C45.21 12.3939 45.7914 12.6837 46.174 13.0739C46.5566 13.4602 46.7479 13.9583 46.7479 14.5682C46.7479 15.0682 46.6039 15.5152 46.3161 15.9091C46.032 16.303 45.6342 16.6136 45.1229 16.8409C44.6115 17.0682 44.0168 17.1818 43.3388 17.1818C42.4486 17.1818 41.7119 16.9886 41.1286 16.6023C40.5452 16.2159 40.1759 15.6515 40.0206 14.9091L41.2933 14.5909C41.4145 15.0606 41.6437 15.4129 41.9808 15.6477C42.3217 15.8826 42.7668 16 43.3161 16C43.9411 16 44.4373 15.8674 44.8047 15.6023C45.1759 15.3333 45.3615 15.0114 45.3615 14.6364C45.3615 14.3333 45.2554 14.0795 45.0433 13.875C44.8312 13.6667 44.5054 13.5114 44.0661 13.4091L42.6115 13.0682C41.8123 12.8788 41.2251 12.5852 40.8501 12.1875C40.4789 11.786 40.2933 11.2841 40.2933 10.6818C40.2933 10.1894 40.4316 9.75379 40.7081 9.375C40.9884 8.99621 41.3691 8.69886 41.8501 8.48295C42.335 8.26705 42.8842 8.15909 43.4979 8.15909C44.3615 8.15909 45.0395 8.34848 45.532 8.72727C46.0282 9.10606 46.3804 9.60606 46.5888 10.2273Z" fill="#3A8C1D"/>
-                                                </svg> */}
-
-                                                <span className={`px-8 py-1 rounded-lg text-white ${tax.tax_includeInPrice ? 'bg-green-400' : 'bg-red-400'}`}>
-                                                    {tax.tax_includeInPrice ? 'Yes' : 'No'}
-                                                </span>
-                                            </td>
-                                            <td className="py-2 flex space-x-2">
+                                            <td className="py-4 px-4 flex justify-center items-center gap-1">
                                                 <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" title="edit" onClick={() => handleModalOpen('edit',tax)}>
                                                     <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M13.3491 3.55222L14.6846 2.21589C14.963 1.93748 15.3406 1.78107 15.7344 1.78107C16.1281 1.78107 16.5057 1.93748 16.7841 2.21589C17.0625 2.4943 17.2189 2.87191 17.2189 3.26564C17.2189 3.65937 17.0625 4.03698 16.7841 4.31539L8.37742 12.7221C7.95888 13.1404 7.44275 13.4478 6.87563 13.6167L4.75 14.25L5.38333 12.1244C5.55218 11.5573 5.85963 11.0411 6.27792 10.6226L13.3491 3.55222ZM13.3491 3.55222L15.4375 5.64064M14.25 11.0833V14.8438C14.25 15.3162 14.0623 15.7692 13.7283 16.1033C13.3942 16.4373 12.9412 16.625 12.4688 16.625H4.15625C3.68383 16.625 3.23077 16.4373 2.89672 16.1033C2.56267 15.7692 2.375 15.3162 2.375 14.8438V6.53126C2.375 6.05885 2.56267 5.60578 2.89672 5.27173C3.23077 4.93768 3.68383 4.75001 4.15625 4.75001H7.91667" stroke="#808080" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -214,12 +201,12 @@ export default function TaxPage() {
                         <span className="text-sm text-gray-3">Input all necesary data</span>
                     </div>
                     <form className="w-full text-center mb-6">
-                        <label>Title</label>
+                        <label>Name</label>
                         <input
                             type="text"
                             name="tax_name"
                             placeholder="Enter title name"
-                            value={formData.title}
+                            value={formData.name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
@@ -247,11 +234,6 @@ export default function TaxPage() {
                                 onChange={() => setFormData({ ...formData, status: !formData.status })}
                                 label="Status"
 
-                            />
-                            <ToggleSwitch
-                                checked={formData.includeInPrice}
-                                onChange={() => setFormData({ ...formData, includeInPrice: !formData.includeInPrice })}
-                                label="Include in Price"
                             />
                         </div>
                     </form>
@@ -292,9 +274,9 @@ export default function TaxPage() {
                             </div>
 
                             <div className="flex flex-row gap-4 justify-start">
-                                <h2 className="w-1/4 font-bold text-gray-3">Title</h2>
+                                <h2 className="w-1/4 font-bold text-gray-3">Name</h2>
                                 <span>:</span>
-                                <p>{formData.title}</p> 
+                                <p>{formData.name}</p> 
                             </div>
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Type</h2>
@@ -311,11 +293,6 @@ export default function TaxPage() {
                                 <span>:</span>
                                 <p>{formData.status}</p> 
                             </div>
-                            <div className="flex flex-row gap-4 justify-start">
-                                <h2 className="w-1/4 font-bold text-gray-3">Include in Price</h2>
-                                <span>:</span>
-                                <p>{formData.includeInPrice}</p> 
-                            </div>
                         </div>
                         <Button
                             onClick={handleModalClose}
@@ -331,12 +308,12 @@ export default function TaxPage() {
                             <span className="text-sm text-gray-3">Edit necesary data</span>
                         </div>
                         <form className="w-full text-center mb-6">
-                        <label>Title</label>
+                        <label>Name</label>
                         <input
                             type="text"
                             name="tax_name"
                             placeholder="Enter title name"
-                            value={formData.title}
+                            value={formData.name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
@@ -364,11 +341,6 @@ export default function TaxPage() {
                                 onChange={() => setFormData({ ...formData, status: !formData.status })}
                                 label="Status"
 
-                            />
-                            <ToggleSwitch
-                                checked={formData.includeInPrice}
-                                onChange={() => setFormData({ ...formData, includeInPrice: !formData.includeInPrice })}
-                                label="Include in Price"
                             />
                         </div>
                     </form>
@@ -404,4 +376,4 @@ export default function TaxPage() {
             </div>
         </div>
     );
-}
+};

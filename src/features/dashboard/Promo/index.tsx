@@ -16,6 +16,7 @@ export default function PromoPage() {
     const [formData, setFormData] = useState({
       id: '',
       name: '',
+      type: '',
       promo: 0,
       start: '',
       end: '',
@@ -53,8 +54,9 @@ export default function PromoPage() {
       } else if (type === 'edit' && promo) {
           setSelectedPromo(promo); 
               setFormData({
-                id: promo.product_id,
-                name: promo.promo_id,
+                id: promo.promo_id,
+                name: promo.promo_name,
+                type: promo.promo_type,
                 promo: promo.promo_value,
                 start: promo.start_date,
                 end: promo.end_date,
@@ -150,9 +152,10 @@ export default function PromoPage() {
                 <table className="min-w-full table-fixed text-center">
                   <thead className=" text-gray-4">
                     <tr>
-                      <th className="">Store Id</th>
+                      <th className="">Promo Id</th>
                       <th className="">Name</th>
-                      <th className="">Promo ( % / Rp )</th>
+                      <th className="">Type</th>
+                      <th className="">Promo ( % )</th>
                       <th className="w-1/6">Start</th>
                       <th className="">End</th>
                       <th className="w-10">Action</th>
@@ -161,9 +164,11 @@ export default function PromoPage() {
                   <tbody className=" text-gray-1">
                     {promos.map((promo) => (
                       <tr key={promo.promo_id} className="even:bg-gray-6">
-                        <td className="">{promo.product_id}</td>
                         <td className="">{promo.promo_id}</td>
-                        <td className="">{promo.promo_type === 'precentage' ? `${promo.promo_value} %` : `Rp ${promo.promo_value}`}</td>
+                        <td className="">{promo.promo_name}</td>
+                        <td className="">{promo.promo_type === 'discount' ? `${promo.promo_type}` : `${promo.promo_type}`}</td>
+                        {/* <td className="">{promo.promo_type === 'discount' ? `${promo.promo_value}` : `${promo.promo_value}`}</td> */}
+                        <td className="">{promo.promo_value} %</td>
                         <td className="">{promo.start_date}</td>
                         <td className="">{promo.end_date}</td>
                         <td className="py-4 px-4 flex justify-center items-center gap-1">
@@ -198,6 +203,15 @@ export default function PromoPage() {
                         name="name"
                         placeholder="Enter promo name"
                         value={formData.name}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    />
+                    <label>Type</label>
+                    <input
+                        type="text"
+                        name="type"
+                        placeholder="Enter promo type"
+                        value={formData.type}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
@@ -271,6 +285,11 @@ export default function PromoPage() {
                         <p>{formData.name}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
+                        <h2 className="w-1/4 font-bold text-gray-3">Type</h2>
+                        <span>:</span>
+                        <p>{formData.type}</p> 
+                    </div>
+                    <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Promo</h2>
                         <span>:</span>
                         <p>{formData.promo}</p> 
@@ -306,6 +325,15 @@ export default function PromoPage() {
                         name="name"
                         placeholder="Enter promo name"
                         value={formData.name}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    />
+                    <label>Type</label>
+                    <input
+                        type="text"
+                        name="type"
+                        placeholder="Enter promo type"
+                        value={formData.type}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
