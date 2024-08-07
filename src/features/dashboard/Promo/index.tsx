@@ -124,27 +124,27 @@ export default function PromoPage() {
                 {/* PAGE */}
                 <div className="flex items-center gap-2">
                   <svg 
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className={`cursor-pointer stroke-gray-2 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className={`cursor-pointer stroke-gray-3 ${currentPage === 1 ? 'opacity-10 cursor-not-allowed' : ''}`}
+                      width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                   {pageNumbers.map((number) => (
-                    <button
-                      key={number}
-                      onClick={() => handlePageChange(number)}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${number === currentPage ? 'bg-gray-5 text-white' : 'bg-gray-200'}`}
-                    >
-                      {number}
-                    </button>
+                      <button
+                          key={number}
+                          onClick={() => handlePageChange(number)}
+                          className={`w-6 h-6 flex items-center justify-center rounded ${number === currentPage ? 'bg-orange-2 text-white' : 'bg-gray-6 hover:bg-gray-5'}`}
+                      >
+                          {number}
+                      </button>
                   ))}
                   <svg 
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className={`cursor-pointer stroke-gray-2 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className={`cursor-pointer stroke-gray-3 ${currentPage === totalPages ? 'opacity-10 cursor-not-allowed' : ''}`}
+                      width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
               </div>
