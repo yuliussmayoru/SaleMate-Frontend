@@ -46,19 +46,19 @@ export default function CategoryPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Store</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="store">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Store Id</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="store id">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Category</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="category">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
