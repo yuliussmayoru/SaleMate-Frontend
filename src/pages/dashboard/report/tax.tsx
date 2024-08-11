@@ -1,4 +1,4 @@
-import TaxPage from 'features/dashboard/report/tax';
+import TaxPage from '@/features/dashboard/Report/Tax';
 import Layout from 'features/dashboard/Layout';
 
 export default function Tax() {
