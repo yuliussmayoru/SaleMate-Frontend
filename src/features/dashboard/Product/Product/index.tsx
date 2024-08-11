@@ -46,19 +46,19 @@ export default function ProductPage() {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Category</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="category">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Product Name</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="product name">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold mb-2">Price</p>
-                                    <select className="border rounded p-2 w-full text-sm">
+                                    <select className="border rounded p-2 w-full text-sm" title="price">
                                         <option value="all">All</option>
                                     </select>
                                 </div>
