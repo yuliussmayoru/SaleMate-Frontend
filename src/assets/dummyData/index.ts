@@ -47,6 +47,26 @@ export interface PaymentReport {
     type: string,
 }
 
+export interface OpenClose {
+    id: string,
+    storeId: string,
+    date: string,
+    openBy: string,
+    closeBy: string,
+    billOfQuantity: number,
+    grandTotal: number,
+}
+
+export interface DriverPartnerReport {
+    id: string,
+    storeId: string,
+    date: string,
+    receipt: string,
+    driverPartner: string,
+    benefit: number,
+    grandTotal: number,
+}
+
 export const dummyStaffs: Staff[] = [
     {
         id: "adm001",
@@ -271,7 +291,6 @@ export const dummyPayments: Payment[] = [
     },
 ]
 
-// export const dummyTransactions
 export const transactions: Transaction[] = [
     { 
         id: '1', 
@@ -457,3 +476,63 @@ export const payments: PaymentReport[] = [
         type: 'Bank'
     },
 ];
+
+export const openCloses: OpenClose[] = [
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-07-01',
+        openBy: 'Mutia',
+        closeBy: 'Mutia',
+        billOfQuantity: 1,
+        grandTotal: 3000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 2',
+        date: '2024-08-01',
+        openBy: 'Mutia',
+        closeBy: 'Tuti',
+        billOfQuantity: 1,
+        grandTotal: 4500000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 3',
+        date: '2024-06-01',
+        openBy: 'Vivi',
+        closeBy: 'Mutia',
+        billOfQuantity: 1,
+        grandTotal: 4500000,
+    },
+];
+
+export const driverPartners: DriverPartnerReport[] = [
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-07-01',
+        receipt: '001',
+        driverPartner: 'gojek',
+        benefit: 30000,
+        grandTotal: 3000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-09-01',
+        receipt: '002',
+        driverPartner: 'shopee',
+        benefit: 20000,
+        grandTotal: 6000000,
+    },
+    {
+        id: '1',
+        storeId: 'Store 1',
+        date: '2024-08-01',
+        receipt: '001',
+        driverPartner: 'grab',
+        benefit: 50000,
+        grandTotal: 3500000,
+    },
+]
