@@ -1,4 +1,5 @@
 import { Button, Card } from "@/features/base";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -91,7 +92,14 @@ export function LoginForm() {
                         </div>
                         <p>Forget password</p>
                     </form>
-
+                    <div className="flex flex-col justify-center items-center">
+                        <span>have POS pin?</span>
+                        <Link href="/pin" className="text-lg w-full">
+                            <Button className="bg-green-2 hover:bg-green-1">
+                                Log In POS
+                            </Button>
+                        </Link>
+                    </div>
                 </Card>
             </div>
 
