@@ -1,110 +1,202 @@
-import React, {useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, CancelButton, DeleteButton } from "@/features/base";
-import { Promo, dummyPromos } from "@/assets/dummyTax";
+import { Promo } from "@/assets/dummyTax";
 import { Modal } from "@/features/base";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function PromoPage() {
-    const [promos, setPromos] = useState<Promo[]>(dummyPromos);
+    const [promos, setPromos] = useState<Promo[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-      id: '',
-      name: '',
-      type: '',
-      promo: 0,
-      start: '',
-      end: '',
+    id: 0,
+    name: '',
+    type: '',
+    promo: 0,
+    start: '',
+    end: '',
+    });
+    const [errors, setErrors] = useState({
+        name: '',
+        type: '',
+        promo: '',
+        start: '',
+        end: '',
     });
     const [selectedPromo, setSelectedPromo] = useState<Promo | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
-    
+
     useEffect(() => {
-    const fetchPromos = async () => {
+        const fetchPromos = async () => {
         try {
-          const response = await axios.get('/api/promos'); // Replace with your actual endpoint
-          const promoData = response.data;
-          setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
-          setPromos(promoData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+            const response = await axios.get('/api/promos');
+            const promoData = response.data;
+            setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
+            setPromos(promoData.slice(0, ITEMS_PER_PAGE));
         } catch (error) {
-          console.error('Error fetching promos', error);
-          setTotalPages(Math.ceil(dummyPromos.length / ITEMS_PER_PAGE));
-          setPromos(dummyPromos.slice(0, ITEMS_PER_PAGE));
+            console.error('Error fetching promos', error);
         }
-      };
-  
-      fetchPromos();
+        };
+
+        fetchPromos();
     }, []);
-    
+
     useEffect(() => {
-      const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIdx = startIdx + ITEMS_PER_PAGE;
-      setPromos(dummyPromos.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
+    const fetchPagePromos = async () => {
+        try {
+        const response = await axios.get('/api/promos');
+        const promoData = response.data;
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        setPromos(promoData.slice(startIdx, endIdx));
+        } catch (error) {
+        console.error('Error fetching promos for page', error);
+        }
+    };
+
+    fetchPagePromos();
     }, [currentPage]);
 
-    // Handle Pop Up Promo
     const handleModalOpen = (type: string, promo?: Promo) => {
-      if(type === 'add') {
-          setIsAddModalOpen(true);
-      } else if (type === 'edit' && promo) {
-          setSelectedPromo(promo); 
-              setFormData({
-                id: promo.promo_id,
-                name: promo.promo_name,
-                type: promo.promo_type,
-                promo: promo.promo_value,
-                start: promo.start_date,
-                end: promo.end_date,
-              });
-              setIsEditModalOpen(true);
-      } else if (type === 'delete' && promo) {
-          setSelectedPromo(promo);
-          setIsDeleteModalOpen(true);
-      }
+    if (type === 'add') {
+        setIsAddModalOpen(true);
+    } else if (type === 'edit' && promo) {
+        setSelectedPromo(promo);
+        setFormData({
+        id: promo.promo_id,
+        name: promo.promo_name,
+        type: promo.promo_type,
+        promo: promo.promo_value,
+        start: promo.start_date,
+        end: promo.end_date,
+        });
+        setIsEditModalOpen(true);
+    } else if (type === 'delete' && promo) {
+        setSelectedPromo(promo);
+        setIsDeleteModalOpen(true);
+    }
     };
 
     const handleModalClose = () => {
-      setIsAddModalOpen(false);
-      setIsSecondModalOpen(false);
-      setIsEditModalOpen(false);
-      setIsDeleteModalOpen(false);
-      setSelectedPromo(null);
+    setIsAddModalOpen(false);
+    setIsSecondModalOpen(false);
+    setIsEditModalOpen(false);
+    setIsDeleteModalOpen(false);
+    setSelectedPromo(null);
     };
-    
-    // HANDLE PAGE AND GENERATE PAGE
+
     const handlePageChange = (newPage: number) => {
-      if (newPage > 0 && newPage <= totalPages) {
+    if (newPage > 0 && newPage <= totalPages) {
         setCurrentPage(newPage);
-      }
+    }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormData((prevData) => ({
-          ...prevData,
-          [name]: value
-      }));
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+    }));
     };
 
-    const handleConfirmAdd = () => {
-      setIsAddModalOpen(false);
-      setIsSecondModalOpen(true);
+    const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
+        try {
+            await axios.post('/api/promos', {
+            promo_name: formData.name,
+            promo_type: formData.type,
+            promo_value: formData.promo,
+            start_date: formData.start,
+            end_date: formData.end,
+            });
+            handleModalClose();
+            setIsSecondModalOpen(true);
+            const response = await axios.get('/api/promos');
+            setPromos(response.data);
+            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error adding promo', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-      // Edit staff logic here
-      handleModalClose();
+    const handleConfirmEdit = async () => {
+        if (!validateForm()) return;
+
+        if (selectedPromo) {
+            try {
+            await axios.patch(`/api/promos/${selectedPromo.promo_id}`, {
+                promo_name: formData.name,
+                promo_type: formData.type,
+                promo_value: formData.promo,
+                start_date: formData.start,
+                end_date: formData.end,
+            });
+            handleModalClose();
+            const response = await axios.get('/api/promos');
+            setPromos(response.data);
+            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error editing promo', error);
+            }
+        }
     };
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
+    if (selectedPromo) {
+        try {
+        await axios.delete(`/api/promos/${selectedPromo.promo_id}`);
         handleModalClose();
+        const response = await axios.get('/api/promos');
+        setPromos(response.data);
+        setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
+        } catch (error) {
+        console.error('Error deleting promo', error);
+        }
+    }
     };
-      
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            name: '',
+            type: '',
+            promo: '',
+            start: '',
+            end: '',
+        };
+    
+        if (!formData.name) {
+            newErrors.name = 'Name is required';
+            isValid = false;
+        }
+        if (!formData.type) {
+            newErrors.type = 'Type is required';
+            isValid = false;
+        }
+        if (!formData.promo) {
+            newErrors.promo = 'Promo value is required';
+            isValid = false;
+        }
+        if (!formData.start) {
+            newErrors.start = 'Start date is required';
+            isValid = false;
+        }
+        if (!formData.end) {
+            newErrors.end = 'End date is required';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+    
+    
     // Generate page numbers for pagination
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
@@ -166,8 +258,7 @@ export default function PromoPage() {
                       <tr key={promo.promo_id} className="even:bg-gray-6">
                         <td className="">{promo.promo_id}</td>
                         <td className="">{promo.promo_name}</td>
-                        <td className="">{promo.promo_type === 'discount' ? `${promo.promo_type}` : `${promo.promo_type}`}</td>
-                        {/* <td className="">{promo.promo_type === 'discount' ? `${promo.promo_value}` : `${promo.promo_value}`}</td> */}
+                        <td className="">{promo.promo_type === 'DISCOUNT' ? `${promo.promo_type}` : `${promo.promo_type}`}</td>
                         <td className="">{promo.promo_value} %</td>
                         <td className="">{promo.start_date}</td>
                         <td className="">{promo.end_date}</td>
@@ -206,6 +297,8 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
+                    {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+
                     <label>Type</label>
                     <input
                         type="text"
@@ -215,6 +308,8 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
+                    {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+
                     <label>Promo</label>
                     <input
                         type="number"
@@ -224,6 +319,8 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
+                    {errors.promo && <p className="text-red-600">{errors.promo}</p>}
+
                     <label>Start</label>
                     <input
                         type="text"
@@ -233,6 +330,8 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
+                    {errors.start && <p className="text-red-600">{errors.start}</p>}
+
                     <label>End</label>
                     <input
                         type="text"
@@ -242,6 +341,7 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
+                    {errors.end && <p className="text-red-600">{errors.end}</p>}
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton
