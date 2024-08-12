@@ -6,7 +6,7 @@ export function Card(props: CardProps) {
   return (
     <div
       className={twMerge(
-        "p-4 bg-white border border-gray-6 rounded-[10px] shadow-md",
+        "p-4 w-full bg-white border border-gray-6 rounded-[10px] shadow-md",
         className
       )}
       {...rest}
