@@ -1,8 +1,7 @@
 export default function DashboardHome() {
     return (
-        <div>
-            <h1>Dashboard Home</h1>
-            <p>edit in the dashboard/home not here</p>
+        <div className="w-full h-96 flex justify-center items-center text-purple-1">
+            <h1 className="text-3xl font-bold">Hello! Welcome to Salemate</h1>
         </div>
     );
 }
