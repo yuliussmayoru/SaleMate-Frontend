@@ -1,53 +1,95 @@
 import { useState } from "react";
 import ToggleSwitch from "@/features/base/toggleSwitch";
+import { Button, Card } from "@/features/base";
 
 type superAdmin = {
-    name: string,
+    companyName: string,
+    fullName: string,
     email: string,
     password: string,
+    role: string,
+    assignTo: string,
 };
 
 export function SuperAdminPage () {
 
 const [formData, setFormData] = useState ({
-    name: '',
+    companyName: '',
+    fullName: '',
     email: '',
     password: '',
+    role: '',
+    assignTo: '',
 });
 
 return (
-        <div>
-            <div className="w-full flex flex-col items-center pb-10">
-                <h2 className="text-2xl font-bold text-orange-2">Add Tax</h2>
-                <span className="text-sm text-gray-3">Input all necesary data</span>
+    <div className="flex flex-col rounded-lg w-[500px] justify-center items-center">
+        <Card className="mb-6 w-full h-28">
+            <div className="w-full flex flex-col items-center">
+                <h2 className="text-2xl font-bold text-orange-2 mb-3">Hello, Super Admin</h2>
+                <span>Insert who the new owner or assign the staff</span>
             </div>
-            <form className="w-full text-center mb-6">
-                <label>Name</label>
+        </Card>
+
+        <Card>
+            <div className="w-full flex flex-col items-center">
+                <h2 className="text-2xl font-bold text-orange-2">Add new owner or</h2>
+                <h2 className="text-2xl font-bold text-orange-2">assign new staff</h2>
+            </div>
+            <form className="w-full text-start mb-6 mx-1">
+                <label className="text-2xl pb-2">Company Name</label>
                 <input
                     type="text"
-                    name="tax_name"
-                    placeholder="Enter title name"
-                    value={formData.name}
+                    name="company_name"
+                    placeholder="Enter The Company Name"
+                    value={formData.companyName}
                     // onChange={handleInputChange}
-                    className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
                 />
-                <label>Email</label>
+                <label className="text-2xl pb-2">Full Name</label>
                 <input
                     type="text"
-                    name="tax_type"
-                    placeholder="Enter tax type"
+                    name="full_name"
+                    placeholder="Enter Your Full Name"
+                    value={formData.fullName}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
+                />
+                <label className="text-2xl pb-2">Email</label>
+                <input
+                    type="text"
+                    name="email"
+                    placeholder="Enter Your Email"
                     value={formData.email}
                     // onChange={handleInputChange}
-                    className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
                 />
-                <label>Password</label>
+                <label className="text-2xl pb-2">Password</label>
                 <input
                     type="text"
-                    name="tax_value"
-                    placeholder="Enter tax value"
+                    name="password"
+                    placeholder="Enter your password"
                     value={formData.password}
                     // onChange={handleInputChange}
-                    className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
+                />
+                <label className="text-2xl">Role</label>
+                <input
+                    type="text"
+                    name="role"
+                    placeholder="Enter your role"
+                    value={formData.role}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
+                />
+                <label className="text-2xl">Assign to</label>
+                <input
+                    type="text"
+                    name="asiign to"
+                    placeholder="Enter the name"
+                    value={formData.assignTo}
+                    // onChange={handleInputChange}
+                    className="border border-gray-300 p-2 mb-4 mt-2 drop-shadow-md w-full rounded-[10px]"
                 />
                 {/* <div className="flex space-x-16">
                     <ToggleSwitch
@@ -58,18 +100,15 @@ return (
                     />
                 </div> */}
             </form>
-            {/* <div className="flex justify-between w-full mt-4 gap-2">
-                <CancelButton
-                    onClick={handleModalClose}
-                >
-                    Cancel
-                </CancelButton>
+            <div className="flex justify-between w-full mt-4 gap-2">
                 <Button
-                    onClick={handleConfirmAdd}
+                    className="text-xl"
+                    // onClick={handleConfirmAdd}
                 >
-                    Ok
+                    Add
                 </Button>
-            </div> */}
-        </div>
-    );
+            </div>
+        </Card>
+    </div>
+);
 };
