@@ -186,6 +186,80 @@ export default function ReportPage() {
                     </Link>
                 </Card>
 
+                {/* PROMO CARD */}
+                <Card>
+                    <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl text-gray-2 font-semibold">Promo Summary</h2>
+                        <div className="flex flex-row gap-2 text-gray-3 text-sm">
+                            <span>period :</span>
+                            {/* CHANGE DATE LATER */}
+                            <p>09.00, 24 Jul 2024 - 22.00, 26 Jul 2024 </p>
+                        </div>
+                    </div>
+
+                    <div className="text-center text-gray-2 mb-6">
+                        <div className="flex flex-col">
+                            <p>
+                                Total Promo Cost ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                36.600
+                            </h1>
+                        </div>
+                    </div>
+
+                    <Link href={'/dashboard/report/promo'} className="flex justify-end">
+                        <button className="bg-green-4 p-1 justify-end px-8 rounded-[10px] text-white font-bold hover:bg-green-5">
+                            See Details
+                        </button>
+                    </Link>
+                </Card>
+
+                {/* TAX CARD */}
+                <Card>
+                    <div className="flex justify-between items-start mb-4">
+                        <h2 className="text-xl text-gray-2 font-semibold">Tax Summary</h2>
+                        <div className="flex flex-row gap-2 text-gray-3 text-sm">
+                            <span>period :</span>
+                            {/* CHANGE DATE LATER */}
+                            <p>09.00, 24 Jul 2024 - 22.00, 26 Jul 2024 </p>
+                        </div>
+                    </div>
+
+                    <div className="flex text-gray-2 mb-6">
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Sub-total ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                6.055.000
+                            </h1>
+                        </div>
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Taxes ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                605.500
+                            </h1>
+                        </div>
+                        <div className="w-1/3 flex flex-col text-center">
+                            <p>
+                                Total Service ( Rp )
+                            </p>
+                            <h1 className="text-3xl font-bold">
+                                70.000
+                            </h1>
+                        </div>
+                    </div>
+
+                    <Link href={'/dashboard/report/tax'} className="flex justify-end">
+                        <button className="bg-green-4 p-1 justify-end px-8 rounded-[10px] text-white font-bold hover:bg-green-5">
+                            See Details
+                        </button>
+                    </Link>
+                </Card>
+
                 {/* DRIVER PARTNER CARD */}
                 <Card className="mb-4">
                     <div className="flex justify-between items-start mb-4">

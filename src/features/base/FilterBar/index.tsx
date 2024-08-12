@@ -31,6 +31,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                             name={field.name}
                             value={filters[field.name] || ''}
                             onChange={handleInputChange}
+                            title='filter-bar'
                         >
                             <option value="">All</option>
                             {field.options?.map(option => (
@@ -46,6 +47,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                             className="border p-1 border-gray-5 rounded-[5px] w-full"
                             value={filters[field.name] || ''}
                             onChange={handleInputChange}
+                            title='filter-bar'
                         />
                     )}
                 </div>
