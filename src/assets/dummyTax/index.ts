@@ -10,12 +10,20 @@ export interface Tax {
 }
 
 export interface Promo {
-    promo_id: string;
+    promo_id: number;
     promo_name: string;
-    promo_type: 'discount' | 'sales';
+    promo_type: PromoType;
     promo_value: number;
     start_date: string;
     end_date: string;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string; 
+}
+
+export enum PromoType {
+    DISCOUNT = 'DISCOUNT',
+    SALES = 'SALES',
 }
 
 export const dummyTax: Tax[] = [
@@ -141,101 +149,101 @@ export const dummyTax: Tax[] = [
     },
 ]
 
-export const dummyPromos: Promo[] = [
-    {
-        promo_id: 'BDG01',
-        promo_name: 'Saya',
-        promo_type: "discount",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG02',
-        promo_name: 'Saya',
-        promo_type: "discount",
-        promo_value: 10,
-        start_date: "27/07/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG03',
-        promo_name: 'Saya',
-        promo_type: "discount",
-        promo_value: 30,
-        start_date: "06/06/2024",
-        end_date: "-",
-    },
-    {
-        promo_id: 'BDG04',
-        promo_name: 'Saya',
-        promo_type: "discount",
-        promo_value: 10,
-        start_date: "20/07/2024",
-        end_date: "27/07/2024",
-    },
-    {
-        promo_id: 'BDG05',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 30,
-        start_date: "15/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG06',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 50,
-        start_date: "15/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG07',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 10,
-        start_date: "30/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG08',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG09',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG010',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG011',
-        promo_name: 'Saya',
-        promo_type: "discount",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    },
-    {
-        promo_id: 'BDG012',
-        promo_name: 'Saya',
-        promo_type: "sales",
-        promo_value: 10,
-        start_date: "08/08/2024",
-        end_date: "18/08/2024",
-    }
-]
+// export const dummyPromos: Promo[] = [
+//     {
+//         promo_id: 'BDG01',
+//         promo_name: 'Saya',
+//         promo_type: "discount",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG02',
+//         promo_name: 'Saya',
+//         promo_type: "discount",
+//         promo_value: 10,
+//         start_date: "27/07/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG03',
+//         promo_name: 'Saya',
+//         promo_type: "discount",
+//         promo_value: 30,
+//         start_date: "06/06/2024",
+//         end_date: "-",
+//     },
+//     {
+//         promo_id: 'BDG04',
+//         promo_name: 'Saya',
+//         promo_type: "discount",
+//         promo_value: 10,
+//         start_date: "20/07/2024",
+//         end_date: "27/07/2024",
+//     },
+//     {
+//         promo_id: 'BDG05',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 30,
+//         start_date: "15/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG06',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 50,
+//         start_date: "15/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG07',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 10,
+//         start_date: "30/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG08',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG09',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG010',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG011',
+//         promo_name: 'Saya',
+//         promo_type: "discount",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     },
+//     {
+//         promo_id: 'BDG012',
+//         promo_name: 'Saya',
+//         promo_type: "sales",
+//         promo_value: 10,
+//         start_date: "08/08/2024",
+//         end_date: "18/08/2024",
+//     }
+// ]
