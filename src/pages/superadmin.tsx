@@ -1,4 +1,4 @@
-import { SuperAdminPage } from "@/features/superadmin";
+import { SuperAdminPage } from "@/src/features";
 
 export default function SuperAdmin() {
     return (

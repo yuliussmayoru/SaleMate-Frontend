@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, CancelButton, DeleteButton } from "@/features/base";
-import { Promo } from "@/assets/dummyTax";
-import { Modal } from "@/features/base";
+import { Button, CancelButton, DeleteButton } from "@/src/features";
+import { Promo } from "@/src/assets";
+import { Modal } from "@/src/features";
 
 const ITEMS_PER_PAGE = 10;
 

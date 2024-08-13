@@ -1,4 +1,4 @@
-import { PinForm } from "@/features/pin";
+import { PinForm } from "@/src/features";
 
 export default function pinPage() {
     return (

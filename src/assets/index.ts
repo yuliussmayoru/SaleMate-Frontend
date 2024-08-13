@@ -1,2 +1,3 @@
 export * from "./internalIcon";
-export * from "./dummyData"
+export * from "./dummyData";
+export * from "./dummyTax";

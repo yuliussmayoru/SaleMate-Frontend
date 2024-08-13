@@ -1,5 +1,5 @@
-import PromoPage from 'features/dashboard/report/promo';
-import Layout from 'features/dashboard/Layout';
+import PromoPage from '@/src/features/dashboard/Report/Promo';
+import Layout from '@/src/features/dashboard/Layout';
 
 export default function Promo() {
     return (

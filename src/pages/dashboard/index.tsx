@@ -1,5 +1,5 @@
-import DashboardHome from 'features/dashboard';
-import Layout from 'features/dashboard/Layout';
+import DashboardHome from '@/src/features/dashboard/dashboard-home';
+import Layout from '@/src/features/dashboard/Layout';
 
 export default function Dashboard() {
     return (

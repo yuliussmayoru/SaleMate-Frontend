@@ -1,5 +1,5 @@
-import { PaymentReport, payments } from "@/assets";
-import { Card, FilterBar } from "@/features/base";
+import { PaymentReport, payments } from "@/src/assets";
+import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
 export default function PaymentPage() {
