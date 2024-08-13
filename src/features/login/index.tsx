@@ -1,4 +1,4 @@
-import { Button, Card } from "@/features/base";
+import { Button, Card } from "../base";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
