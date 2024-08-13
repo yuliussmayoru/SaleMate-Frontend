@@ -1,5 +1,5 @@
-import { DriverPartnerReport, driverPartners} from "@/assets";
-import { Card, FilterBar } from "@/features/base";
+import { DriverPartnerReport, driverPartners} from "@/src/assets";
+import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
 export default function DriverPartnerPage() {

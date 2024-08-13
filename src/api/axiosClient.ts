@@ -1,4 +1,4 @@
-import { token } from "@/config";
+import { token } from "../config";
 import axios from "axios";
 import Cookies from "js-cookie";
 

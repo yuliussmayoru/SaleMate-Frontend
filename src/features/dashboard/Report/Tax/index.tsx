@@ -1,4 +1,4 @@
-import { Card, FilterBar } from "@/features/base";
+import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
 type Tax = {

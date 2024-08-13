@@ -1,5 +1,5 @@
-import ProductPage from 'features/dashboard/Product';
-import Layout from 'features/dashboard/Layout';
+import ProductPage from '@/src/features/dashboard/Product/Product';
+import Layout from '@/src/features/dashboard/Layout';
 
 export default function Product() {
     return (

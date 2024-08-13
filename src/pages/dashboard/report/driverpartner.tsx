@@ -1,5 +1,5 @@
-import DriverPartnerPage from 'features/dashboard/report/driverpartner';
-import Layout from 'features/dashboard/Layout';
+import DriverPartnerPage from '@/src/features/dashboard/Report/DriverPartner';
+import Layout from '@/src/features/dashboard/Layout';
 
 export default function DriverPartner() {
     return (

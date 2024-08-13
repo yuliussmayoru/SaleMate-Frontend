@@ -1,5 +1,5 @@
-import { Transaction, transactions } from "@/assets";
-import { Card, FilterBar } from "@/features/base";
+import { Transaction, transactions } from "@/src/assets";
+import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
 export default function TransactionPage() {
