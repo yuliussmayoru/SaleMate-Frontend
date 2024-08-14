@@ -1,5 +1,5 @@
-import OpenClosePage from 'features/dashboard/report/openclose';
-import Layout from 'features/dashboard/Layout';
+import OpenClosePage from '@/src/features/dashboard/Report/OpenClose';
+import Layout from '@/src/features/dashboard/Layout';
 
 export default function openclose() {
     return (

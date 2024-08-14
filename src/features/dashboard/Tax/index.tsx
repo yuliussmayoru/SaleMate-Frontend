@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, CancelButton, DeleteButton } from "@/features/base";
-import { Tax, dummyTax } from "@/assets/dummyTax";
-import { Modal } from "@/features/base/Modal";
-import ToggleSwitch from "@/features/base/toggleSwitch";
+import { Button, CancelButton, DeleteButton } from "@/src/features";
+import { Tax, dummyTax } from "@/src/assets";
+import { Modal } from "@/src/features";
+import ToggleSwitch from "@/src/features/base/toggleSwitch";
 
 const ITEMS_PER_PAGE = 10;
 

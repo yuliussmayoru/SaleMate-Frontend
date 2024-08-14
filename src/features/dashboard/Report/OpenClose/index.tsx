@@ -1,5 +1,5 @@
-import { OpenClose, openCloses } from "@/assets";
-import { Card, FilterBar } from "@/features/base";
+import { OpenClose, openCloses } from "@/src/assets";
+import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
 export default function OpenClosePage() {

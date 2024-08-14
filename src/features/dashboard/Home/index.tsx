@@ -1,7 +1,7 @@
-import { Transaction, transactions } from "@/assets";
+import { Transaction, transactions } from "@/src/assets";
 import axios from "axios";
-import { Card } from "features/base";
 import { useEffect, useState } from "react";
+import { Card } from "@/src/features";
 
 export default function DashboardHome() {
     const [transaction, setTransactions] = useState<Transaction[]>(transactions);

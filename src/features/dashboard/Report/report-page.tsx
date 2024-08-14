@@ -1,4 +1,4 @@
-import { Card } from "@/features/base";
+import { Card } from "@/src/features";
 import Link from "next/link";
 
 export default function ReportPage() {

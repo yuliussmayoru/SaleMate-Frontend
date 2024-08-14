@@ -1,6 +1,5 @@
 import { useState } from "react";
-import ToggleSwitch from "@/features/base/toggleSwitch";
-import { Button, Card } from "@/features/base";
+import { Button, Card } from "@/src/features";
 
 type superAdmin = {
     companyName: string,
