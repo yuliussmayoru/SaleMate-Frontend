@@ -1,13 +1,44 @@
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Transaction, transactions } from "@/src/assets";
 import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
+const ITEMS_PER_PAGE = 10;
+
 export default function TransactionPage() {
+    const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            try {
+                const response = await axiosInstance.get('/transactions');
+                const staffData = response.data.data;
+                setAllTransactions(staffData);
+                setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
+                setTransactions(staffData.slice(0, ITEMS_PER_PAGE));
+            } catch (error) {
+                console.error('Error fetching staffs', error);
+                setTotalPages(Math.ceil(transactions.length / ITEMS_PER_PAGE));
+                setTransactions(transactions.slice(0, ITEMS_PER_PAGE));
+            }
+        };
+
+        fetchTransactions();
+    }, []);
     
     useEffect(() => {
         setFilteredTransactions(transactions);
     }, []);
+
+    useEffect(() => {
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        setTransactions(allTransactions.slice(startIdx, endIdx));
+    }, [currentPage, allTransactions]);
 
     const filtersConfig = [
         { name: 'storeId', label: 'Store', type: 'select' as const, options: ['Store 1', 'Store 2'] },
@@ -41,6 +72,15 @@ export default function TransactionPage() {
             minimumFractionDigits: 0,
         }).format(value);
     };
+
+    // HANDLE PAGE AND GENERATE PAGE
+    const handlePageChange = (newPage: number) => {
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+
+    const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
     return (
         <div className="w-full flex flex-col items-center">

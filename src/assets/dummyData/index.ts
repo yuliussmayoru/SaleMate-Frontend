@@ -36,9 +36,12 @@ export interface DriverPartner {
 }
 
 export interface Payment {
-    id: string,
-    type: string,
-    name: string,
+    payment_id: any;
+    payment_type: string;
+    payment_name: string;
+    created_at: string,
+    updated_at: string,
+    isDelete: boolean,
 }
 
 export interface Transaction {
@@ -406,73 +409,73 @@ export const dummyDriverPartners: DriverPartner[] = [
     }
 ]
 
-export const dummyPayments: Payment[] = [
-    {
-        id: "1",
-        type: "Bank",
-        name: "BRI",
-    },
-    {
-        id: "2",
-        type: "Bank",
-        name: "BCA",
-    },
-    {
-        id: "3",
-        type: "Bank",
-        name: "Mandiri",
-    },
-    {
-        id: "4",
-        type: "Bank",
-        name: "BNI",
-    },
-    {
-        id: "5",
-        type: "Bank",
-        name: "BTN",
-    },
-    {
-        id: "6",
-        type: "Bank",
-        name: "Bank Danamon",
-    },
-    {
-        id: "7",
-        type: "Bank",
-        name: "OCBC NISP",
-    },
-    {
-        id: "8",
-        type: "E-Payment",
-        name: "OVO",
-    },
-    {
-        id: "9",
-        type: "E-Payment",
-        name: "Gopay",
-    },
-    {
-        id: "10",
-        type: "E-Payment",
-        name: "ShopeePay",
-    },
-    {
-        id: "11",
-        type: "Bank",
-        name: "Jenius",
-    },
-    {
-        id: "12",
-        type: "Bank",
-        name: "Bank Jago",
-    },
-    {
-        id: "13",
-        type: "Bank",
-        name: "Bank DKI",
-    },
-]
+// export const dummyPayments: Payment[] = [
+//     {
+//         id: "1",
+//         type: "Bank",
+//         name: "BRI",
+//     },
+//     {
+//         id: "2",
+//         type: "Bank",
+//         name: "BCA",
+//     },
+//     {
+//         id: "3",
+//         type: "Bank",
+//         name: "Mandiri",
+//     },
+//     {
+//         id: "4",
+//         type: "Bank",
+//         name: "BNI",
+//     },
+//     {
+//         id: "5",
+//         type: "Bank",
+//         name: "BTN",
+//     },
+//     {
+//         id: "6",
+//         type: "Bank",
+//         name: "Bank Danamon",
+//     },
+//     {
+//         id: "7",
+//         type: "Bank",
+//         name: "OCBC NISP",
+//     },
+//     {
+//         id: "8",
+//         type: "E-Payment",
+//         name: "OVO",
+//     },
+//     {
+//         id: "9",
+//         type: "E-Payment",
+//         name: "Gopay",
+//     },
+//     {
+//         id: "10",
+//         type: "E-Payment",
+//         name: "ShopeePay",
+//     },
+//     {
+//         id: "11",
+//         type: "Bank",
+//         name: "Jenius",
+//     },
+//     {
+//         id: "12",
+//         type: "Bank",
+//         name: "Bank Jago",
+//     },
+//     {
+//         id: "13",
+//         type: "Bank",
+//         name: "Bank DKI",
+//     },
+// ]
 
 export const transactions: Transaction[] = [
     { 

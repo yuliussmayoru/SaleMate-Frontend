@@ -254,6 +254,7 @@ export default function StaffPage() {
                         placeholder="Enter staff name"
                         value={formData.user_name}
                         onChange={handleInputChange}
+                        required
                     />
                     <label>Email</label>
                     <input
@@ -263,6 +264,7 @@ export default function StaffPage() {
                         placeholder="Enter staff email address"
                         value={formData.email}
                         onChange={handleInputChange}
+                        required
                     />
                     <label>Password</label>
                     <div className="relative">
@@ -273,6 +275,7 @@ export default function StaffPage() {
                             value={formData.password} 
                             onChange={handleInputChange} 
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            required
                         />
                         <button type="button" onClick={togglePasswordVisibility} className="text-gray-4 absolute right-0 p-2">
                             {showPassword ? 'Hide' : 'Show'}
@@ -286,6 +289,7 @@ export default function StaffPage() {
                         placeholder="Enter staff role"
                         value={formData.role}
                         onChange={handleInputChange}
+                        required
                     />
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
