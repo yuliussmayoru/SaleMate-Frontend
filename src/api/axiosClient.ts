@@ -16,9 +16,11 @@ export const axiosInstance = axios.create({
 console.log(axiosInstance)
 axiosInstance.interceptors.request.use(
     (config) => {
-        const auth = Cookies.get(token);
+        // const auth = Cookies.get(token);
+        const token = localStorage.getItem('authToken');
 
-        if (auth) { config.headers.Authorization = `Bearer ${auth}`;
+        if (token) { config.headers.Authorization = `Bearer ${token}`;
+        console.log('Token is saved:', token);
         }  else {
             console.warn("token not found")
         } 

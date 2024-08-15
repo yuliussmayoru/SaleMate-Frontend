@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Card } from "@/src/features";
+import Link from "next/link";
 
 type superAdmin = {
     companyName: string,
@@ -103,7 +104,7 @@ const [formData, setFormData] = useState ({
                             />
                         </div> */}
                     </form>
-                    <div className="flex justify-between w-full mt-4 gap-2">
+                    <div className="flex justify-between w-full mt-4 gap-2 mb-6">
                         <Button
                             className="text-xl"
                             // onClick={handleConfirmAdd}
@@ -111,6 +112,14 @@ const [formData, setFormData] = useState ({
                             Add
                         </Button>
                     </div>
+                    <Link href={"/dashboard"}>
+                        <Button
+                            className="text-xl "
+                            // onClick={handleConfirmAdd}
+                        >
+                            Go To Dashboard
+                        </Button>
+                    </Link>
                 </Card>
             </div>
             {/* <svg className="-z-50" width="650" height="650" viewBox="0 0 650 650" fill="none" xmlns="http://www.w3.org/2000/svg">
