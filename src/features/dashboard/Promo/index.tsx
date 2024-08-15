@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton } from "@/src/features";
 import { Promo } from "@/src/assets";
 import { Modal } from "@/src/features";
@@ -14,12 +15,12 @@ export default function PromoPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-    id: 0,
-    name: '',
-    type: '',
-    promo: 0,
-    start: '',
-    end: '',
+        id: 0,
+        name: '',
+        type: '',
+        promo: 0,
+        start: '',
+        end: '',
     });
     const [errors, setErrors] = useState({
         name: '',
@@ -34,7 +35,7 @@ export default function PromoPage() {
     useEffect(() => {
         const fetchPromos = async () => {
         try {
-            const response = await axios.get('/api/promos');
+            const response = await axiosInstance.get('/promos');
             const promoData = response.data;
             setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
             setPromos(promoData.slice(0, ITEMS_PER_PAGE));
@@ -49,13 +50,13 @@ export default function PromoPage() {
     useEffect(() => {
     const fetchPagePromos = async () => {
         try {
-        const response = await axios.get('/api/promos');
-        const promoData = response.data;
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIdx = startIdx + ITEMS_PER_PAGE;
-        setPromos(promoData.slice(startIdx, endIdx));
+            const response = await axiosInstance.get('/promos');
+            const promoData = response.data;
+            const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIdx = startIdx + ITEMS_PER_PAGE;
+            setPromos(promoData.slice(startIdx, endIdx));
         } catch (error) {
-        console.error('Error fetching promos for page', error);
+            console.error('Error fetching promos for page', error);
         }
     };
 
@@ -68,12 +69,12 @@ export default function PromoPage() {
     } else if (type === 'edit' && promo) {
         setSelectedPromo(promo);
         setFormData({
-        id: promo.promo_id,
-        name: promo.promo_name,
-        type: promo.promo_type,
-        promo: promo.promo_value,
-        start: promo.start_date,
-        end: promo.end_date,
+            id: promo.promo_id,
+            name: promo.promo_name,
+            type: promo.promo_type,
+            promo: promo.promo_value,
+            start: promo.start_date,
+            end: promo.end_date,
         });
         setIsEditModalOpen(true);
     } else if (type === 'delete' && promo) {
@@ -83,41 +84,41 @@ export default function PromoPage() {
     };
 
     const handleModalClose = () => {
-    setIsAddModalOpen(false);
-    setIsSecondModalOpen(false);
-    setIsEditModalOpen(false);
-    setIsDeleteModalOpen(false);
-    setSelectedPromo(null);
+        setIsAddModalOpen(false);
+        setIsSecondModalOpen(false);
+        setIsEditModalOpen(false);
+        setIsDeleteModalOpen(false);
+        setSelectedPromo(null);
     };
 
     const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= totalPages) {
-        setCurrentPage(newPage);
-    }
+        if (newPage > 0 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-    }));
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
     };
 
     const handleConfirmAdd = async () => {
         if (!validateForm()) return;
 
         try {
-            await axios.post('/api/promos', {
-            promo_name: formData.name,
-            promo_type: formData.type,
-            promo_value: formData.promo,
-            start_date: formData.start,
-            end_date: formData.end,
+            await axiosInstance.post('/promos', {
+                promo_name: formData.name,
+                promo_type: formData.type,
+                promo_value: formData.promo,
+                start_date: formData.start,
+                end_date: formData.end,
             });
             handleModalClose();
             setIsSecondModalOpen(true);
-            const response = await axios.get('/api/promos');
+            const response = await axiosInstance.get('/promos');
             setPromos(response.data);
             setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
         } catch (error) {
@@ -130,7 +131,7 @@ export default function PromoPage() {
 
         if (selectedPromo) {
             try {
-            await axios.patch(`/api/promos/${selectedPromo.promo_id}`, {
+            await axiosInstance.patch(`/promos/${selectedPromo.promo_id}`, {
                 promo_name: formData.name,
                 promo_type: formData.type,
                 promo_value: formData.promo,
@@ -138,7 +139,7 @@ export default function PromoPage() {
                 end_date: formData.end,
             });
             handleModalClose();
-            const response = await axios.get('/api/promos');
+            const response = await axiosInstance.get('/promos');
             setPromos(response.data);
             setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
         } catch (error) {
@@ -150,13 +151,13 @@ export default function PromoPage() {
     const handleConfirmDelete = async () => {
     if (selectedPromo) {
         try {
-        await axios.delete(`/api/promos/${selectedPromo.promo_id}`);
-        handleModalClose();
-        const response = await axios.get('/api/promos');
-        setPromos(response.data);
-        setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
+            await axiosInstance.delete(`/promos/${selectedPromo.promo_id}`);
+            handleModalClose();
+            const response = await axiosInstance.get('/promos');
+            setPromos(response.data);
+            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
         } catch (error) {
-        console.error('Error deleting promo', error);
+            console.error('Error deleting promo', error);
         }
     }
     };

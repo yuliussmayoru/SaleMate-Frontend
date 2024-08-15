@@ -1,25 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton } from "@/src/features";
-import { Tax, dummyTax } from "@/src/assets";
+import { Tax } from "@/src/assets";
 import { Modal } from "@/src/features";
 import ToggleSwitch from "@/src/features/base/toggleSwitch";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function TaxPage() {
-    const [taxes, setTaxes] = useState<Tax[]>(dummyTax);
+    const [taxes, setTaxes] = useState<Tax[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
+        id: 0,
         type: '',
         name: '',
         value: 0,
         status: true,
+    });
+    const [errors, setErrors] = useState({
+        type: '',
+        name: '',
+        value: '',
+        status: '',
     });
     const [selectedTax, setSelectedTax] = useState<Tax | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
@@ -27,24 +33,33 @@ export default function TaxPage() {
     useEffect(() => {
         const fetchTaxes = async () => {
             try {
-                const response = await axios.get('/api/taxes'); // Replace with your actual endpoint
+                const response = await axiosInstance.get('/tax'); // Pastikan endpoint sesuai
                 const taxData = response.data;
                 setTotalPages(Math.ceil(taxData.length / ITEMS_PER_PAGE));
-                setTaxes(taxData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setTaxes(taxData.slice(0, ITEMS_PER_PAGE)); // Mengambil 10 data pertama untuk halaman pertama
             } catch (error) {
                 console.error('Error fetching taxes', error);
-                setTotalPages(Math.ceil(dummyTax.length / ITEMS_PER_PAGE));
-                setTaxes(dummyTax.slice(0, ITEMS_PER_PAGE));
             }
         };
-
+    
         fetchTaxes();
-    }, []);
+    }, []);    
+
+    const fetchTaxes = async () => {
+        try {
+            const response = await axiosInstance.get('/tax');
+            const taxData = response.data;
+            setTotalPages(Math.ceil(taxData.length / ITEMS_PER_PAGE));
+            const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIdx = startIdx + ITEMS_PER_PAGE;
+            setTaxes(taxData.slice(startIdx, endIdx));
+        } catch (error) {
+            console.error('Error fetching taxes', error);
+        }
+    };
 
     useEffect(() => {
-        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIdx = startIdx + ITEMS_PER_PAGE;
-        setTaxes(dummyTax.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
+        fetchTaxes();
     }, [currentPage]);
 
     // Handle Pop Up Tax
@@ -53,14 +68,14 @@ export default function TaxPage() {
             setIsAddModalOpen(true);
         } else if (type === 'edit' && tax) {
             setSelectedTax(tax); 
-                setFormData({
-                    id: tax.tax_id,
-                    name: tax.tax_name,
-                    type: tax.tax_type,
-                    value: tax.tax_value,
-                    status: tax.tax_status,
-                });
-                setIsEditModalOpen(true);
+            setFormData({
+                id: tax.tax_id,
+                name: tax.tax_name,
+                type: tax.tax_type,
+                value: tax.tax_value,
+                status: tax.tax_status,
+            });
+            setIsEditModalOpen(true);
         } else if (type === 'delete' && tax) {
             setSelectedTax(tax);
             setIsDeleteModalOpen(true);
@@ -83,18 +98,57 @@ export default function TaxPage() {
         }));
     };
 
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const newTax =  {
+                tax_name: formData.name,
+                tax_type: formData.type,
+                tax_value: formData.value,
+                tax_status: formData.status
+            };
+            // Setelah berhasil menambah data, fetch ulang data pajak
+            await axiosInstance.post('/tax', newTax);
+            setIsAddModalOpen(false);
+            setIsSecondModalOpen(true);
+        } catch (error) {
+            console.error('Error adding tax', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    // PATCH /tax/{tax_id} - Memperbarui data pajak
+    const handleConfirmEdit = async () => {
+        if (!validateForm()) return;
+
+        try {
+            if (selectedTax) {
+                const updatedTax = {
+                    tax_name: formData.name,
+                    tax_type: formData.type,
+                    tax_value: formData.value,
+                    tax_status: formData.status,
+                };
+                await axiosInstance.patch(`/tax/${selectedTax.tax_id}`, updatedTax);
+                handleModalClose();
+                fetchTaxes();
+            };
+        } catch (error) {
+            console.error('Error updating tax', error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        handleModalClose();
+    // DELETE /tax/{tax_id} - Menghapus data pajak
+    const handleConfirmDelete = async () => {
+        try {
+            if (selectedTax) {
+                await axiosInstance.delete(`/tax/${selectedTax.tax_id}`);
+                fetchTaxes(); // Fetch ulang data setelah delete
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error deleting tax', error);
+        }
     };
 
     // HANDLE PAGE AND GENERATE PAGE
@@ -102,6 +156,36 @@ export default function TaxPage() {
         if (newPage > 0 && newPage <= totalPages) {
             setCurrentPage(newPage);
         }
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            type: '',
+            name: '',
+            value: '',
+            status: '',
+        };
+    
+        if (!formData.type) {
+            newErrors.type = 'Type is required';
+            isValid = false;
+        }
+        if (!formData.name) {
+            newErrors.name = 'Name is required';
+            isValid = false;
+        }
+        if (!formData.value) {
+            newErrors.value = 'Tax value is required';
+            isValid = false;
+        }
+        if (!formData.status) {
+            newErrors.status = 'Status is required';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
     };
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -204,30 +288,36 @@ export default function TaxPage() {
                         <label>Name</label>
                         <input
                             type="text"
-                            name="tax_name"
+                            name="name"
                             placeholder="Enter title name"
                             value={formData.name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+
                         <label>Type</label>
                         <input
                             type="text"
-                            name="tax_type"
+                            name="type"
                             placeholder="Enter tax type"
                             value={formData.type}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+
                         <label>Tax Value (%)</label>
                         <input
                             type="number"
-                            name="tax_value"
+                            name="value"
                             placeholder="Enter tax value"
                             value={formData.value}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.value && <p className="text-red-600 text-sm">{errors.value}</p>}
+
                         <div className="flex space-x-16">
                             <ToggleSwitch
                                 checked={formData.status}
@@ -236,6 +326,7 @@ export default function TaxPage() {
 
                             />
                         </div>
+                        {errors.status && <p className="text-red-600 text-sm">{errors.status}</p>}
                     </form>
                     <div className="flex justify-between w-full mt-4 gap-2">
                         <CancelButton
@@ -303,38 +394,44 @@ export default function TaxPage() {
 
                 {/* EDIT */}
                 <Modal isOpen={isEditModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
-                        <div className="w-full flex flex-col items-center pb-10">
-                            <h2 className="text-2xl font-bold text-orange-2">Edit Tax</h2>
-                            <span className="text-sm text-gray-3">Edit necesary data</span>
-                        </div>
-                        <form className="w-full text-center mb-6">
+                    <div className="w-full flex flex-col items-center pb-10">
+                        <h2 className="text-2xl font-bold text-orange-2">Edit Tax</h2>
+                        <span className="text-sm text-gray-3">Edit necesary data</span>
+                    </div>
+                    <form className="w-full text-center mb-6">
                         <label>Name</label>
                         <input
                             type="text"
-                            name="tax_name"
+                            name="name"
                             placeholder="Enter title name"
                             value={formData.name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+
                         <label>Type</label>
                         <input
                             type="text"
-                            name="tax_type"
+                            name="type"
                             placeholder="Enter tax type"
                             value={formData.type}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+
                         <label>Tax Value (%)</label>
                         <input
                             type="number"
-                            name="tax_value"
+                            name="value"
                             placeholder="Enter tax value"
                             value={formData.value}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
+                        {errors.value && <p className="text-red-600 text-sm">{errors.value}</p>}
+
                         <div className="flex space-x-16">
                             <ToggleSwitch
                                 checked={formData.status}
@@ -343,6 +440,7 @@ export default function TaxPage() {
 
                             />
                         </div>
+                        {errors.status && <p className="text-red-600 text-sm">{errors.status}</p>}
                     </form>
                     <div className="flex justify-between w-full mt-4 gap-2">
                         <Button
@@ -355,23 +453,23 @@ export default function TaxPage() {
 
                 {/* DELETE */}
                 <Modal isOpen={isDeleteModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
-                        <div className="w-full flex flex-col items-center">
-                            <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
-                            <span className="text-gray-2">Are you sure you want to delete</span>
-                        </div>
-                        <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedTax?.tax_name}</h2>
-                        <div className="flex justify-between w-full mt-4 gap-2">
-                            <CancelButton 
-                                onClick={handleModalClose}
-                            >
-                                Cancel
-                            </CancelButton>
-                            <DeleteButton
-                                onClick={handleConfirmDelete}
-                            >
-                                Delete
-                            </DeleteButton>
-                        </div>
+                    <div className="w-full flex flex-col items-center">
+                        <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
+                        <span className="text-gray-2">Are you sure you want to delete</span>
+                    </div>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedTax?.tax_name}</h2>
+                    <div className="flex justify-between w-full mt-4 gap-2">
+                        <CancelButton 
+                            onClick={handleModalClose}
+                        >
+                            Cancel
+                        </CancelButton>
+                        <DeleteButton
+                            onClick={handleConfirmDelete}
+                        >
+                            Delete
+                        </DeleteButton>
+                    </div>
                 </Modal>
             </div>
         </div>

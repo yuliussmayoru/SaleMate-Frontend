@@ -12,7 +12,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange, label })
             className="sr-only"
             placeholder="toggleswitch"
           />
-          <div className="w-11 h-6 bg-gray-200 rounded-full shadow-inner"></div>
+          <div className={`w-11 h-6 rounded-full shadow-inner transition-colors ${checked ? 'bg-blue-500' : 'bg-gray-200'}`}></div>
           <div
             className={`absolute left-1 top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
               checked ? 'translate-x-5 bg-blue-500' : ''
