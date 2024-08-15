@@ -1,41 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from '@/src/api/axiosClient';
-import { Button, CancelButton, Card, DeleteButton } from "@/src/features";
-import { Staff, dummyStaffs } from '@/src/assets'
-import { Modal } from "@/src/features";
+import { Button, CancelButton, Card, DeleteButton, Modal } from "@/src/features";
+import { Staff } from "@/src/assets";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function StaffPage() {
-    const [staffs, setStaffs] = useState<Staff[]>(dummyStaffs);
+    const [allStaffs, setAllStaffs] = useState<Staff[]>([]);
+    const [staffs, setStaffs] = useState<Staff[]>([]);
+    const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
-        name: '',
+        user_id: '',
+        user_name: '',
         email: '',
         password: '',
         role: '',
+        pin: ''
     });
     const [showPassword, setShowPassword] = useState(false);
-    const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+    const [showPin, setShowPin] = useState(false);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
-    // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
                 const response = await axiosInstance.get('/user');
-                const staffData = response.data;
+                const staffData = response.data.data;
+                setAllStaffs(staffData);
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
                 setStaffs(staffData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching staffs', error);
-                setTotalPages(Math.ceil(dummyStaffs.length / ITEMS_PER_PAGE));
-                setStaffs(dummyStaffs.slice(0, ITEMS_PER_PAGE));
             }
         };
 
@@ -45,22 +45,24 @@ export default function StaffPage() {
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setStaffs((prevStaffs) => prevStaffs.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
-    }, [currentPage]);
+        setStaffs(allStaffs.slice(startIdx, endIdx));
+    }, [currentPage, allStaffs]);
 
     
     // HANDLE POP UP ADD DATA
-    const handleModalOpen = (type: string, staff?: Staff) => {
+    const handleModalOpen = (type: string, staff: Staff) => {
         if (type === 'add') {
+            setFormData({ user_id: '', user_name: '', email: '', password: '', role: '', pin: '' });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && staff) {
             setSelectedStaff(staff);
             setFormData({
-                id: staff.id,
-                name: staff.staff_name,
-                email: staff.staff_email,
-                password: '',
+                user_id: staff.user_id,
+                user_name: staff.user_name,
+                email: staff.email,
+                password: staff.password,
                 role: staff.role,
+                pin: staff.pin
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && staff) {
@@ -88,12 +90,32 @@ export default function StaffPage() {
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
+
+    const togglePinVisibility = () => {
+        setShowPin(!showPin);
+    };
+
+
+    const refreshStaffs = async () => {
+        try {
+            const response = await axiosInstance.get('/user');
+            const staffData = response.data.data;
+            setAllStaffs(staffData);
+            setStaffs(staffData.slice(0, ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error refreshing staffs', error);
+        }
+    };
     
     const handleConfirmAdd = async () => {
         try {
-            await axiosInstance.post(`/user`, formData);
+            const { user_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await axiosInstance.post(`/user`, dataToSend);
+            await refreshStaffs();
             handleModalClose();
-            // Optionally refresh the staff list after adding a new staff
+            setIsAddModalOpen(false);
+            setIsSecondModalOpen(true);
         } catch (error) {
             console.error('Error adding staff', error);
         }
@@ -101,10 +123,11 @@ export default function StaffPage() {
 
     const handleConfirmEdit = async () => {
         try {
+            const { user_id, ...dataToSend } = formData;
             if (selectedStaff) {
-                await axiosInstance.put(`/user/${selectedStaff.id}`, formData);
+                await axiosInstance.patch(`/user/${selectedStaff.user_id}`, dataToSend);
+                await refreshStaffs();
                 handleModalClose();
-                // Optionally refresh the staff list after editing a staff
             }
         } catch (error) {
             console.error('Error editing staff', error);
@@ -114,9 +137,9 @@ export default function StaffPage() {
     const handleConfirmDelete = async () => {
         try {
             if (selectedStaff) {
-                await axiosInstance.delete(`/user/${selectedStaff.id}`);
+                await axiosInstance.delete(`/user/${selectedStaff.user_id}`);
+                await refreshStaffs();
                 handleModalClose();
-                // Optionally refresh the staff list after deleting a staff
             }
         } catch (error) {
             console.error('Error deleting staff', error);
@@ -141,7 +164,7 @@ export default function StaffPage() {
                         <h2 className="text-xl font-bold">Staff</h2>
                         <p className="text-sm">Check your store staff details, you can add, edit and delete</p>
                     </div>
-                    <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Staff</Button>
+                    <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add', staffs[0])}>+ Add Staff</Button>
                 </div>
 
                 <Card>
@@ -183,17 +206,17 @@ export default function StaffPage() {
                                 <tr>
                                     <th>Staff Id</th>
                                     <th className="w-2/6">Full Name</th>
-                                    <th className="w-1/6">Username</th>
+                                    <th className="w-1/6">Email</th>
                                     <th>Role</th>
                                     <th className="w-10">Action</th>
                                 </tr>
                             </thead>
                             <tbody className=" text-gray-1">
                                 {staffs.map((staff) => (
-                                    <tr key={staff.id} className="even:bg-gray-6">
-                                        <td>{staff.id}</td>
-                                        <td>{staff.staff_name}</td>
-                                        <td>{staff.staff_email}</td>
+                                    <tr key={staff.user_id} className="even:bg-gray-6">
+                                        <td>{staff.user_id}</td>
+                                        <td>{staff.user_name}</td>
+                                        <td>{staff.email}</td>
                                         <td>{staff.role}</td>
                                         <td className="p-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" title="edit" onClick={() => handleModalOpen('edit', staff)}>
@@ -226,10 +249,10 @@ export default function StaffPage() {
                     <label>Full Name</label>
                     <input
                         type="text"
-                        name="name"
+                        name="user_name"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="Enter staff name"
-                        value={formData.name}
+                        value={formData.user_name}
                         onChange={handleInputChange}
                     />
                     <label>Email</label>
@@ -295,17 +318,11 @@ export default function StaffPage() {
                     <span className="text-sm text-gray-3">You can update or delete this data later</span>
                 </div>
                 <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
-                    <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/4 font-bold text-gray-3">Staff Id</h2>
-                        <span>:</span>
-                        {/* CHANGE INTO STAFF ID LATER */}
-                        <p>{formData.id}</p> 
-                    </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Full Name</h2>
                         <span>:</span>
-                        <p>{formData.name}</p> 
+                        <p>{formData.user_name}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
@@ -317,7 +334,7 @@ export default function StaffPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Password</h2>
                         <span>:</span>
-                        <p>{showPassword ? '----------' : (formData.password) }</p>
+                        <p>{showPassword ? (formData.password) : '----------' }</p>
                         <button type="button" onClick={togglePasswordVisibility} className="text-gray-4 absolute right-1/3">
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
@@ -327,13 +344,6 @@ export default function StaffPage() {
                         <h2 className="w-1/4 font-bold text-gray-3">Role</h2>
                         <span>:</span>
                         <p>{formData.role}</p> 
-                    </div>
-
-                    <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/4 font-bold text-gray-3">Pin</h2>
-                        <span>:</span>
-                        {/* CHANGE INTO STAFF PIN LATER */}
-                        <p>325618</p> 
                     </div>
                 </div>
                 <Button
@@ -353,10 +363,10 @@ export default function StaffPage() {
                         <label>Full Name</label>
                         <input
                             type="text"
-                            name="name"
+                            name="user_name"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter staff name"
-                            value={formData.name}
+                            value={formData.user_name}
                             onChange={handleInputChange}
                         />
                         <label>Email</label>
@@ -368,7 +378,7 @@ export default function StaffPage() {
                             value={formData.email}
                             onChange={handleInputChange}
                         />
-                        <label>Password</label>
+                        {/* <label>Password</label>
                         <div className="relative">
                             <input 
                                 type={showPassword ? 'text' : 'password'} 
@@ -378,10 +388,10 @@ export default function StaffPage() {
                                 onChange={handleInputChange} 
                                 className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             />
-                            <button type="button" onClick={togglePasswordVisibility} className="text-gray-4 absolute right-0 p-2">
+                            <button type="button" onClick={togglePasswordVisibility} className="bg-white pl-4 m-2 text-gray-4 absolute right-0">
                                 {showPassword ? 'Hide' : 'Show'}
                             </button>
-                        </div>
+                        </div> */}
                         <label>Role</label>
                         <input
                             type="text"
@@ -391,12 +401,33 @@ export default function StaffPage() {
                             value={formData.role}
                             onChange={handleInputChange}
                         />
+                        <label>Pin</label>
+                        <div className="relative">
+                            <input 
+                                type={showPin ? 'text' : 'password'} 
+                                name="pin" 
+                                placeholder="pin" 
+                                value={formData.pin} 
+                                onChange={handleInputChange} 
+                                className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            />
+                            <button type="button" onClick={togglePinVisibility} className="bg-white pl-4 m-2 text-gray-4 absolute right-0">
+                                {showPin ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
                     </form>
-                    <Button
-                        onClick={handleConfirmEdit}
-                    >
-                        Ok
-                    </Button>
+                        <div className="flex justify-between w-full mt-4 gap-2">
+                            <CancelButton 
+                                onClick={handleModalClose}
+                            >
+                                Cancel
+                            </CancelButton>
+                            <Button
+                                onClick={handleConfirmEdit}
+                            >
+                                Ok
+                            </Button>
+                        </div>
             </Modal>
             
             {/* DELETE */}
@@ -405,7 +436,7 @@ export default function StaffPage() {
                         <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
                         <span className="text-gray-2">Are you sure you want to delete</span>
                 </div>
-                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedStaff?.staff_name}</h2>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedStaff?.user_name}</h2>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton 
                         onClick={handleModalClose}
