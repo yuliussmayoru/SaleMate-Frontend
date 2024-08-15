@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from '@/src/api/axiosClient';
 import { Button, CancelButton, Card, DeleteButton } from "@/src/features";
 import { Staff, dummyStaffs } from '@/src/assets'
 import { Modal } from "@/src/features";
@@ -28,10 +28,10 @@ export default function StaffPage() {
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
-                const response = await axios.get('/api/staff'); // Replace with your actual endpoint
+                const response = await axiosInstance.get('/user');
                 const staffData = response.data;
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setStaffs(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setStaffs(staffData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching staffs', error);
                 setTotalPages(Math.ceil(dummyStaffs.length / ITEMS_PER_PAGE));
@@ -45,7 +45,7 @@ export default function StaffPage() {
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setStaffs(dummyStaffs.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
+        setStaffs((prevStaffs) => prevStaffs.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
     }, [currentPage]);
 
     
@@ -89,19 +89,38 @@ export default function StaffPage() {
         setShowPassword(!showPassword);
     };
     
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const handleConfirmAdd = async () => {
+        try {
+            await axiosInstance.post(`/user`, formData);
+            handleModalClose();
+            // Optionally refresh the staff list after adding a new staff
+        } catch (error) {
+            console.error('Error adding staff', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    const handleConfirmEdit = async () => {
+        try {
+            if (selectedStaff) {
+                await axiosInstance.put(`/user/${selectedStaff.id}`, formData);
+                handleModalClose();
+                // Optionally refresh the staff list after editing a staff
+            }
+        } catch (error) {
+            console.error('Error editing staff', error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        // Delete staff logic here
-        handleModalClose();
+    const handleConfirmDelete = async () => {
+        try {
+            if (selectedStaff) {
+                await axiosInstance.delete(`/user/${selectedStaff.id}`);
+                handleModalClose();
+                // Optionally refresh the staff list after deleting a staff
+            }
+        } catch (error) {
+            console.error('Error deleting staff', error);
+        }
     };
     
     // HANDLE PAGE AND GENERATE PAGE
@@ -162,7 +181,7 @@ export default function StaffPage() {
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th>Store Id</th>
+                                    <th>Staff Id</th>
                                     <th className="w-2/6">Full Name</th>
                                     <th className="w-1/6">Username</th>
                                     <th>Role</th>
@@ -172,7 +191,7 @@ export default function StaffPage() {
                             <tbody className=" text-gray-1">
                                 {staffs.map((staff) => (
                                     <tr key={staff.id} className="even:bg-gray-6">
-                                        <td>{staff.store_id}</td>
+                                        <td>{staff.id}</td>
                                         <td>{staff.staff_name}</td>
                                         <td>{staff.staff_email}</td>
                                         <td>{staff.role}</td>

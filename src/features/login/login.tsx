@@ -29,11 +29,17 @@ export function LoginForm() {
             console.log('Response: ', response)
 
             if (response.ok) {
-              // On successful login, redirect to the /superadmin page
-                console.log('Login successful, redirecting...');  
-                router.push('/superadmin');
+                const result = await response.json();
+                const token = result.data?.access_token;
+                if (token) {
+                    localStorage.setItem('authToken', token); // Save the token in localStorage
+                    console.log('Token saved:', token);
+                    router.push('/superadmin'); // Redirect after successful login
+                } else {
+                    console.error('Token not found in response');
+                }
             } else {
-                const errorData = await response.json();
+                const errorData = await response.json(); // Read the error response body once
                 console.error('Login failed:', errorData.message);
             }
         } catch (error) {
