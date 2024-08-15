@@ -10,6 +10,24 @@ export interface Staff {
     isDelete: boolean,
 }
 
+export interface ProductCategory {
+    id: string,
+    store: string,
+    storeId: string,
+    category: string,
+    tax: string,
+}
+
+export interface Product {
+    id: string,
+    storeId: string,
+    category: string,
+    productName: string,
+    price: string,
+    qty: number,
+    note: string,
+}
+
 export interface DriverPartner {
     id: string,
     type: string,
@@ -200,6 +218,172 @@ export interface DriverPartnerReport {
 //         isDelete: false,
 //     },
 // ]
+
+export const dummyProduct: Product[] = [
+    {
+        id: "1",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black Hoodie - Female",
+        price: "700,000",
+        qty: 2,
+        note: "All Size",
+    },
+    {
+        id: "2",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Light Gray Hoodie - Female",
+        price: "720,000",
+        qty: 2,
+        note: "All Size",
+    },
+    {
+        id: "3",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black Hoodie - Male",
+        price: "720,000",
+        qty: 2,
+        note: "All Size",
+    },
+    {
+        id: "4",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "White Hoodie - Male",
+        price: "720,000",
+        qty: 2,
+        note: "All Size",
+    },
+    {
+        id: "5",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Female",
+        price: "300,000",
+        qty: 1,
+        note: "Size S",
+    },
+    {
+        id: "6",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Female",
+        price: "300,000",
+        qty: 1,
+        note: "Size M",
+    },
+    {
+        id: "7",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Female",
+        price: "300,000",
+        qty: 1,
+        note: "Size L",
+    },
+    {
+        id: "8",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Male",
+        price: "330,000",
+        qty: 1,
+        note: "Size M",
+    },
+    {
+        id: "9",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Male",
+        price: "330,000",
+        qty: 1,
+        note: "Size L",
+    },
+    {
+        id: "10",
+        storeId: "BGD01",
+        category: "Activewears",
+        productName: "Black DriFit Workout Tops - Male",
+        price: "330,000",
+        qty: 1,
+        note: "Size XL",
+    }
+]
+
+export const dummyProductCategory: ProductCategory[] = [
+    {
+        id: "1",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Activewears",
+        tax: "10",
+    },
+    {
+        id: "2",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Bottoms",
+        tax: "10",
+    },
+    {
+        id: "3",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Bottoms",
+        tax: "10",
+    },
+    {
+        id: "4",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Jackets",
+        tax: "10",
+    },
+    {
+        id: "5",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Tops",
+        tax: "10",
+    },
+    {
+        id: "6",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Jackets",
+        tax: "10",
+    },
+    {
+        id: "7",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Bottoms",
+        tax: "10",
+    },
+    {
+        id: "8",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Jackets",
+        tax: "10",
+    },
+    {
+        id: "9",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Denim Tops",
+        tax: "10",
+    },
+    {
+        id: "10",
+        store: "Dago, Bandung",
+        storeId: "BDG01",
+        category: "Jackets",
+        tax: "10",
+    }
+]
 
 export const dummyDriverPartners: DriverPartner[] = [
     {
