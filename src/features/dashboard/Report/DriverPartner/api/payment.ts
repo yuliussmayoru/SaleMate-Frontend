@@ -1,13 +1,13 @@
 import { axiosInstance } from '@/src/api/axiosClient';
 import { AxiosError } from 'axios';
 
-export async function userRequest() {
+export async function paymentRequest() {
     try {
-        const userRequest = axiosInstance.get(`/user`);
+        const paymentRequest = axiosInstance.get(`/payments`);
 
-        const [userResponse] = await Promise.all([userRequest]);
+        const [paymentResponse] = await Promise.all([paymentRequest]);
 
-        const user = userResponse.data.data;
+        const user = paymentResponse.data.data;
 
         return {user};
     } catch (error) {

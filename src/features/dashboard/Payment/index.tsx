@@ -1,50 +1,48 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Button, CancelButton, Card, DeleteButton } from "@/src/features";
-import { Payment, dummyPayments } from "@/src/assets";
-import { Modal } from "@/src/features";
+import { axiosInstance } from "@/src/api/axiosClient";
+import { Button, CancelButton, Card, DeleteButton, Modal } from "@/src/features";
+import { Payment } from "@/src/assets";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function PaymentPage() {
-    const [payments, setPayments] = useState<Payment[]>(dummyPayments);
+    const [allPayments, setAllPayments] = useState<Payment[]>([]);
+    const [payments, setPayments] = useState<Payment[]>([]);
+    const [SelectedPayment, setSelectedPayment] = useState<Payment | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
-        type: '',
-        name: '',
+        payment_id: '',
+        payment_type: '',
+        payment_name: '',
     });
-    const [showPassword, setShowPassword] = useState(false);
-    const [SelectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+    // const [showPassword, setShowPassword] = useState(false);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
-    // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
-        const fetchStaffs = async () => {
+        const fetchPayments = async () => {
             try {
-                const response = await axios.get('/api/payment'); // Replace with your actual endpoint
+                const response = await axiosInstance.get('/payments'); 
                 const staffData = response.data;
+                setAllPayments(staffData);
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setPayments(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setPayments(staffData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
-                console.error('Error fetching driver partners', error);
-                setTotalPages(Math.ceil(dummyPayments.length / ITEMS_PER_PAGE));
-                setPayments(dummyPayments.slice(0, ITEMS_PER_PAGE));
+                console.error('Error fetching payments', error);
             }
         };
 
-        fetchStaffs();
+        fetchPayments();
     }, []);
 
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setPayments(dummyPayments.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
-    }, [currentPage]);
+        setPayments(allPayments.slice(startIdx, endIdx));
+    }, [currentPage, allPayments]);
 
     
     // HANDLE POP UP ADD DATA
@@ -54,9 +52,9 @@ export default function PaymentPage() {
         } else if (type === 'edit' && payment) {
             setSelectedPayment(payment);
             setFormData({
-                id: payment.id,
-                type: payment.type,
-                name: payment.name
+                payment_id: payment.payment_id,
+                payment_type: payment.payment_type,
+                payment_name: payment.payment_name
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && payment) {
@@ -81,23 +79,58 @@ export default function PaymentPage() {
         }));
     };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    // const togglePasswordVisibility = () => {
+    //     setShowPassword(!showPassword);
+    // };
+
+    const refreshStaffs = async () => {
+        try {
+            const response = await axiosInstance.get('/payments');
+            const staffData = response.data;
+            setAllPayments(staffData);
+            setPayments(staffData.slice(0, ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error refreshing staffs', error);
+        }
     };
     
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const handleConfirmAdd = async () => {
+        try {
+            const { payment_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await axiosInstance.post(`/payments`, dataToSend);
+            await refreshStaffs();
+            handleModalClose();
+            setIsAddModalOpen(false);
+            setIsSecondModalOpen(true);
+        } catch (error) {
+            console.error('Error adding staff', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    const handleConfirmEdit = async () => {
+        try {
+            const { payment_id, ...dataToSend } = formData;
+            if (SelectedPayment) {
+                await axiosInstance.put(`/payments/${SelectedPayment.payment_id}`, dataToSend);
+                await refreshStaffs();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error editing staff', error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        // Delete staff logic here
-        handleModalClose();
+    const handleConfirmDelete = async () => {
+        try {
+            if (SelectedPayment) {
+                await axiosInstance.delete(`/payments/${SelectedPayment.payment_id}`);
+                await refreshStaffs();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error deleting staff', error);
+        }
     };
     
     // HANDLE PAGE AND GENERATE PAGE
@@ -165,9 +198,9 @@ export default function PaymentPage() {
                             </thead>
                             <tbody className=" text-gray-1">
                                 {payments.map((payment) => (
-                                    <tr key={payment.id} className="even:bg-gray-6">
-                                        <td className="">{payment.type}</td>
-                                        <td className="">{payment.name}</td>
+                                    <tr key={payment.payment_id} className="even:bg-gray-6">
+                                        <td className="">{payment.payment_type}</td>
+                                        <td className="">{payment.payment_name}</td>
                                         <td className="py-4 px-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" title="edit" onClick={() => handleModalOpen('edit', payment)}>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -199,19 +232,19 @@ export default function PaymentPage() {
                     <label>Type</label>
                     <input
                         type="text"
-                        name="name"
+                        name="payment_type"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g Online Delivery"
-                        value={formData.type}
+                        value={formData.payment_type}
                         onChange={handleInputChange}
                     />
                     <label>Name</label>
                     <input
                         type="email"
-                        name="email"
+                        name="payment_name"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g Gojek, Grab, etc"
-                        value={formData.name}
+                        value={formData.payment_name}
                         onChange={handleInputChange}
                     />
                 </form>
@@ -228,6 +261,7 @@ export default function PaymentPage() {
                     </Button>
                 </div>
             </Modal>
+
             <Modal isOpen={isSecondModalOpen} onClose={handleModalClose} onConfirm={handleModalClose}>
                 <div className="w-full flex flex-col items-center pb-10">
                     <div className="text-green-2 flex row gap-2 justify-center items-center">
@@ -247,13 +281,13 @@ export default function PaymentPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Partner Id</h2>
                         <span>:</span>
-                        <p>{formData.id}</p> 
+                        <p>{formData.payment_id}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/3 font-bold text-gray-3">Full Name</h2>
                         <span>:</span>
-                        <p>{formData.name}</p> 
+                        <p>{formData.payment_name}</p> 
                     </div>
                 </div>
                 <Button
@@ -276,7 +310,7 @@ export default function PaymentPage() {
                             name="type"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter driver partner type"
-                            value={formData.type}
+                            value={formData.payment_type}
                             onChange={handleInputChange}
                         />
                         <label>Name</label>
@@ -285,15 +319,22 @@ export default function PaymentPage() {
                             name="name"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter driver partner name"
-                            value={formData.name}
+                            value={formData.payment_name}
                             onChange={handleInputChange}
                         />
                     </form>
-                    <Button
-                        onClick={handleConfirmEdit}
-                    >
-                        Ok
-                    </Button>
+                    <div className="flex justify-between w-full mt-4 gap-2">
+                            <CancelButton 
+                                onClick={handleModalClose}
+                            >
+                                Cancel
+                            </CancelButton>
+                            <Button
+                                onClick={handleConfirmEdit}
+                            >
+                                Ok
+                            </Button>
+                        </div>
             </Modal>
             
             {/* DELETE */}
@@ -302,7 +343,7 @@ export default function PaymentPage() {
                         <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
                         <span className="text-gray-2">Are you sure you want to delete</span>
                 </div>
-                    <h2 className="p-6 text-2xl text-bold text-gray-1">{SelectedPayment?.name}</h2>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{SelectedPayment?.payment_name}</h2>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton 
                         onClick={handleModalClose}
