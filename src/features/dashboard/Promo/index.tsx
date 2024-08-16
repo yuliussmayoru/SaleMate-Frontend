@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 // import axios from "axios";
 import { axiosInstance } from "@/src/api/axiosClient";
-import { Button, CancelButton, DeleteButton } from "@/src/features";
+import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
 import { Promo } from "@/src/assets";
-import { Modal } from "@/src/features";
+import Loader from "../../base/Loader";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -32,17 +32,27 @@ export default function PromoPage() {
     });
     const [selectedPromo, setSelectedPromo] = useState<Promo | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchPromos = async () => {
             try {
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const response = await axiosInstance.get('/promos');
                 const promoData = response.data.data;
+
                 setAllPromos(promoData)
                 setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
                 setPromos(promoData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching promos', error);
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
@@ -63,27 +73,27 @@ export default function PromoPage() {
     };
 
     fetchPagePromos();
-    }, [currentPage]);
+    }, [currentPage, AllPromos]);
 
     const handleModalOpen = (type: any, promo: Promo) => {
-    if (type === 'add') {
-        setFormData({ promo_id: 0, promo_name: '', promo_type: '', promo_value: 0, start_date: '', end_date: '' });
-        setIsAddModalOpen(true);
-    } else if (type === 'edit' && promo) {
-        setSelectedPromo(promo);
-        setFormData({
-            promo_id: promo.promo_id,
-            promo_name: promo.promo_name,
-            promo_type: promo.promo_type,
-            promo_value: promo.promo_value,
-            start_date: promo.start_date,
-            end_date: promo.end_date,
-        });
-        setIsEditModalOpen(true);
-    } else if (type === 'delete' && promo) {
-        setSelectedPromo(promo);
-        setIsDeleteModalOpen(true);
-    }
+        if (type === 'add') {
+            setFormData({ promo_id: 0, promo_name: '', promo_type: '', promo_value: 0, start_date: '', end_date: '' });
+            setIsAddModalOpen(true);
+        } else if (type === 'edit' && promo) {
+            setSelectedPromo(promo);
+            setFormData({
+                promo_id: promo.promo_id,
+                promo_name: promo.promo_name,
+                promo_type: promo.promo_type,
+                promo_value: promo.promo_value,
+                start_date: promo.start_date,
+                end_date: promo.end_date,
+            });
+            setIsEditModalOpen(true);
+        } else if (type === 'delete' && promo) {
+            setSelectedPromo(promo);
+            setIsDeleteModalOpen(true);
+        }
     };
 
     const handleModalClose = () => {
@@ -136,7 +146,6 @@ export default function PromoPage() {
     };
 
     const handleConfirmEdit = async () => {
-        if (!validateForm()) return;
 
         if (selectedPromo) {
             try {
@@ -246,6 +255,11 @@ export default function PromoPage() {
                   </svg>
                 </div>
               </div>
+                
+            {loading ? (
+                <Loader />
+            ) : (
+
               <div>
                 <table className="min-w-full table-fixed text-center">
                   <thead className=" text-gray-4">
@@ -285,6 +299,9 @@ export default function PromoPage() {
                   </tbody>
                 </table>
               </div>
+
+            )}
+
             </div>
 
             {/* Fill Promos Data Pop Up */}
@@ -295,6 +312,7 @@ export default function PromoPage() {
                 </div>
                 <form className="w-full text-center mb-6">
                     <label>Name</label>
+                    {errors.promo_name && <p className="text-red-600 text-sm">{errors.promo_name}</p>}
                     <input
                         type="text"
                         name="promo_name"
@@ -303,9 +321,9 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.promo_name && <p className="text-red-600 text-sm">{errors.promo_name}</p>}
 
                     <label>Type</label>
+                    {errors.promo_type && <p className="text-red-600 text-sm">{errors.promo_type}</p>}
                     <input
                         type="text"
                         name="promo_type"
@@ -314,9 +332,9 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.promo_type && <p className="text-red-600 text-sm">{errors.promo_type}</p>}
 
                     <label>Promo</label>
+                    {errors.promo_value && <p className="text-red-600">{errors.promo_value}</p>}
                     <input
                         type="number"
                         name="promo_value"
@@ -325,9 +343,9 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.promo_value && <p className="text-red-600">{errors.promo_value}</p>}
 
                     <label>Start</label>
+                    {errors.start_date && <p className="text-red-600">{errors.start_date}</p>}
                     <input
                         type="text"
                         name="start_date"
@@ -336,9 +354,9 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.start_date && <p className="text-red-600">{errors.start_date}</p>}
 
                     <label>End</label>
+                    {errors.end_date && <p className="text-red-600">{errors.end_date}</p>}
                     <input
                         type="text"
                         name="end_date"
@@ -347,7 +365,6 @@ export default function PromoPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.end_date && <p className="text-red-600">{errors.end_date}</p>}
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton
@@ -472,6 +489,11 @@ export default function PromoPage() {
                     />
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
+                    <CancelButton 
+                        onClick={handleModalClose}
+                    >
+                        Cancel
+                    </CancelButton>
                     <Button
                         onClick={handleConfirmEdit}
                     >

@@ -1,39 +1,53 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
-import { DriverPartner, dummyDriverPartners } from "@/src/assets";
+import { DriverPartner } from "@/src/assets";
+import Loader from "../../base/Loader";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function DriverPartnerPage() {
-    const [driverpartners, setDriverPartners] = useState<DriverPartner[]>(dummyDriverPartners);
+    const [allDriverPartners, setAllDriverPartners] = useState<DriverPartner[]>([]);
+    const [driverpartners, setDriverPartners] = useState<DriverPartner[]>([]);
+    const [selectedDriverPartner, setSelectedDriverPartner] = useState<DriverPartner | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
-        type: '',
-        name: '',
+        store_id: 0,
+        driver_partner_id: '',
+        partner_name: '',
+        benefit: 0,
+    });
+    const [errors, setErrors] = useState({
+        partner_name: '',
         benefit: '',
     });
-    const [showPassword, setShowPassword] = useState(false);
-    const [selectedDriverPartner, setSelectedDriverPartner] = useState<DriverPartner | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
-                const response = await axios.get('/api/driver-partner'); // Replace with your actual endpoint
-                const staffData = response.data;
-                setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setDriverPartners(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                const response = await axiosInstance.get('/driver-partner'); 
+                const driverPartnerfData = response.data.data;
+                
+                setAllDriverPartners(driverPartnerfData)
+                setTotalPages(Math.ceil(driverPartnerfData.length / ITEMS_PER_PAGE));
+                setDriverPartners(driverPartnerfData.slice(0, ITEMS_PER_PAGE)); 
             } catch (error) {
                 console.error('Error fetching driver partners', error);
-                setTotalPages(Math.ceil(dummyDriverPartners.length / ITEMS_PER_PAGE));
-                setDriverPartners(dummyDriverPartners.slice(0, ITEMS_PER_PAGE));
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
@@ -43,20 +57,21 @@ export default function DriverPartnerPage() {
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setDriverPartners(dummyDriverPartners.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
-    }, [currentPage]);
+        setDriverPartners(allDriverPartners.slice(startIdx, endIdx)); 
+    }, [currentPage, allDriverPartners]);
 
     
     // HANDLE POP UP ADD DATA
     const handleModalOpen = (type: string, driverPartner?: DriverPartner) => {
         if (type === 'add') {
+            setFormData({ store_id: selectedDriverPartner?.store_id || 0, driver_partner_id: '', partner_name: '', benefit: 0, });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && driverPartner) {
             setSelectedDriverPartner(driverPartner);
             setFormData({
-                id: driverPartner.id,
-                type: driverPartner.type,
-                name: driverPartner.name,
+                store_id: driverPartner.store_id,
+                driver_partner_id: driverPartner.driver_partner_id,
+                partner_name: driverPartner.partner_name,
                 benefit: driverPartner.benefit,
             });
             setIsEditModalOpen(true);
@@ -78,27 +93,62 @@ export default function DriverPartnerPage() {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value
+            [name]: name === "benefit" ? parseInt(value) : value
         }));
     };
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
     
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const refreshDriverPartners = async () => {
+        try {
+            const response = await axiosInstance.get('/driver-partner');
+            const staffData = response.data.data;
+            setAllDriverPartners(staffData);
+            setDriverPartners(staffData.slice(0, ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error refreshing Driver Partners', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
+        try {
+            
+            const { store_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+
+            await axiosInstance.post(`/driver-partner/${selectedDriverPartner?.store_id}`, dataToSend);
+            await refreshDriverPartners();
+            handleModalClose();
+            setIsAddModalOpen(false);
+            setIsSecondModalOpen(true);
+        } catch (error) {
+            console.error('Error adding Driver Partner', error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        // Delete staff logic here
-        handleModalClose();
+    const handleConfirmEdit = async () => {
+        try {
+            const { driver_partner_id, ...dataToSend } = formData;
+            if (selectedDriverPartner) {
+                await axiosInstance.patch(`/driver-partner/${selectedDriverPartner.driver_partner_id}`, dataToSend);
+                await refreshDriverPartners();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error editing Driver Partner', error);
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            if (selectedDriverPartner) {
+                await axiosInstance.delete(`/driver-partner/${selectedDriverPartner.driver_partner_id}`);
+                await refreshDriverPartners();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error deleting Driver Partner', error);
+        }
     };
     
     // HANDLE PAGE AND GENERATE PAGE
@@ -110,6 +160,26 @@ export default function DriverPartnerPage() {
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
     
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            partner_name: '',
+            benefit: ''  
+        };
+    
+        if (!formData.partner_name) {
+            newErrors.partner_name = 'Driver partner name is required';
+            isValid = false;
+        }
+        if (!formData.benefit) {
+            newErrors.benefit = 'Benefit is required';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+
     return (
         <div className="w-full flex flex-col items-center">
             <div className="w-full">
@@ -155,11 +225,15 @@ export default function DriverPartnerPage() {
                         
                     </div>
 
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                     <div>
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th className="">Type</th>
+                                    <th className="">Partner Id</th>
                                     <th className="">Name</th>
                                     <th className="">Benefit (%)</th>
                                     <th className="w-10">Action</th>
@@ -167,9 +241,9 @@ export default function DriverPartnerPage() {
                             </thead>
                             <tbody className=" text-gray-1">
                                 {driverpartners.map((driverPartner) => (
-                                    <tr key={driverPartner.id} className="even:bg-gray-6">
-                                        <td className="">{driverPartner.type}</td>
-                                        <td className="">{driverPartner.name}</td>
+                                    <tr key={driverPartner.driver_partner_id} className="even:bg-gray-6">
+                                        <td className="">{driverPartner.driver_partner_id}</td>
+                                        <td className="">{driverPartner.partner_name}</td>
                                         <td className="">{driverPartner.benefit}%</td>
                                         <td className="py-4 px-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" onClick={() => handleModalOpen('edit', driverPartner)}>
@@ -189,6 +263,8 @@ export default function DriverPartnerPage() {
                         </table>
                     </div>
 
+                    )}
+
                 </div>
             </div>
 
@@ -199,25 +275,18 @@ export default function DriverPartnerPage() {
                     <span className="text-sm text-gray-3">Input all necesary data</span>
                 </div>
                 <form className="w-full text-center mb-6">
-                    <label>Type</label>
+                    <label>Name</label>
+                    {errors.partner_name && <p className="text-red-600 text-sm">{errors.partner_name}</p>}
                     <input
                         type="text"
-                        name="name"
-                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        placeholder="e.g Online Delivery"
-                        value={formData.type}
-                        onChange={handleInputChange}
-                    />
-                    <label>Name</label>
-                    <input
-                        type="email"
-                        name="email"
+                        name="partner_name"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g Gojek, Grab, etc"
-                        value={formData.name}
+                        value={formData.partner_name}
                         onChange={handleInputChange}
                     />
                     <label>Benefit</label>
+                    {errors.benefit && <p className="text-red-600 text-sm">{errors.benefit}</p>}
                     <input
                         type="number"
                         name="benefit"
@@ -256,16 +325,11 @@ export default function DriverPartnerPage() {
                     <span className="text-sm text-gray-3">You can update or delete this data later</span>
                 </div>
                 <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
-                    <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/4 font-bold text-gray-3">Partner Id</h2>
-                        <span>:</span>
-                        <p>{formData.id}</p> 
-                    </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/3 font-bold text-gray-3">Full Name</h2>
                         <span>:</span>
-                        <p>{formData.name}</p> 
+                        <p>{formData.partner_name}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
@@ -288,22 +352,13 @@ export default function DriverPartnerPage() {
                         <span className="text-sm text-gray-3">Edit necesary data</span>
                     </div>
                     <form className="w-full text-center mb-6">
-                        <label>Type</label>
-                        <input
-                            type="text"
-                            name="type"
-                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                            placeholder="Enter driver partner type"
-                            value={formData.type}
-                            onChange={handleInputChange}
-                        />
                         <label>Name</label>
                         <input
                             type="text"
-                            name="name"
+                            name="partner_name"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter driver partner name"
-                            value={formData.name}
+                            value={formData.partner_name}
                             onChange={handleInputChange}
                         />
                         <label>Benefit</label>
@@ -329,7 +384,7 @@ export default function DriverPartnerPage() {
                         <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
                         <span className="text-gray-2">Are you sure you want to delete</span>
                 </div>
-                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedDriverPartner?.name}</h2>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedDriverPartner?.partner_name}</h2>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton 
                         onClick={handleModalClose}

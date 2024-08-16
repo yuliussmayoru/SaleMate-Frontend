@@ -19,20 +19,28 @@ export interface ProductCategory {
 }
 
 export interface Product {
-    id: string,
-    storeId: string,
-    category: string,
-    productName: string,
-    price: string,
-    qty: number,
-    note: string,
+    product_id: number,
+    store_id: number,
+    product_category_id: number,
+    product_name: string,
+    product_price: number,
+    cost_of_good_sold: number,
+    product_code: number,
+    product_image: any,
+    created_at: string,
+    updated_at: string,
+    isDelete: boolean,
 }
 
 export interface DriverPartner {
-    id: string,
-    type: string,
-    name: string,
-    benefit: string,
+    driver_partner_id: string,
+    store_id: number,
+    partner_type: string,
+    partner_name: string,
+    benefit: number,
+    created_at: string,
+    updated_at: string,
+    isDelete: boolean,
 }
 
 export interface Payment {
@@ -222,98 +230,98 @@ export interface DriverPartnerReport {
 //     },
 // ]
 
-export const dummyProduct: Product[] = [
-    {
-        id: "1",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black Hoodie - Female",
-        price: "700,000",
-        qty: 2,
-        note: "All Size",
-    },
-    {
-        id: "2",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Light Gray Hoodie - Female",
-        price: "720,000",
-        qty: 2,
-        note: "All Size",
-    },
-    {
-        id: "3",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black Hoodie - Male",
-        price: "720,000",
-        qty: 2,
-        note: "All Size",
-    },
-    {
-        id: "4",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "White Hoodie - Male",
-        price: "720,000",
-        qty: 2,
-        note: "All Size",
-    },
-    {
-        id: "5",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Female",
-        price: "300,000",
-        qty: 1,
-        note: "Size S",
-    },
-    {
-        id: "6",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Female",
-        price: "300,000",
-        qty: 1,
-        note: "Size M",
-    },
-    {
-        id: "7",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Female",
-        price: "300,000",
-        qty: 1,
-        note: "Size L",
-    },
-    {
-        id: "8",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Male",
-        price: "330,000",
-        qty: 1,
-        note: "Size M",
-    },
-    {
-        id: "9",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Male",
-        price: "330,000",
-        qty: 1,
-        note: "Size L",
-    },
-    {
-        id: "10",
-        storeId: "BGD01",
-        category: "Activewears",
-        productName: "Black DriFit Workout Tops - Male",
-        price: "330,000",
-        qty: 1,
-        note: "Size XL",
-    }
-]
+// export const dummyProduct: Product[] = [
+//     {
+//         id: "1",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black Hoodie - Female",
+//         price: "700,000",
+//         qty: 2,
+//         note: "All Size",
+//     },
+//     {
+//         id: "2",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Light Gray Hoodie - Female",
+//         price: "720,000",
+//         qty: 2,
+//         note: "All Size",
+//     },
+//     {
+//         id: "3",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black Hoodie - Male",
+//         price: "720,000",
+//         qty: 2,
+//         note: "All Size",
+//     },
+//     {
+//         id: "4",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "White Hoodie - Male",
+//         price: "720,000",
+//         qty: 2,
+//         note: "All Size",
+//     },
+//     {
+//         id: "5",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Female",
+//         price: "300,000",
+//         qty: 1,
+//         note: "Size S",
+//     },
+//     {
+//         id: "6",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Female",
+//         price: "300,000",
+//         qty: 1,
+//         note: "Size M",
+//     },
+//     {
+//         id: "7",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Female",
+//         price: "300,000",
+//         qty: 1,
+//         note: "Size L",
+//     },
+//     {
+//         id: "8",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Male",
+//         price: "330,000",
+//         qty: 1,
+//         note: "Size M",
+//     },
+//     {
+//         id: "9",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Male",
+//         price: "330,000",
+//         qty: 1,
+//         note: "Size L",
+//     },
+//     {
+//         id: "10",
+//         storeId: "BGD01",
+//         category: "Activewears",
+//         productName: "Black DriFit Workout Tops - Male",
+//         price: "330,000",
+//         qty: 1,
+//         note: "Size XL",
+//     }
+// ]
 
 export const dummyProductCategory: ProductCategory[] = [
     {
@@ -388,26 +396,26 @@ export const dummyProductCategory: ProductCategory[] = [
     }
 ]
 
-export const dummyDriverPartners: DriverPartner[] = [
-    {
-        id: "1",
-        type: "Online Delivery",
-        name: "Gojek",
-        benefit: "20",
-    },
-    {
-        id: "2",
-        type: "Online Delivery",
-        name: "Grab",
-        benefit: "20",
-    },
-    {
-        id: "3",
-        type: "Online Delivery",
-        name: "Shopee",
-        benefit: "20",
-    }
-]
+// export const dummyDriverPartners: DriverPartner[] = [
+//     {
+//         id: "1",
+//         type: "Online Delivery",
+//         name: "Gojek",
+//         benefit: "20",
+//     },
+//     {
+//         id: "2",
+//         type: "Online Delivery",
+//         name: "Grab",
+//         benefit: "20",
+//     },
+//     {
+//         id: "3",
+//         type: "Online Delivery",
+//         name: "Shopee",
+//         benefit: "20",
+//     }
+// ]
 
 // export const dummyPayments: Payment[] = [
 //     {

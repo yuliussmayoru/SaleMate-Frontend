@@ -1,69 +1,100 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
-import { Product, dummyProduct } from "@/src/assets";
+import { Product } from "@/src/assets";
+import Loader from "../../../base/Loader";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 8;
 
 export default function ProductPage() {
-    const [product, setProduct] = useState<Product[]>(dummyProduct);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [allCategories, setAllCategories] = useState<Product[]>([]);
+    const [allInventories, setAllInventories] = useState<Product[]>([]);
+    const [product, setProduct] = useState<Product[]>([]);
+    const [category, setCategory] = useState<Product[]>([]);
+    const [inventory, setInventory] = useState<Product[]>([]);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
-        storeId: '',
-        category: '',
-        productName: '',
-        price: '',
-        qty: 0,
-        note: '',
+        product_id: 0,
+        store_id: 0,
+        product_name: '',
+        product_price: 0,
+        // qty: 0,
+        // note: '',
     });
-    const [showPassword, setShowPassword] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
-        const fetchStaffs = async () => {
+        const fetchProducts = async () => {
             try {
-                const response = await axios.get('/api/driver-partner'); // Replace with your actual endpoint
-                const staffData = response.data;
-                setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setProduct(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                const [productsResponse, categoriesResponse, inventoryResponse] = await Promise.all([
+                    axiosInstance.get('/products'),
+                    axiosInstance.get('/products/product-category'),
+                    axiosInstance.get('/inventory')
+                ]);
+
+                const productsData = productsResponse.data;
+                const categoriesData = categoriesResponse.data;
+                const inventoriesData = inventoryResponse.data;
+
+                setAllProducts(productsData)
+                setTotalPages(Math.ceil(productsData.length / ITEMS_PER_PAGE));
+                setProduct(productsData.slice(0, ITEMS_PER_PAGE)); 
+
+                setAllCategories(categoriesData)
+                setTotalPages(Math.ceil(categoriesData.length / ITEMS_PER_PAGE));
+                setCategory(categoriesData.slice(0, ITEMS_PER_PAGE)); 
+
+                setAllInventories(inventoriesData)
+                setTotalPages(Math.ceil(inventoriesData.length / ITEMS_PER_PAGE));
+                setInventory(inventoriesData.slice(0, ITEMS_PER_PAGE)); 
+
             } catch (error) {
-                console.error('Error fetching driver partners', error);
-                setTotalPages(Math.ceil(dummyProduct.length / ITEMS_PER_PAGE));
-                setProduct(dummyProduct.slice(0, ITEMS_PER_PAGE));
+                console.error('Error fetching products', error);
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
-        fetchStaffs();
+        fetchProducts();
     }, []);
 
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setProduct(dummyProduct.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
-    }, [currentPage]);
+        setProduct(allProducts.slice(startIdx, endIdx)); 
+    }, [currentPage, allProducts]);
 
     
     // HANDLE POP UP ADD DATA
     const handleModalOpen = (type: string, product?: Product) => {
         if (type === 'add') {
+            setFormData({ product_id: 0, store_id: 0, product_name: '', product_price: 0 });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && product) {
             setSelectedProduct(product);
             setFormData({
-                id: product.id,
-                storeId: product.storeId,
-                category: product.category,
-                productName: product.productName,
-                price: product.price,
-                qty: product.qty,
-                note: product.note,
+                product_id: product.product_id,
+                store_id: product.store_id,
+                product_name: product.product_name,
+                product_price: product.product_price,
+                // category: product.category,
+                // qty: product.qty,
+                // note: product.note,
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && product) {
@@ -87,10 +118,6 @@ export default function ProductPage() {
             [name]: value
         }));
     };
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
     
     const handleConfirmAdd = () => {
         setIsAddModalOpen(false);
@@ -112,6 +139,14 @@ export default function ProductPage() {
         if (newPage > 0 && newPage <= totalPages) {
             setCurrentPage(newPage);
         }
+    };
+
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0,
+        }).format(value);
     };
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -214,28 +249,32 @@ export default function ProductPage() {
                         </div>   
                     </div>
 
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                     <div>
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
                                     <th className="">Store Id</th>
-                                    <th className="">Category</th>
                                     <th className="">Product Name</th>
                                     <th className="">Price</th>
-                                    <th className="">Qty</th>
-                                    <th className="">Note</th>
+                                    {/* <th className="">Category</th>
+                                    <th className="">Qty</th> */}
+                                    {/* <th className="">Note</th> */}
                                     <th className="w-10">Action</th>
                                 </tr>
                             </thead>
                             <tbody className=" text-gray-1">
                                 {product.map((product) => (
-                                    <tr key={product.id} className="even:bg-gray-6">
-                                        <td className="">{product.storeId}</td>
-                                        <td className="">{product.category}</td>
-                                        <td className="">{product.productName}</td>
-                                        <td className="">Rp. {product.price}</td>
-                                        <td className="">{product.qty}</td>
-                                        <td className="">{product.note}</td>
+                                    <tr key={product.product_id} className="even:bg-gray-6">
+                                        <td className="">{product.store_id}</td>
+                                        <td className="">{product.product_name}</td>
+                                        <td className="">{formatCurrency(product.product_price)}</td>
+                                        {/* <td className="">{product.category}</td>
+                                        <td className="">{product.qty}</td> */}
+                                        {/* <td className="">{product.note}</td> */}
                                         <td className="py-4 px-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" onClick={() => handleModalOpen('edit', product)}>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -253,6 +292,9 @@ export default function ProductPage() {
                             </tbody>
                         </table>
                     </div>
+
+                    )}
+
                 </div>
             </div>
 
@@ -269,7 +311,7 @@ export default function ProductPage() {
                         name="storeid"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g BGD01"
-                        value={formData.storeId}
+                        value={formData.store_id}
                         onChange={handleInputChange}
                     />
                     <label>Category</label>
@@ -278,7 +320,7 @@ export default function ProductPage() {
                         name="category"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g Activewears"
-                        value={formData.category}
+                        // value={formData.category}
                         onChange={handleInputChange}
                     />
                     <label>Product Name</label>
@@ -287,7 +329,7 @@ export default function ProductPage() {
                         name="productName"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g. Black Hoodie - Female"
-                        value={formData.productName} 
+                        // value={formData.productName} 
                         onChange={handleInputChange}
                     />
                     <label>Price</label>
@@ -296,7 +338,7 @@ export default function ProductPage() {
                         name="price"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g 700,000"
-                        value={formData.price}
+                        // value={formData.price}
                         onChange={handleInputChange}
                     />
                     <label>Qty</label>
@@ -305,7 +347,7 @@ export default function ProductPage() {
                         name="qty"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g 2"
-                        value={formData.qty}
+                        // value={formData.qty}
                         onChange={handleInputChange}
                     />
                     <label>Note</label>
@@ -314,7 +356,7 @@ export default function ProductPage() {
                         name="note"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g All Size"
-                        value={formData.note}
+                        // value={formData.note}
                         onChange={handleInputChange}
                     />
                 </form>
@@ -350,33 +392,33 @@ export default function ProductPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Store Id</h2>
                         <span>:</span>
-                        <p>{formData.storeId}</p> 
+                        <p>{formData.store_id}</p> 
                     </div>                    
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Category</h2>
                         <span>:</span>
-                        <p>{formData.category}</p> 
+                        {/* <p>{formData.category}</p>  */}
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Product Name</h2>
                         <span>:</span>
-                        <p>Rp. {formData.productName}</p> 
+                        <p>Rp. {formData.product_name}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Price</h2>
                         <span>:</span>
-                        <p>{formData.price}</p> 
+                        {/* <p>{formData.price}</p>  */}
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Qty</h2>
                         <span>:</span>
-                        <p>{formData.qty}</p> 
+                        {/* <p>{formData.qty}</p>  */}
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Note</h2>
                         <span>:</span>
-                        <p>{formData.note}</p> 
+                        {/* <p>{formData.note}</p>  */}
                     </div>
                 </div>
                 <Button
@@ -399,7 +441,7 @@ export default function ProductPage() {
                             name="storeId"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter store id"
-                            value={formData.storeId}
+                            value={formData.store_id}
                             onChange={handleInputChange}
                         />
                         <label>Category</label>
@@ -408,7 +450,7 @@ export default function ProductPage() {
                             name="category"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter category"
-                            value={formData.category}
+                            // value={formData.category}
                             onChange={handleInputChange}
                         />
                         <label>Product Name</label>
@@ -417,7 +459,7 @@ export default function ProductPage() {
                             name="productName"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter product name"
-                            value={formData.productName}
+                            value={formData.product_name}
                             onChange={handleInputChange}
                         />  
                         <label>Price</label>
@@ -426,7 +468,7 @@ export default function ProductPage() {
                             name="price"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter price"
-                            value={formData.price}
+                            // value={formData.price}
                             onChange={handleInputChange}
                         />
                         <label>Qty</label>
@@ -435,7 +477,7 @@ export default function ProductPage() {
                             name="qty"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter qty"
-                            value={formData.qty}
+                            // value={formData.qty}
                             onChange={handleInputChange}
                         />
                         <label>Note</label>
@@ -444,7 +486,7 @@ export default function ProductPage() {
                             name="note"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter note"
-                            value={formData.note}
+                            // value={formData.note}
                             onChange={handleInputChange}
                         />
                     </form>
@@ -461,7 +503,7 @@ export default function ProductPage() {
                         <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
                         <span className="text-gray-2">Are you sure you want to delete</span>
                 </div>
-                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedProduct?.productName}</h2>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedProduct?.product_name}</h2>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton 
                         onClick={handleModalClose}

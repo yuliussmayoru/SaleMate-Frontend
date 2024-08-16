@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { axiosInstance } from '@/src/api/axiosClient';
 import { Button, CancelButton, Card, DeleteButton, Modal } from "@/src/features";
 import { Staff } from "@/src/assets";
+import Loader from "../../base/Loader";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -22,20 +23,35 @@ export default function StaffPage() {
         role: '',
         pin: ''
     });
+    const [errors, setErrors] = useState({
+        user_name: '',
+        email: '',
+        password: ''
+    });
     const [showPassword, setShowPassword] = useState(false);
     const [showPin, setShowPin] = useState(false);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchStaffs = async () => {
             try {
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const response = await axiosInstance.get('/user');
                 const staffData = response.data.data;
+
                 setAllStaffs(staffData);
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
                 setStaffs(staffData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching staffs', error);
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
@@ -81,11 +97,21 @@ export default function StaffPage() {
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
+        setFormData({
+            ...formData,
             [name]: value
-        }));
-    };
+        });
+        console.log(formData);
+    };  
+
+    const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+        console.log("Role selected in handler:", value, formData);
+    }
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -108,6 +134,8 @@ export default function StaffPage() {
     };
     
     const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
         try {
             const { user_id, ...dataToSend } = formData;
             console.log('Sending data:', dataToSend);
@@ -155,6 +183,31 @@ export default function StaffPage() {
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
     
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            user_name: '',
+            email: '',
+            password: ''
+        };
+    
+        if (!formData.user_name) {
+            newErrors.user_name = 'Full Name is required';
+            isValid = false;
+        }
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+            isValid = false;
+        }
+        if (!formData.password) {
+            newErrors.password = 'Password is required and should be more than 8 character';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+
     return (
         <div className="w-full flex flex-col items-center">
             <div className="w-full">
@@ -200,6 +253,10 @@ export default function StaffPage() {
                         
                     </div>
 
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                     <div>
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
@@ -236,6 +293,8 @@ export default function StaffPage() {
                         </table>
                     </div>
 
+                    )}
+
                 </Card>
             </div>
 
@@ -247,6 +306,7 @@ export default function StaffPage() {
                 </div>
                 <form className="w-full text-center mb-6">
                     <label>Full Name</label>
+                    {errors.user_name && <p className="text-red-600 text-sm">{errors.user_name}</p>}
                     <input
                         type="text"
                         name="user_name"
@@ -257,6 +317,7 @@ export default function StaffPage() {
                         required
                     />
                     <label>Email</label>
+                    {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
                     <input
                         type="email"
                         name="email"
@@ -267,6 +328,7 @@ export default function StaffPage() {
                         required
                     />
                     <label>Password</label>
+                    {errors.password && <p className="text-red-600 text-sm">{errors.password}</p>}
                     <div className="relative">
                         <input 
                             type={showPassword ? 'text' : 'password'} 
@@ -282,7 +344,17 @@ export default function StaffPage() {
                         </button>
                     </div>
                     <label>Role</label>
-                    <input
+                    <select 
+                        name="role"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        value={formData.role}                    
+                        onChange={handleRoleChange}
+                        >
+                        <option value="">Select a Role</option>
+                        <option value="STAFF">STAFF</option>
+                        <option value="OWNER">OWNER</option>
+                    </select>
+                    {/* <input
                         type="text"
                         name="role"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
@@ -290,7 +362,7 @@ export default function StaffPage() {
                         value={formData.role}
                         onChange={handleInputChange}
                         required
-                    />
+                    /> */}
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton
@@ -382,6 +454,26 @@ export default function StaffPage() {
                             value={formData.email}
                             onChange={handleInputChange}
                         />
+                        <label>Role</label>
+                        <select 
+                            name="role"
+                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            value={formData.role}                    
+                            onChange={handleRoleChange}
+                            >
+                            <option value="">Select a Role</option>
+                            <option value="STAFF">STAFF</option>
+                            <option value="OWNER">OWNER</option>
+                        </select>
+                        {/* <label>Role</label>
+                        <input
+                            type="text"
+                            name="role"
+                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            placeholder="Enter staff role"
+                            value={formData.role}
+                            onChange={handleInputChange}
+                        /> */}
                         {/* <label>Password</label>
                         <div className="relative">
                             <input 
@@ -396,15 +488,6 @@ export default function StaffPage() {
                                 {showPassword ? 'Hide' : 'Show'}
                             </button>
                         </div> */}
-                        <label>Role</label>
-                        <input
-                            type="text"
-                            name="role"
-                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                            placeholder="Enter staff role"
-                            value={formData.role}
-                            onChange={handleInputChange}
-                        />
                         <label>Pin</label>
                         <div className="relative">
                             <input 
