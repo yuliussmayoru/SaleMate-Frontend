@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 
-const baseUrl = process.env.example.NEXT_PUBLIC_BASE_URL
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://salemate-be-production.up.railway.app/";
 
 export const axiosInstance = axios.create({
     baseURL : baseUrl,
