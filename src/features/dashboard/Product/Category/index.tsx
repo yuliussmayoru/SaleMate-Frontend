@@ -1,65 +1,97 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
-import { ProductCategory, dummyProductCategory } from "@/src/assets";
+import { ProductCategory } from "@/src/assets";
+import Loader from "../../../base/Loader";
 
 const ITEMS_PER_PAGE = 8;
 
 export default function CategoryPage() {
-    const [productcategory, setProductCategory] = useState<ProductCategory[]>(dummyProductCategory);
+    const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
+    const [allStores, setAllStores] = useState<ProductCategory[]>([]);
+    const [allTaxes, setAllTaxes] = useState<ProductCategory[]>([]);
+    const [category, setCategory] = useState<ProductCategory[]>([]);
+    const [store, setStore] = useState<ProductCategory[]>([]);
+    const [tax, setTax] = useState<ProductCategory[]>([]);
+    const [selectedProductCategory, setSelectedProductCategory] = useState<ProductCategory | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: '',
-        store: '',  
-        storeId: '',
-        category: '',
-        tax: '',
+        product_category_id: 0,
+        store_name: '',  
+        store_id: 0,
+        category_name: '',
+        tax_value: 0,
     });
-    const [showPassword, setShowPassword] = useState(false);
-    const [selectedProductCategory, setSelectedProductCategory] = useState<ProductCategory | null>(null);
+    
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     // HANDLE GET DATA FROM API (IF NOT GETTING ANY DATA, GET FROM DUMMY DATA)
     useEffect(() => {
-        const fetchStaffs = async () => {
+        const fetchCategories = async () => {
             try {
-                const response = await axios.get('/api/driver-partner'); // Replace with your actual endpoint
-                const staffData = response.data;
-                setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setProductCategory(staffData.slice(0, ITEMS_PER_PAGE)); // Ensure only 10 entries are used
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
+                const [categoriesResponse, storesResponse, taxesResponse] = await Promise.all([
+                    axiosInstance.get('/products/product-category'),
+                    axiosInstance.get('/store'),
+                    axiosInstance.get('/tax')
+                ]);
+
+                const categoriesData = categoriesResponse.data;
+                const storesData = storesResponse.data;
+                const taxesData = taxesResponse.data; 
+
+                setAllCategories(categoriesData)
+                setTotalPages(Math.ceil(categoriesData.length / ITEMS_PER_PAGE));
+                setCategory(categoriesData.slice(0, ITEMS_PER_PAGE)); 
+
+                setAllStores(storesData)
+                setTotalPages(Math.ceil(storesData.length / ITEMS_PER_PAGE));
+                setStore(storesData.slice(0, ITEMS_PER_PAGE));
+
+                setAllTaxes(taxesData)
+                setTotalPages(Math.ceil(taxesData.length / ITEMS_PER_PAGE));
+                setTax(taxesData.slice(0, ITEMS_PER_PAGE));
+
             } catch (error) {
-                console.error('Error fetching driver partners', error);
-                setTotalPages(Math.ceil(dummyProductCategory.length / ITEMS_PER_PAGE));
-                setProductCategory(dummyProductCategory.slice(0, ITEMS_PER_PAGE));
+                console.error('Error fetching products category', error);
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
-        fetchStaffs();
+        fetchCategories();
     }, []);
 
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setProductCategory(dummyProductCategory.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
-    }, [currentPage]);
+        setCategory(allCategories.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
+    }, [currentPage, allCategories]);
 
     
     // HANDLE POP UP ADD DATA
     const handleModalOpen = (type: string, productCategory?: ProductCategory) => {
         if (type === 'add') {
+            setFormData({ product_category_id: 0, store_name: '', store_id: 0, category_name: '', tax_value: 0 });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && productCategory) {
             setSelectedProductCategory(productCategory);
             setFormData({
-                id: productCategory.id,
-                store: productCategory.store,
-                storeId: productCategory.storeId,
-                category: productCategory.category,
-                tax: productCategory.tax,
+                product_category_id: productCategory.product_category_id,
+                store_name: productCategory.store_name,
+                store_id: productCategory.store_id,
+                category_name: productCategory.category_name,
+                tax_value: productCategory.tax_value,
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && productCategory) {
@@ -82,10 +114,6 @@ export default function CategoryPage() {
             ...prevData,
             [name]: value
         }));
-    };
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
     };
     
     const handleConfirmAdd = () => {
@@ -210,6 +238,10 @@ export default function CategoryPage() {
                         </div>   
                     </div>
 
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                     <div>
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
@@ -222,12 +254,12 @@ export default function CategoryPage() {
                                 </tr>
                             </thead>
                             <tbody className=" text-gray-1">
-                                {productcategory.map((productCategory) => (
-                                    <tr key={productCategory.id} className="even:bg-gray-6">
-                                        <td className="">{productCategory.store}</td>
-                                        <td className="">{productCategory.storeId}</td>
-                                        <td className="">{productCategory.category}</td>
-                                        <td className="">{productCategory.tax}%</td>
+                                {category.map((productCategory) => (
+                                    <tr key={productCategory.product_category_id} className="even:bg-gray-6">
+                                        <td className="">{productCategory.store_name}</td>
+                                        <td className="">{productCategory.store_id}</td>
+                                        <td className="">{productCategory.category_name}</td>
+                                        <td className="">{productCategory.tax_value}%</td>
                                         <td className="py-4 px-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" onClick={() => handleModalOpen('edit', productCategory)}>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -245,6 +277,9 @@ export default function CategoryPage() {
                             </tbody>
                         </table>
                     </div>
+
+                    )}
+                
                 </div>
             </div>
 
@@ -261,7 +296,7 @@ export default function CategoryPage() {
                         name="store"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g Dago, Bandung"
-                        value={formData.store}
+                        value={formData.store_name}
                         onChange={handleInputChange}
                     />
                     <label>Store id</label>
@@ -270,7 +305,7 @@ export default function CategoryPage() {
                         name="storeId"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g BDG01"
-                        value={formData.storeId}
+                        value={formData.store_id}
                         onChange={handleInputChange}
                     />
                     <label>Category</label>
@@ -279,7 +314,7 @@ export default function CategoryPage() {
                         name="category"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g. Activewears"
-                        value={formData.category} 
+                        value={formData.category_name} 
                         onChange={handleInputChange}
                     />
                     <label>Tax</label>
@@ -288,7 +323,7 @@ export default function CategoryPage() {
                         name="tax"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g 1"
-                        value={formData.tax}
+                        value={formData.tax_value}
                         onChange={handleInputChange}
                     />
                 </form>
@@ -324,25 +359,25 @@ export default function CategoryPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Store Id</h2>
                         <span>:</span>
-                        <p>{formData.storeId}</p> 
+                        <p>{formData.store_id}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/3 font-bold text-gray-3">Store</h2>
                         <span>:</span>
-                        <p>{formData.store}</p> 
+                        <p>{formData.store_name}</p> 
                     </div>
                     
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Category</h2>
                         <span>:</span>
-                        <p>{formData.category}</p> 
+                        <p>{formData.category_name}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Tax</h2>
                         <span>:</span>
-                        <p>{formData.tax}%</p> 
+                        <p>{formData.tax_value}%</p> 
                     </div>
                 </div>
                 <Button
@@ -365,7 +400,7 @@ export default function CategoryPage() {
                             name="type"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter store name"
-                            value={formData.store}
+                            value={formData.store_name}
                             onChange={handleInputChange}
                         />
                         <label>Store id</label>
@@ -374,7 +409,7 @@ export default function CategoryPage() {
                             name="name"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter store id"
-                            value={formData.storeId}
+                            value={formData.store_id}
                             onChange={handleInputChange}
                         />
                         <label>Category</label>
@@ -383,7 +418,7 @@ export default function CategoryPage() {
                             name="benefit"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter category"
-                            value={formData.category}
+                            value={formData.category_name}
                             onChange={handleInputChange}
                         />  
                         <label>Tax</label>
@@ -392,7 +427,7 @@ export default function CategoryPage() {
                             name="benefit"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter tax"
-                            value={formData.tax}
+                            value={formData.tax_value}
                             onChange={handleInputChange}
                         />
                     </form>
@@ -409,7 +444,7 @@ export default function CategoryPage() {
                         <h2 className="text-2xl font-bold text-orange-2">Confirm Delete</h2>
                         <span className="text-gray-2">Are you sure you want to delete</span>
                 </div>
-                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedProductCategory?.store}</h2>
+                    <h2 className="p-6 text-2xl text-bold text-gray-1">{selectedProductCategory?.store_name}</h2>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton 
                         onClick={handleModalClose}
