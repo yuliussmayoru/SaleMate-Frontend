@@ -3,7 +3,7 @@ import axios from "axios";
 import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
 import { ProductCategory, dummyProductCategory } from "@/src/assets";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 8;
 
 export default function CategoryPage() {
     const [productcategory, setProductCategory] = useState<ProductCategory[]>(dummyProductCategory);

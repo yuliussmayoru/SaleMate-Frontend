@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton } from "@/src/features";
-import { Tax, TaxType } from "@/src/assets";
+import { Tax } from "@/src/assets";
 import { Modal } from "@/src/features";
 import ToggleSwitch from "@/src/features/base/toggleSwitch";
+import Loader from "../../base/Loader";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -30,18 +31,28 @@ export default function TaxPage() {
     });
     const [selectedTax, setSelectedTax] = useState<Tax | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchTaxes = async () => {
             try {
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const response = await axiosInstance.get('/tax'); 
                 const taxData = response.data.data;
+
                 setAllTaxes(taxData);
                 setTotalPages(Math.ceil(taxData.length / ITEMS_PER_PAGE));
                 setTaxes(taxData.slice(0, ITEMS_PER_PAGE)); // Mengambil 10 data pertama untuk halaman pertama
             } catch (error) {
                 console.error('Error fetching taxes', error);
-            }
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
+        }
         };
     
         fetchTaxes();
@@ -57,12 +68,12 @@ export default function TaxPage() {
             setTaxes(taxData.slice(startIdx, endIdx));
         } catch (error) {
             console.error('Error fetching taxes', error);
-        }
+        } 
     };
 
     useEffect(() => {
         fetchTaxes();
-    }, [currentPage]);
+    }, [currentPage, allTaxes]);
 
 
     // Handle Pop Up Tax
@@ -239,6 +250,11 @@ export default function TaxPage() {
                             </svg>
                         </div>
                     </div>
+
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                         <div>
                             <table className="min-w-full table-fixed text-center">
                                 <thead className=" text-gray-4">
@@ -285,6 +301,8 @@ export default function TaxPage() {
                                 </tbody>
                             </table>
                     </div>
+
+                    )}
                 </div>
 
                 {/* FILL TAX DATA POP UP */}
@@ -295,6 +313,7 @@ export default function TaxPage() {
                     </div>
                     <form className="w-full text-center mb-6">
                         <label>Name</label>
+                        {errors.tax_name && <p className="text-red-600 text-sm">{errors.tax_name}</p>}
                         <input
                             type="text"
                             name="tax_name"
@@ -303,9 +322,9 @@ export default function TaxPage() {
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.tax_name && <p className="text-red-600 text-sm">{errors.tax_name}</p>}
 
                         <label>Type</label>
+                        {errors.tax_type && <p className="text-red-600 text-sm">{errors.tax_type}</p>}
                         <input
                             type="text"
                             name="tax_type"
@@ -314,9 +333,9 @@ export default function TaxPage() {
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.tax_type && <p className="text-red-600 text-sm">{errors.tax_type}</p>}
 
                         <label>Tax Value (%)</label>
+                        {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
                         <input
                             type="number"
                             name="tax_value"
@@ -325,7 +344,6 @@ export default function TaxPage() {
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
 
                         <div className="flex space-x-16">
                             <ToggleSwitch
