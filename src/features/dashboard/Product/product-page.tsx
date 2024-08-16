@@ -1,15 +1,37 @@
-export default function ProductPage() {
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+
+export default function MainProductPage() {
+    const router = useRouter();
+
+    const handleCategoryDetails = () => {
+        router.push('product/category/');
+    };
+
+    const handleProductDetails = () => {
+        router.push('product/product');
+    };
+
+    useEffect(() => {
+        const elements = document.querySelectorAll('.fade-in-slide-up');
+        elements.forEach((element, index) => {
+            setTimeout(() => {
+                element.classList.add('visible');
+            }, index * 200);
+        });
+    }, []);
+
     return (
         <div className="w-full flex flex-col items-center">
-            <div className="w-full">
+            <div className="w-full max-w-screen-xl px-0.5">
                 <div className="flex justify-between items-center pt-20 mb-4 gap-6">
-                    <div className="text-gray-2">
+                    <div className="text-gray-2 w-full">
                         <h2 className="text-xl font-bold">Product</h2>
                         <p className="text-sm mb-4">Check your store product details. You can add, edit, and update.</p>
 
-                        <div className="grid grid-cols-1 gap-6">
+                        <div className="grid grid-cols-1 gap-0">
                             {/* Product Category Navigation */}
-                            <div className="border rounded-lg p-6">
+                            <div className="p-6 border bg-white border-gray-6 rounded-[10px] shadow-md mb-6">
                                 <h3 className="text-xl font-bold mb-4">Product Category Navigation</h3>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center">
@@ -29,12 +51,18 @@ export default function ProductPage() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end mt-4">
-                                    <button className="text-white font-bold py-2 px-4 rounded" style={{ backgroundColor: '#a4be6a' }}>See Details</button>
+                                    <button
+                                        onClick={handleCategoryDetails}
+                                        className="text-white font-bold py-2 px-4 rounded"
+                                        style={{ backgroundColor: '#a4be6a' }}
+                                    >
+                                        See Details
+                                    </button>
                                 </div>
                             </div>
 
                             {/* Product Navigation */}
-                            <div className="border rounded-lg p-6">
+                            <div className="p-6 border bg-white border-gray-6 rounded-[10px] shadow-md mb-6">
                                 <h3 className="text-xl font-bold mb-4">Product Navigation</h3>
                                 <div className="grid grid-cols-3 gap-4">
                                     <div className="text-center">
@@ -54,7 +82,13 @@ export default function ProductPage() {
                                     </div>
                                 </div>
                                 <div className="flex justify-end mt-4">
-                                    <button className="text-white font-bold py-2 px-4 rounded" style={{ backgroundColor: '#a4be6a' }}>See Details</button>
+                                    <button
+                                        onClick={handleProductDetails}
+                                        className="text-white font-bold py-2 px-4 rounded"
+                                        style={{ backgroundColor: '#a4be6a' }}
+                                    >
+                                        See Details
+                                    </button>
                                 </div>
                             </div>
                         </div>

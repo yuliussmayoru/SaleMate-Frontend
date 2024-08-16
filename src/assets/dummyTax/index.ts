@@ -1,6 +1,6 @@
 export interface Tax {
     tax_id: number,
-    tax_type: TaxType,
+    tax_type: string,
     tax_name: string,
     tax_value: number,
     tax_status: boolean,

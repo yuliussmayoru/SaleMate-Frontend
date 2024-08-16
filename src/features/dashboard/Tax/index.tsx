@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, DeleteButton } from "@/src/features";
-import { Tax } from "@/src/assets";
+import { Tax, TaxType } from "@/src/assets";
 import { Modal } from "@/src/features";
 import ToggleSwitch from "@/src/features/base/toggleSwitch";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function TaxPage() {
+    const [allTaxes, setAllTaxes] = useState<Tax[]>([]);
     const [taxes, setTaxes] = useState<Tax[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -15,17 +16,17 @@ export default function TaxPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: 0,
-        type: '',
-        name: '',
-        value: 0,
-        status: true,
+        tax_id: 0,
+        tax_type: '',
+        tax_name: '',
+        tax_value: 0,
+        tax_status: true,
     });
     const [errors, setErrors] = useState({
-        type: '',
-        name: '',
-        value: '',
-        status: '',
+        tax_type: '',
+        tax_name: '',
+        tax_value: '',
+        // tax_status: '',
     });
     const [selectedTax, setSelectedTax] = useState<Tax | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
@@ -33,8 +34,9 @@ export default function TaxPage() {
     useEffect(() => {
         const fetchTaxes = async () => {
             try {
-                const response = await axiosInstance.get('/tax'); // Pastikan endpoint sesuai
-                const taxData = response.data;
+                const response = await axiosInstance.get('/tax'); 
+                const taxData = response.data.data;
+                setAllTaxes(taxData);
                 setTotalPages(Math.ceil(taxData.length / ITEMS_PER_PAGE));
                 setTaxes(taxData.slice(0, ITEMS_PER_PAGE)); // Mengambil 10 data pertama untuk halaman pertama
             } catch (error) {
@@ -48,7 +50,7 @@ export default function TaxPage() {
     const fetchTaxes = async () => {
         try {
             const response = await axiosInstance.get('/tax');
-            const taxData = response.data;
+            const taxData = response.data.data;
             setTotalPages(Math.ceil(taxData.length / ITEMS_PER_PAGE));
             const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIdx = startIdx + ITEMS_PER_PAGE;
@@ -62,18 +64,20 @@ export default function TaxPage() {
         fetchTaxes();
     }, [currentPage]);
 
+
     // Handle Pop Up Tax
-    const handleModalOpen = (type: string, tax?: Tax) => {
+    const handleModalOpen = (type: any, tax: Tax) => {
         if(type === 'add') {
+            setFormData({ tax_id: 0, tax_name: '', tax_type: '', tax_value: 0, tax_status: true });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && tax) {
             setSelectedTax(tax); 
             setFormData({
-                id: tax.tax_id,
-                name: tax.tax_name,
-                type: tax.tax_type,
-                value: tax.tax_value,
-                status: tax.tax_status,
+                tax_id: tax.tax_id,
+                tax_type: tax.tax_type,
+                tax_name: tax.tax_name,
+                tax_value: tax.tax_value,
+                tax_status: tax.tax_status,
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && tax) {
@@ -94,22 +98,30 @@ export default function TaxPage() {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value
+            [name]: name === 'tax_value' ? Number(value) : value,
         }));
+    };
+
+    const refreshTaxes = async () => {
+        try {
+            const response = await axiosInstance.get('/tax');
+            const taxData = response.data.data;
+            setAllTaxes(taxData);
+            setTaxes(taxData.slice(0, ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error refreshing taxes', error);
+        }
     };
 
     const handleConfirmAdd = async () => {
         if (!validateForm()) return;
 
         try {
-            const newTax =  {
-                tax_name: formData.name,
-                tax_type: formData.type,
-                tax_value: formData.value,
-                tax_status: formData.status
-            };
-            // Setelah berhasil menambah data, fetch ulang data pajak
-            await axiosInstance.post('/tax', newTax);
+            const { tax_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await axiosInstance.post(`/tax`, dataToSend);
+            await refreshTaxes();
+            handleModalClose();
             setIsAddModalOpen(false);
             setIsSecondModalOpen(true);
         } catch (error) {
@@ -122,16 +134,12 @@ export default function TaxPage() {
         if (!validateForm()) return;
 
         try {
+            const { tax_id, ...dataToSend } = formData;
             if (selectedTax) {
-                const updatedTax = {
-                    tax_name: formData.name,
-                    tax_type: formData.type,
-                    tax_value: formData.value,
-                    tax_status: formData.status,
-                };
-                await axiosInstance.patch(`/tax/${selectedTax.tax_id}`, updatedTax);
+                await axiosInstance.patch(`/tax/${selectedTax.tax_id}`, dataToSend);
+                await refreshTaxes();
                 handleModalClose();
-                fetchTaxes();
+                // fetchTaxes();
             };
         } catch (error) {
             console.error('Error updating tax', error);
@@ -143,8 +151,9 @@ export default function TaxPage() {
         try {
             if (selectedTax) {
                 await axiosInstance.delete(`/tax/${selectedTax.tax_id}`);
-                fetchTaxes(); // Fetch ulang data setelah delete
+                await refreshTaxes();
                 handleModalClose();
+                // fetchTaxes(); 
             }
         } catch (error) {
             console.error('Error deleting tax', error);
@@ -161,28 +170,28 @@ export default function TaxPage() {
     const validateForm = () => {
         let isValid = true;
         const newErrors = {
-            type: '',
-            name: '',
-            value: '',
-            status: '',
+            tax_type: '',
+            tax_name: '',
+            tax_value: '',
+            // tax_status: '',
         };
     
-        if (!formData.type) {
-            newErrors.type = 'Type is required';
+        if (!formData.tax_type) {
+            newErrors.tax_type = 'Type is required';
             isValid = false;
         }
-        if (!formData.name) {
-            newErrors.name = 'Name is required';
+        if (!formData.tax_name) {
+            newErrors.tax_name = 'Name is required';
             isValid = false;
         }
-        if (!formData.value) {
-            newErrors.value = 'Tax value is required';
+        if (!formData.tax_value) {
+            newErrors.tax_value = 'Value is required';
             isValid = false;
         }
-        if (!formData.status) {
-            newErrors.status = 'Status is required';
-            isValid = false;
-        }
+        // if (!formData.tax_status) {
+        //     newErrors.tax_status = 'Status is required';
+        //     isValid = false;
+        // }
     
         setErrors(newErrors);
         return isValid;
@@ -198,7 +207,7 @@ export default function TaxPage() {
                         <h2 className="text-xl font-bold">Tax</h2>
                         <p className="text-sm">Check your store taxes, you can add, edit and update</p>
                     </div>
-                    <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Tax</Button>
+                    <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add', taxes[0])}>+ Add Tax</Button>
                 </div>
                 <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
                     <div className="flex justify-between items-center mb-4">
@@ -288,45 +297,44 @@ export default function TaxPage() {
                         <label>Name</label>
                         <input
                             type="text"
-                            name="name"
+                            name="tax_name"
                             placeholder="Enter title name"
-                            value={formData.name}
+                            value={formData.tax_name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                        {errors.tax_name && <p className="text-red-600 text-sm">{errors.tax_name}</p>}
 
                         <label>Type</label>
                         <input
                             type="text"
-                            name="type"
+                            name="tax_type"
                             placeholder="Enter tax type"
-                            value={formData.type}
+                            value={formData.tax_type}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+                        {errors.tax_type && <p className="text-red-600 text-sm">{errors.tax_type}</p>}
 
                         <label>Tax Value (%)</label>
                         <input
                             type="number"
-                            name="value"
+                            name="tax_value"
                             placeholder="Enter tax value"
-                            value={formData.value}
+                            value={formData.tax_value}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.value && <p className="text-red-600 text-sm">{errors.value}</p>}
+                        {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
 
                         <div className="flex space-x-16">
                             <ToggleSwitch
-                                checked={formData.status}
-                                onChange={() => setFormData({ ...formData, status: !formData.status })}
+                                checked={formData.tax_status}
+                                onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
                                 label="Status"
 
                             />
                         </div>
-                        {errors.status && <p className="text-red-600 text-sm">{errors.status}</p>}
                     </form>
                     <div className="flex justify-between w-full mt-4 gap-2">
                         <CancelButton
@@ -361,28 +369,28 @@ export default function TaxPage() {
                                 <h2 className="w-1/4 font-bold text-gray-3">Tax Id</h2>
                                 <span>:</span>
                                 {/* CHANGE INTO TAX ID LATER */}
-                                <p>{formData.id}</p> 
+                                <p>{formData.tax_id}</p> 
                             </div>
 
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Name</h2>
                                 <span>:</span>
-                                <p>{formData.name}</p> 
+                                <p>{formData.tax_name}</p> 
                             </div>
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Type</h2>
                                 <span>:</span>
-                                <p>{formData.type}</p> 
+                                <p>{formData.tax_type}</p> 
                             </div>
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Value</h2>
                                 <span>:</span>
-                                <p>{formData.value}</p> 
+                                <p>{formData.tax_value}</p> 
                             </div>
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Status</h2>
                                 <span>:</span>
-                                <p>{formData.status}</p> 
+                                <p>{formData.tax_status}</p> 
                             </div>
                         </div>
                         <Button
@@ -402,45 +410,44 @@ export default function TaxPage() {
                         <label>Name</label>
                         <input
                             type="text"
-                            name="name"
+                            name="tax_name"
                             placeholder="Enter title name"
-                            value={formData.name}
+                            value={formData.tax_name}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                        {errors.tax_name && <p className="text-red-600 text-sm">{errors.tax_name}</p>}
 
                         <label>Type</label>
                         <input
                             type="text"
-                            name="type"
+                            name="tax_type"
                             placeholder="Enter tax type"
-                            value={formData.type}
+                            value={formData.tax_type}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+                        {errors.tax_type && <p className="text-red-600 text-sm">{errors.tax_type}</p>}
 
                         <label>Tax Value (%)</label>
                         <input
                             type="number"
-                            name="value"
+                            name="tax_value"
                             placeholder="Enter tax value"
-                            value={formData.value}
+                            value={formData.tax_value}
                             onChange={handleInputChange}
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         />
-                        {errors.value && <p className="text-red-600 text-sm">{errors.value}</p>}
+                        {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
 
                         <div className="flex space-x-16">
                             <ToggleSwitch
-                                checked={formData.status}
-                                onChange={() => setFormData({ ...formData, status: !formData.status })}
+                                checked={formData.tax_status}
+                                onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
                                 label="Status"
 
                             />
                         </div>
-                        {errors.status && <p className="text-red-600 text-sm">{errors.status}</p>}
                     </form>
                     <div className="flex justify-between w-full mt-4 gap-2">
                         <Button
