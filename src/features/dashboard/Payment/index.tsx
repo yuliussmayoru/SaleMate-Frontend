@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { axiosInstance } from "@/src/api/axiosClient";
 import { Button, CancelButton, Card, DeleteButton, Modal } from "@/src/features";
 import { Payment } from "@/src/assets";
+import Loader from "../../base/Loader";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -19,19 +20,33 @@ export default function PaymentPage() {
         payment_type: '',
         payment_name: '',
     });
+    const [errors, setErrors] = useState({
+        payment_type: '',
+        payment_name: '',
+    });
     // const [showPassword, setShowPassword] = useState(false);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchPayments = async () => {
             try {
+                setLoading(true)
+                console.log("Loading started");
+
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 const response = await axiosInstance.get('/payments'); 
                 const staffData = response.data;
+
                 setAllPayments(staffData);
                 setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
                 setPayments(staffData.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching payments', error);
+            } finally {
+                setLoading(false);
+                console.log("Loading finished");
             }
         };
 
@@ -44,7 +59,6 @@ export default function PaymentPage() {
         setPayments(allPayments.slice(startIdx, endIdx));
     }, [currentPage, allPayments]);
 
-    
     // HANDLE POP UP ADD DATA
     const handleModalOpen = (type: string, payment?: Payment) => {
         if (type === 'add') {
@@ -73,38 +87,46 @@ export default function PaymentPage() {
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
+        setFormData(({
+            ...formData,
             [name]: value
         }));
+        console.log(formData);
     };
 
-    // const togglePasswordVisibility = () => {
-    //     setShowPassword(!showPassword);
-    // };
+    const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+        console.log("Type selected in handler:", value, formData);
+    }
 
-    const refreshStaffs = async () => {
+    const refreshPayments = async () => {
         try {
             const response = await axiosInstance.get('/payments');
             const staffData = response.data;
             setAllPayments(staffData);
             setPayments(staffData.slice(0, ITEMS_PER_PAGE));
         } catch (error) {
-            console.error('Error refreshing staffs', error);
+            console.error('Error refreshing payments', error);
         }
     };
     
     const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
         try {
             const { payment_id, ...dataToSend } = formData;
             console.log('Sending data:', dataToSend);
             await axiosInstance.post(`/payments`, dataToSend);
-            await refreshStaffs();
+            await refreshPayments();
             handleModalClose();
             setIsAddModalOpen(false);
             setIsSecondModalOpen(true);
         } catch (error) {
-            console.error('Error adding staff', error);
+            console.error('Error adding payment', error);
         }
     };
 
@@ -113,11 +135,11 @@ export default function PaymentPage() {
             const { payment_id, ...dataToSend } = formData;
             if (SelectedPayment) {
                 await axiosInstance.put(`/payments/${SelectedPayment.payment_id}`, dataToSend);
-                await refreshStaffs();
+                await refreshPayments();
                 handleModalClose();
             }
         } catch (error) {
-            console.error('Error editing staff', error);
+            console.error('Error editing payment', error);
         }
     };
 
@@ -125,11 +147,11 @@ export default function PaymentPage() {
         try {
             if (SelectedPayment) {
                 await axiosInstance.delete(`/payments/${SelectedPayment.payment_id}`);
-                await refreshStaffs();
+                await refreshPayments();
                 handleModalClose();
             }
         } catch (error) {
-            console.error('Error deleting staff', error);
+            console.error('Error deleting payment', error);
         }
     };
     
@@ -142,6 +164,30 @@ export default function PaymentPage() {
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
     
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            payment_type: '',
+            payment_name: '',
+        };
+    
+        if (!formData.payment_type) {
+            newErrors.payment_type = 'Payment type is required';
+            isValid = false;
+        }
+        if (!formData.payment_name) {
+            newErrors.payment_name = 'Payment Name is required';
+            isValid = false;
+        }
+        // if (!formData.tax_status) {
+        //     newErrors.tax_status = 'Status is required';
+        //     isValid = false;
+        // }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
+
     return (
         <div className="w-full flex flex-col items-center">
             <div className="w-full">
@@ -187,6 +233,10 @@ export default function PaymentPage() {
                         
                     </div>
 
+                    {loading ? (
+                        <Loader />
+                    ) : (
+
                     <div>
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
@@ -219,6 +269,8 @@ export default function PaymentPage() {
                         </table>
                     </div>
 
+                    )}
+
                 </Card>
             </div>
 
@@ -229,21 +281,34 @@ export default function PaymentPage() {
                     <span className="text-sm text-gray-3">Input all necesary data</span>
                 </div>
                 <form className="w-full text-center mb-6">
+                    {/* {errors.payment_type && <p className="text-red-600 text-sm">{errors.payment_type}</p>} */}
                     <label>Type</label>
-                    <input
+                    <select
+                        name="payment_type"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        value={formData.payment_type}                    
+                        onChange={handleTypeChange}
+                        >
+                        <option value="">Select Type</option>
+                        <option value="Bank">Bank</option>
+                        <option value="Cash">Cash</option>
+                        <option value="EPayment">EPayment</option>
+                    </select>
+                    {/* <input
                         type="text"
                         name="payment_type"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        placeholder="e.g Online Delivery"
+                        placeholder="e.g Bank, Cash, EPayment"
                         value={formData.payment_type}
                         onChange={handleInputChange}
-                    />
+                    /> */}
                     <label>Name</label>
+                    {errors.payment_name && <p className="text-red-600 text-sm">{errors.payment_name}</p>}
                     <input
                         type="email"
                         name="payment_name"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        placeholder="e.g Gojek, Grab, etc"
+                        placeholder="e.g BCA, BRI, BNI"
                         value={formData.payment_name}
                         onChange={handleInputChange}
                     />
@@ -273,19 +338,19 @@ export default function PaymentPage() {
                                 strokeLinecap="round" 
                                 strokeLinejoin="round"/>
                         </svg>
-                        <h2 className="text-2xl font-bold">Driver Partner Added</h2>
+                        <h2 className="text-2xl font-bold">Payment Added</h2>
                     </div>
                     <span className="text-sm text-gray-3">You can update or delete this data later</span>
                 </div>
                 <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
                     <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/4 font-bold text-gray-3">Partner Id</h2>
+                        <h2 className="w-1/3 font-bold text-gray-3">Payment Type</h2>
                         <span>:</span>
-                        <p>{formData.payment_id}</p> 
+                        <p>{formData.payment_type}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/3 font-bold text-gray-3">Full Name</h2>
+                        <h2 className="w-1/3 font-bold text-gray-3">Payment Name</h2>
                         <span>:</span>
                         <p>{formData.payment_name}</p> 
                     </div>
@@ -305,14 +370,25 @@ export default function PaymentPage() {
                     </div>
                     <form className="w-full text-center mb-6">
                         <label>Type</label>
-                        <input
+                        <select
+                            name="payment_type"
+                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                            value={formData.payment_type}                    
+                            onChange={handleTypeChange}
+                            >
+                            <option value="">Select Type</option>
+                            <option value="Bank">Bank</option>
+                            <option value="Cash">Cash</option>
+                            <option value="EPayment">EPayment</option>
+                        </select>
+                        {/* <input
                             type="text"
                             name="type"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter driver partner type"
                             value={formData.payment_type}
                             onChange={handleInputChange}
-                        />
+                        /> */}
                         <label>Name</label>
                         <input
                             type="text"

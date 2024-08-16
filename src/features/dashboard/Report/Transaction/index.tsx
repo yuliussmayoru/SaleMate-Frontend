@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/src/api/axiosClient";
-import { Transaction, transactions } from "@/src/assets";
+import { Transaction } from "@/src/assets";
 import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
@@ -41,7 +41,6 @@ export default function TransactionPage() {
     }, [currentPage, allTransactions]);
 
     const filtersConfig = [
-        { name: 'storeId', label: 'Store', type: 'select' as const, options: ['Store 1', 'Store 2'] },
         { name: 'receipt', label: 'Receipt', type: 'select' as const, options: ['001', '002'] },
         { name: 'from', label: 'From', type: 'date' as const },
         { name: 'to', label: 'To', type: 'date' as const },
@@ -54,7 +53,6 @@ export default function TransactionPage() {
             const toDate = filters.to ? new Date(filters.to) : null;
             
             return (
-                (filters.storeId ? transaction.storeId.includes(filters.storeId) : true) &&
                 (filters.receipt ? transaction.receipt.includes(filters.receipt) : true) &&
                 (fromDate ? transactionDate >= fromDate : true) &&
                 (toDate ? transactionDate <= toDate : true)
