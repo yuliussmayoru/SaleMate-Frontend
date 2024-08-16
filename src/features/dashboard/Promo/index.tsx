@@ -8,6 +8,7 @@ import { Modal } from "@/src/features";
 const ITEMS_PER_PAGE = 10;
 
 export default function PromoPage() {
+    const [AllPromos, setAllPromos] =useState<Promo[]>([]);
     const [promos, setPromos] = useState<Promo[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -15,33 +16,34 @@ export default function PromoPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
-        id: 0,
-        name: '',
-        type: '',
-        promo: 0,
-        start: '',
-        end: '',
+        promo_id: 0,
+        promo_name: '',
+        promo_type: '',
+        promo_value: 0,
+        start_date: '',
+        end_date: '',
     });
     const [errors, setErrors] = useState({
-        name: '',
-        type: '',
-        promo: '',
-        start: '',
-        end: '',
+        promo_name: '',
+        promo_type: '',
+        promo_value: '',
+        start_date: '',
+        end_date: '',
     });
     const [selectedPromo, setSelectedPromo] = useState<Promo | null>(null);
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchPromos = async () => {
-        try {
-            const response = await axiosInstance.get('/promos');
-            const promoData = response.data;
-            setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
-            setPromos(promoData.slice(0, ITEMS_PER_PAGE));
-        } catch (error) {
-            console.error('Error fetching promos', error);
-        }
+            try {
+                const response = await axiosInstance.get('/promos');
+                const promoData = response.data.data;
+                setAllPromos(promoData)
+                setTotalPages(Math.ceil(promoData.length / ITEMS_PER_PAGE));
+                setPromos(promoData.slice(0, ITEMS_PER_PAGE));
+            } catch (error) {
+                console.error('Error fetching promos', error);
+            }
         };
 
         fetchPromos();
@@ -51,7 +53,7 @@ export default function PromoPage() {
     const fetchPagePromos = async () => {
         try {
             const response = await axiosInstance.get('/promos');
-            const promoData = response.data;
+            const promoData = response.data.data;
             const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIdx = startIdx + ITEMS_PER_PAGE;
             setPromos(promoData.slice(startIdx, endIdx));
@@ -63,18 +65,19 @@ export default function PromoPage() {
     fetchPagePromos();
     }, [currentPage]);
 
-    const handleModalOpen = (type: string, promo?: Promo) => {
+    const handleModalOpen = (type: any, promo: Promo) => {
     if (type === 'add') {
+        setFormData({ promo_id: 0, promo_name: '', promo_type: '', promo_value: 0, start_date: '', end_date: '' });
         setIsAddModalOpen(true);
     } else if (type === 'edit' && promo) {
         setSelectedPromo(promo);
         setFormData({
-            id: promo.promo_id,
-            name: promo.promo_name,
-            type: promo.promo_type,
-            promo: promo.promo_value,
-            start: promo.start_date,
-            end: promo.end_date,
+            promo_id: promo.promo_id,
+            promo_name: promo.promo_name,
+            promo_type: promo.promo_type,
+            promo_value: promo.promo_value,
+            start_date: promo.start_date,
+            end_date: promo.end_date,
         });
         setIsEditModalOpen(true);
     } else if (type === 'delete' && promo) {
@@ -101,26 +104,32 @@ export default function PromoPage() {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: name === 'promo_value' ? Number(value) : value,
         }));
+    };
+
+    const refreshPromos = async () => {
+        try {
+            const response = await axiosInstance.get('/promos');
+            const promoData = response.data.data;
+            setAllPromos(promoData);
+            setPromos(promoData.slice(0, ITEMS_PER_PAGE));
+        } catch (error) {
+            console.error('Error refreshing taxes', error);
+        }
     };
 
     const handleConfirmAdd = async () => {
         if (!validateForm()) return;
 
         try {
-            await axiosInstance.post('/promos', {
-                promo_name: formData.name,
-                promo_type: formData.type,
-                promo_value: formData.promo,
-                start_date: formData.start,
-                end_date: formData.end,
-            });
+            const { promo_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await axiosInstance.post(`/promos`, dataToSend);
+            await refreshPromos();
             handleModalClose();
+            setIsAddModalOpen(false)
             setIsSecondModalOpen(true);
-            const response = await axiosInstance.get('/promos');
-            setPromos(response.data);
-            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
         } catch (error) {
             console.error('Error adding promo', error);
         }
@@ -131,31 +140,27 @@ export default function PromoPage() {
 
         if (selectedPromo) {
             try {
-            await axiosInstance.patch(`/promos/${selectedPromo.promo_id}`, {
-                promo_name: formData.name,
-                promo_type: formData.type,
-                promo_value: formData.promo,
-                start_date: formData.start,
-                end_date: formData.end,
-            });
-            handleModalClose();
-            const response = await axiosInstance.get('/promos');
-            setPromos(response.data);
-            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
-        } catch (error) {
-            console.error('Error editing promo', error);
+                const { promo_id, ...dataToSend } = formData;
+                if (selectedPromo) {
+                    await axiosInstance.patch(`/promos/${selectedPromo.promo_id}`, dataToSend);
+                    await refreshPromos();
+                    handleModalClose();
+                };
+            } catch (error) {
+                console.error('Error editing promo', error);
+                }
             }
-        }
-    };
+        };
 
     const handleConfirmDelete = async () => {
     if (selectedPromo) {
         try {
-            await axiosInstance.delete(`/promos/${selectedPromo.promo_id}`);
-            handleModalClose();
-            const response = await axiosInstance.get('/promos');
-            setPromos(response.data);
-            setTotalPages(Math.ceil(response.data.length / ITEMS_PER_PAGE));
+            if (selectedPromo) {
+                await axiosInstance.delete(`/promos/${selectedPromo.promo_id}`);
+                await refreshPromos();
+                handleModalClose();
+                // fetchTaxes(); 
+            }
         } catch (error) {
             console.error('Error deleting promo', error);
         }
@@ -165,31 +170,31 @@ export default function PromoPage() {
     const validateForm = () => {
         let isValid = true;
         const newErrors = {
-            name: '',
-            type: '',
-            promo: '',
-            start: '',
-            end: '',
+            promo_name: '',
+            promo_type: '',
+            promo_value: '',
+            start_date: '',
+            end_date: '',
         };
     
-        if (!formData.name) {
-            newErrors.name = 'Name is required';
+        if (!formData.promo_name) {
+            newErrors.promo_name = 'Name is required';
             isValid = false;
         }
-        if (!formData.type) {
-            newErrors.type = 'Type is required';
+        if (!formData.promo_type) {
+            newErrors.promo_type = 'Type is required';
             isValid = false;
         }
-        if (!formData.promo) {
-            newErrors.promo = 'Promo value is required';
+        if (!formData.promo_value) {
+            newErrors.promo_value = 'Promo value is required';
             isValid = false;
         }
-        if (!formData.start) {
-            newErrors.start = 'Start date is required';
+        if (!formData.start_date) {
+            newErrors.start_date = 'Start date is required';
             isValid = false;
         }
-        if (!formData.end) {
-            newErrors.end = 'End date is required';
+        if (!formData.end_date) {
+            newErrors.end_date = 'End date is required';
             isValid = false;
         }
     
@@ -209,7 +214,7 @@ export default function PromoPage() {
                 <h2 className="text-xl font-bold">Promo</h2>
                 <p className="text-sm">Check your promo details, you can add, edit and delete</p>
               </div>
-              <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add')}>+ Add Promo</Button>
+              <Button className="bg-orange-2 h-full w-48 text-white rounded" onClick={() => handleModalOpen('add', promos[0])}>+ Add Promo</Button>
             </div>
             <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
               <div className="flex justify-between items-center mb-4">
@@ -292,57 +297,57 @@ export default function PromoPage() {
                     <label>Name</label>
                     <input
                         type="text"
-                        name="name"
+                        name="promo_name"
                         placeholder="Enter promo name"
-                        value={formData.name}
+                        value={formData.promo_name}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+                    {errors.promo_name && <p className="text-red-600 text-sm">{errors.promo_name}</p>}
 
                     <label>Type</label>
                     <input
                         type="text"
-                        name="type"
+                        name="promo_type"
                         placeholder="Enter promo type"
-                        value={formData.type}
+                        value={formData.promo_type}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.type && <p className="text-red-600 text-sm">{errors.type}</p>}
+                    {errors.promo_type && <p className="text-red-600 text-sm">{errors.promo_type}</p>}
 
                     <label>Promo</label>
                     <input
                         type="number"
-                        name="promo"
+                        name="promo_value"
                         placeholder="Enter promo value"
-                        value={formData.promo}
+                        value={formData.promo_value}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.promo && <p className="text-red-600">{errors.promo}</p>}
+                    {errors.promo_value && <p className="text-red-600">{errors.promo_value}</p>}
 
                     <label>Start</label>
                     <input
                         type="text"
-                        name="start"
+                        name="start_date"
                         placeholder="Enter start date"
-                        value={formData.start}
+                        value={formData.start_date}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.start && <p className="text-red-600">{errors.start}</p>}
+                    {errors.start_date && <p className="text-red-600">{errors.start_date}</p>}
 
                     <label>End</label>
                     <input
                         type="text"
-                        name="end"
+                        name="end_date"
                         placeholder="Enter end date"
-                        value={formData.end}
+                        value={formData.end_date}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.end && <p className="text-red-600">{errors.end}</p>}
+                    {errors.end_date && <p className="text-red-600">{errors.end_date}</p>}
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton
@@ -377,33 +382,33 @@ export default function PromoPage() {
                         <h2 className="w-1/4 font-bold text-gray-3">Promo Id</h2>
                         <span>:</span>
                         {/* CHANGE INTO PROMO ID LATER */}
-                        <p>{formData.id}</p> 
+                        <p>{formData.promo_id}</p> 
                     </div>
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Name</h2>
                         <span>:</span>
-                        <p>{formData.name}</p> 
+                        <p>{formData.promo_name}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Type</h2>
                         <span>:</span>
-                        <p>{formData.type}</p> 
+                        <p>{formData.promo_type}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Promo</h2>
                         <span>:</span>
-                        <p>{formData.promo}</p> 
+                        <p>{formData.promo_value}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Start</h2>
                         <span>:</span>
-                        <p>{formData.start}</p> 
+                        <p>{formData.start_date}</p> 
                     </div>
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">End</h2>
                         <span>:</span>
-                        <p>{formData.end}</p> 
+                        <p>{formData.end_date}</p> 
                     </div>
                 </div>
                 <Button
@@ -423,45 +428,45 @@ export default function PromoPage() {
                     <label>Name</label>
                     <input
                         type="text"
-                        name="name"
+                        name="promo_name"
                         placeholder="Enter promo name"
-                        value={formData.name}
+                        value={formData.promo_name}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
                     <label>Type</label>
                     <input
                         type="text"
-                        name="type"
+                        name="promo_type"
                         placeholder="Enter promo type"
-                        value={formData.type}
+                        value={formData.promo_type}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
                     <label>Promo</label>
                     <input
                         type="text"
-                        name="promo"
+                        name="promo_value"
                         placeholder="Enter promo value"
-                        value={formData.promo}
+                        value={formData.promo_value}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
                     <label>Start</label>
                     <input
                         type="text"
-                        name="start"
+                        name="start_date"
                         placeholder="Enter start date"
-                        value={formData.start}
+                        value={formData.start_date}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
                     <label>End</label>
                     <input
                         type="text"
-                        name="end"
+                        name="end_date"
                         placeholder="Enter end date"
-                        value={formData.end}
+                        value={formData.end_date}
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
