@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/src/api/axiosClient";
-import { Transaction } from "@/src/assets";
+import { Transaction, transactions as localTransactions } from "@/src/assets";
 import { Card, FilterBar } from "@/src/features";
 import { useEffect, useState } from "react";
 
@@ -16,14 +16,15 @@ export default function TransactionPage() {
         const fetchTransactions = async () => {
             try {
                 const response = await axiosInstance.get('/transactions');
-                const staffData = response.data.data;
-                setAllTransactions(staffData);
-                setTotalPages(Math.ceil(staffData.length / ITEMS_PER_PAGE));
-                setTransactions(staffData.slice(0, ITEMS_PER_PAGE));
+                const serverTransactions = response.data.data;
+                setAllTransactions(serverTransactions);
+                setTotalPages(Math.ceil(serverTransactions.length / ITEMS_PER_PAGE));
+                setTransactions(serverTransactions.slice(0, ITEMS_PER_PAGE));
             } catch (error) {
                 console.error('Error fetching staffs', error);
-                setTotalPages(Math.ceil(transactions.length / ITEMS_PER_PAGE));
-                setTransactions(transactions.slice(0, ITEMS_PER_PAGE));
+                setAllTransactions(localTransactions);
+                setTotalPages(Math.ceil(localTransactions.length / ITEMS_PER_PAGE));
+                setTransactions(localTransactions.slice(0, ITEMS_PER_PAGE));
             }
         };
 
