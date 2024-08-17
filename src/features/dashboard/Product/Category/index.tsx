@@ -21,10 +21,8 @@ export default function CategoryPage() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         product_category_id: 0,
-        store_name: '',  
         store_id: 0,
         category_name: '',
-        tax_value: 0,
     });
     
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
@@ -82,16 +80,14 @@ export default function CategoryPage() {
     // HANDLE POP UP ADD DATA
     const handleModalOpen = (type: string, productCategory?: ProductCategory) => {
         if (type === 'add') {
-            setFormData({ product_category_id: 0, store_name: '', store_id: 0, category_name: '', tax_value: 0 });
+            setFormData({ product_category_id: 0, store_id: 0, category_name: '' });
             setIsAddModalOpen(true);
         } else if (type === 'edit' && productCategory) {
             setSelectedProductCategory(productCategory);
             setFormData({
                 product_category_id: productCategory.product_category_id,
-                store_name: productCategory.store_name,
                 store_id: productCategory.store_id,
                 category_name: productCategory.category_name,
-                tax_value: productCategory.tax_value,
             });
             setIsEditModalOpen(true);
         } else if (type === 'delete' && productCategory) {
@@ -246,20 +242,16 @@ export default function CategoryPage() {
                         <table className="min-w-full table-fixed text-center">
                             <thead className=" text-gray-4">
                                 <tr>
-                                    <th className="">Store</th>
                                     <th className="">Store Id</th>
                                     <th className="">Category</th>
-                                    <th className="">Tax</th>
                                     <th className="w-10">Action</th>
                                 </tr>
                             </thead>
                             <tbody className=" text-gray-1">
                                 {category.map((productCategory) => (
                                     <tr key={productCategory.product_category_id} className="even:bg-gray-6">
-                                        <td className="">{productCategory.store_name}</td>
                                         <td className="">{productCategory.store_id}</td>
                                         <td className="">{productCategory.category_name}</td>
-                                        <td className="">{productCategory.tax_value}%</td>
                                         <td className="py-4 px-4 flex justify-center items-center gap-1">
                                             <button className="w-10 bg-gray-200 p-1 rounded hover:bg-gray-300 flex justify-center" onClick={() => handleModalOpen('edit', productCategory)}>
                                                 <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -290,15 +282,6 @@ export default function CategoryPage() {
                     <span className="text-sm text-gray-3">Input all necesary data</span>
                 </div>
                 <form className="w-full text-center mb-6">
-                    <label>Store</label>
-                    <input
-                        type="text"
-                        name="store"
-                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        placeholder="e.g Dago, Bandung"
-                        value={formData.store_name}
-                        onChange={handleInputChange}
-                    />
                     <label>Store id</label>
                     <input
                         type="text"
@@ -315,15 +298,6 @@ export default function CategoryPage() {
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g. Activewears"
                         value={formData.category_name} 
-                        onChange={handleInputChange}
-                    />
-                    <label>Tax</label>
-                    <input
-                        type="number"
-                        name="tax"
-                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        placeholder="e.g 1"
-                        value={formData.tax_value}
                         onChange={handleInputChange}
                     />
                 </form>
@@ -361,12 +335,6 @@ export default function CategoryPage() {
                         <span>:</span>
                         <p>{formData.store_id}</p> 
                     </div>
-
-                    <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/3 font-bold text-gray-3">Store</h2>
-                        <span>:</span>
-                        <p>{formData.store_name}</p> 
-                    </div>
                     
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Category</h2>
@@ -374,11 +342,6 @@ export default function CategoryPage() {
                         <p>{formData.category_name}</p> 
                     </div>
 
-                    <div className="flex flex-row gap-4 justify-start">
-                        <h2 className="w-1/4 font-bold text-gray-3">Tax</h2>
-                        <span>:</span>
-                        <p>{formData.tax_value}%</p> 
-                    </div>
                 </div>
                 <Button
                     onClick={handleModalClose}
@@ -394,15 +357,6 @@ export default function CategoryPage() {
                         <span className="text-sm text-gray-3">Edit necesary data</span>
                     </div>
                     <form className="w-full text-center mb-6">
-                        <label>Store</label>
-                        <input
-                            type="text"
-                            name="type"
-                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                            placeholder="Enter store name"
-                            value={formData.store_name}
-                            onChange={handleInputChange}
-                        />
                         <label>Store id</label>
                         <input
                             type="text"
@@ -421,15 +375,6 @@ export default function CategoryPage() {
                             value={formData.category_name}
                             onChange={handleInputChange}
                         />  
-                        <label>Tax</label>
-                        <input
-                            type="number"
-                            name="benefit"
-                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                            placeholder="Enter tax"
-                            value={formData.tax_value}
-                            onChange={handleInputChange}
-                        />
                     </form>
                     <Button
                         onClick={handleConfirmEdit}

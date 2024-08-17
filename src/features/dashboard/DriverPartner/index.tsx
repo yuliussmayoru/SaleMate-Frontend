@@ -22,6 +22,7 @@ export default function DriverPartnerPage() {
         benefit: 0,
     });
     const [errors, setErrors] = useState({
+        driver_partner_id: '',
         partner_name: '',
         benefit: '',
     });
@@ -113,10 +114,10 @@ export default function DriverPartnerPage() {
 
         try {
             
-            const { store_id, ...dataToSend } = formData;
+            const { driver_partner_id, ...dataToSend } = formData;
             console.log('Sending data:', dataToSend);
 
-            await axiosInstance.post(`/driver-partner/${selectedDriverPartner?.store_id}`, dataToSend);
+            await axiosInstance.post(`/driver-partner/${selectedDriverPartner?.driver_partner_id}`, dataToSend);
             await refreshDriverPartners();
             handleModalClose();
             setIsAddModalOpen(false);
@@ -163,14 +164,21 @@ export default function DriverPartnerPage() {
     const validateForm = () => {
         let isValid = true;
         const newErrors = {
+            driver_partner_id: '',
             partner_name: '',
             benefit: ''  
         };
+
+        if (!formData.driver_partner_id) {
+            newErrors.driver_partner_id = 'Partner Id number is required';
+            isValid = false;
+        }
     
         if (!formData.partner_name) {
             newErrors.partner_name = 'Driver partner name is required';
             isValid = false;
         }
+
         if (!formData.benefit) {
             newErrors.benefit = 'Benefit is required';
             isValid = false;
@@ -275,6 +283,16 @@ export default function DriverPartnerPage() {
                     <span className="text-sm text-gray-3">Input all necesary data</span>
                 </div>
                 <form className="w-full text-center mb-6">
+                    <label>Partner Id</label>
+                    {errors.driver_partner_id && <p className="text-red-600 text-sm">{errors.driver_partner_id}</p>}
+                    <input
+                        type="number"
+                        name="driver_partner_id"
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                        placeholder="e.g Gojek, Grab, etc"
+                        value={formData.driver_partner_id}
+                        onChange={handleInputChange}
+                    />
                     <label>Name</label>
                     {errors.partner_name && <p className="text-red-600 text-sm">{errors.partner_name}</p>}
                     <input
