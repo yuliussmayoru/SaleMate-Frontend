@@ -4,16 +4,16 @@ import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
 import { Product } from "@/src/assets";
 import Loader from "../../../base/Loader";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 6;
 
 export default function ProductPage() {
     const [allProducts, setAllProducts] = useState<Product[]>([]);
-    const [allCategories, setAllCategories] = useState<Product[]>([]);
-    const [allInventories, setAllInventories] = useState<Product[]>([]);
     const [product, setProduct] = useState<Product[]>([]);
-    const [category, setCategory] = useState<Product[]>([]);
-    const [inventory, setInventory] = useState<Product[]>([]);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [allCategories, setAllCategories] = useState<Product[]>([]);
+    const [category, setCategory] = useState<Product[]>([]);
+    const [allInventories, setAllInventories] = useState<Product[]>([]);
+    const [inventory, setInventory] = useState<Product[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -26,6 +26,10 @@ export default function ProductPage() {
         product_price: 0,
         // qty: 0,
         // note: '',
+    });
+    const [errors, setErrors] = useState({
+        product_name: '',
+        product_price: '',
     });
 
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
@@ -113,25 +117,92 @@ export default function ProductPage() {
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
+        setFormData((formData) => ({
+            ...formData,
             [name]: value
         }));
     };
     
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const refreshProducts = async () => {
+        try {
+            const [productsResponse, categoriesResponse, inventoryResponse] = await Promise.all([
+                axiosInstance.get('/products'),
+                axiosInstance.get('/products/product-category'),
+                axiosInstance.get('/inventory')
+            ]);
+            const productsData = productsResponse.data;
+            const categoriesData = categoriesResponse.data;
+            const inventoriesData = inventoryResponse.data;
+
+            setAllProducts(productsData)
+            setTotalPages(Math.ceil(productsData.length / ITEMS_PER_PAGE));
+            setProduct(productsData.slice(0, ITEMS_PER_PAGE)); 
+
+            setAllCategories(categoriesData)
+            setTotalPages(Math.ceil(categoriesData.length / ITEMS_PER_PAGE));
+            setCategory(categoriesData.slice(0, ITEMS_PER_PAGE)); 
+
+            setAllInventories(inventoriesData)
+            setTotalPages(Math.ceil(inventoriesData.length / ITEMS_PER_PAGE));
+            setInventory(inventoriesData.slice(0, ITEMS_PER_PAGE));
+
+        } catch (error) {
+            console.error('Error refreshing products', error);
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const { product_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await Promise.all([
+                axiosInstance.post('/products', dataToSend),
+                axiosInstance.post('/products/product-category', dataToSend),
+                axiosInstance.post('/inventory', dataToSend)
+            ]);
+            await refreshProducts();
+            handleModalClose();
+            setIsAddModalOpen(false);
+            setIsSecondModalOpen(true);
+        } catch (error) {
+            console.error('Error adding product', error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        // Delete staff logic here
-        handleModalClose();
+    const handleConfirmEdit = async () => {
+        try {
+            const { product_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            if (selectedProduct) {
+                await Promise.all([
+                    axiosInstance.put(`/products/${selectedProduct.product_id}`, dataToSend),
+                    axiosInstance.put('/products/product-category'),
+                    axiosInstance.put('/inventory')
+                ]);
+                await refreshProducts();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error('Error editing product', error);
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const { product_id, ...dataToSend } = formData;
+            console.log('Sending data:', dataToSend);
+            await Promise.all([
+                axiosInstance.delete('/products'),
+                axiosInstance.delete('/products/product-category'),
+                axiosInstance.delete('/inventory')
+            ]);
+            await refreshProducts();
+            handleModalClose();
+        } catch (error) {
+            console.error('Error deleting product', error);
+        }
     };
     
     // HANDLE PAGE AND GENERATE PAGE
@@ -150,6 +221,26 @@ export default function ProductPage() {
     };
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = {
+            product_name: '',
+            product_price: '',
+        };
+    
+        if (!formData.product_name) {
+            newErrors.product_name = 'Product name is required';
+            isValid = false;
+        }
+        if (!formData.product_price) {
+            newErrors.product_price = 'Price is required';
+            isValid = false;
+        }
+    
+        setErrors(newErrors);
+        return isValid;
+    };
 
     return (
         <div className="w-full flex flex-col items-center">
@@ -307,14 +398,14 @@ export default function ProductPage() {
                 <form className="w-full text-center mb-6">
                     <label>Store id</label>
                     <input
-                        type="text"
-                        name="storeid"
+                        type="number"
+                        name="store_id"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g BGD01"
                         value={formData.store_id}
                         onChange={handleInputChange}
                     />
-                    <label>Category</label>
+                    {/* <label>Category</label>
                     <input
                         type="text"
                         name="category"
@@ -322,26 +413,26 @@ export default function ProductPage() {
                         placeholder="e.g Activewears"
                         // value={formData.category}
                         onChange={handleInputChange}
-                    />
+                    /> */}
                     <label>Product Name</label>
                     <input
                         type="text"
-                        name="productName"
+                        name="product_name"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g. Black Hoodie - Female"
-                        // value={formData.productName} 
+                        value={formData.product_name} 
                         onChange={handleInputChange}
                     />
                     <label>Price</label>
                     <input
-                        type="text"
-                        name="price"
+                        type="number"
+                        name="product_price"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         placeholder="e.g 700,000"
-                        // value={formData.price}
+                        value={formData.product_price}
                         onChange={handleInputChange}
                     />
-                    <label>Qty</label>
+                    {/* <label>Qty</label>
                     <input
                         type="number"
                         name="qty"
@@ -349,8 +440,8 @@ export default function ProductPage() {
                         placeholder="e.g 2"
                         // value={formData.qty}
                         onChange={handleInputChange}
-                    />
-                    <label>Note</label>
+                    /> */}
+                    {/* <label>Note</label>
                     <input
                         type="text"
                         name="note"
@@ -358,7 +449,7 @@ export default function ProductPage() {
                         placeholder="e.g All Size"
                         // value={formData.note}
                         onChange={handleInputChange}
-                    />
+                    /> */}
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
                     <CancelButton
@@ -394,11 +485,11 @@ export default function ProductPage() {
                         <span>:</span>
                         <p>{formData.store_id}</p> 
                     </div>                    
-                    <div className="flex flex-row gap-4 justify-start">
+                    {/* <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Category</h2>
                         <span>:</span>
-                        {/* <p>{formData.category}</p>  */}
-                    </div>
+                        <p>{formData.category}</p> 
+                    </div> */}
 
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Product Name</h2>
@@ -408,18 +499,18 @@ export default function ProductPage() {
                     <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Price</h2>
                         <span>:</span>
-                        {/* <p>{formData.price}</p>  */}
+                        <p>{formData.product_price}</p> 
                     </div>
-                    <div className="flex flex-row gap-4 justify-start">
+                    {/* <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Qty</h2>
                         <span>:</span>
-                        {/* <p>{formData.qty}</p>  */}
-                    </div>
-                    <div className="flex flex-row gap-4 justify-start">
+                        <p>{formData.qty}</p> 
+                    </div> */}
+                    {/* <div className="flex flex-row gap-4 justify-start">
                         <h2 className="w-1/4 font-bold text-gray-3">Note</h2>
                         <span>:</span>
-                        {/* <p>{formData.note}</p>  */}
-                    </div>
+                        <p>{formData.note}</p> 
+                    </div> */}
                 </div>
                 <Button
                     onClick={handleModalClose}
@@ -444,15 +535,15 @@ export default function ProductPage() {
                             value={formData.store_id}
                             onChange={handleInputChange}
                         />
-                        <label>Category</label>
+                        {/* <label>Category</label>
                         <input
                             type="text"
                             name="category"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter category"
-                            // value={formData.category}
+                            value={formData.category}
                             onChange={handleInputChange}
-                        />
+                        /> */}
                         <label>Product Name</label>
                         <input
                             type="text"
@@ -468,27 +559,27 @@ export default function ProductPage() {
                             name="price"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter price"
-                            // value={formData.price}
+                            value={formData.product_price}
                             onChange={handleInputChange}
                         />
-                        <label>Qty</label>
+                        {/* <label>Qty</label>
                         <input
                             type="number"
                             name="qty"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter qty"
-                            // value={formData.qty}
+                            value={formData.qty}
                             onChange={handleInputChange}
-                        />
-                        <label>Note</label>
+                        /> */}
+                        {/* <label>Note</label>
                         <input
                             type="text"
                             name="note"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="Enter note"
-                            // value={formData.note}
+                            value={formData.note}
                             onChange={handleInputChange}
-                        />
+                        /> */}
                     </form>
                     <Button
                         onClick={handleConfirmEdit}
