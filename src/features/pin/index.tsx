@@ -1,5 +1,6 @@
 import { Button, Card } from "@/src/features";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -50,7 +51,7 @@ export function PinForm() {
     
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-green-2 p-6">
+        <div className="fixed inset-0 flex items-center justify-center bg-[#A5BE6A] p-6">
             <div className="flex flex-col items-center justify-center rounded-lg p-6 w-full max-w-md">
 
                 <Card className="mb-8 flex items-center justify-center space-x-4">
@@ -110,6 +111,54 @@ export function PinForm() {
                         </div>
                     </form>
                     <Link href="/login" className="text-gray-3 text-sm hover:underline">back to Login Page</Link>
+
+                    <div className="absolute flex flex-row top-0 left-0 -z-50 w-full h-full justify-between p-10">
+                        <div className="pl-10 text-[3rem] text-white font-bold w-[500px]">
+                            <div className="h-full flex flex-col justify-center text-left">
+                                <h1 className="-mt-3">
+                                    Doing business
+                                </h1>
+                                <h1 className="-mt-3">
+                                    is easy thanks to
+                                </h1>
+                                <h1 className="-mt-3">
+                                    Salemate
+                                </h1>
+                                <br />
+                                <h1 className="-mt-3">
+                                    Everything is 
+                                </h1>
+                                <h1 className="-mt-3">
+                                    well organised
+                                </h1>
+                                <h1 className="-mt-3">
+                                    and updated
+                                </h1>
+                                <h1 className="-mt-3">
+                                    quickly!
+                                </h1>
+                            </div>
+                            <div className="absolute text-[20rem] -mt-[55rem] -ml-[3rem] opacity-30">
+                                <h1>“</h1>
+                            </div>
+                        </div>
+                        <div>
+                            <Image
+                                height="100"
+                                width="100"                            
+                                src="/favicon.png"
+                                alt="Salemate Logo"
+                            />
+                        </div>
+                        <div>
+                            <Image
+                                height="903"
+                                width="500"                            
+                                src="/pin-img.png"
+                                alt="Salemate Logo"
+                            />
+                        </div>
+                    </div>
                 </Card>
 
             </div>
