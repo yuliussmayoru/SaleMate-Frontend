@@ -23,7 +23,7 @@ export default function MainProductPage() {
 
     return (
         <div className="w-full flex flex-col items-center">
-            <div className="w-full max-w-screen-xl px-0.5">
+            <div className="w-full px-0.5">
                 <div className="flex justify-between items-center pt-20 mb-4 gap-6">
                     <div className="text-gray-2 w-full">
                         <h2 className="text-xl font-bold">Product</h2>

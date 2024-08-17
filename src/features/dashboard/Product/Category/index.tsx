@@ -4,7 +4,7 @@ import { Button, CancelButton, DeleteButton, Modal } from "@/src/features";
 import { ProductCategory } from "@/src/assets";
 import Loader from "../../../base/Loader";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 6    ;
 
 export default function CategoryPage() {
     const [allCategories, setAllCategories] = useState<ProductCategory[]>([]);
@@ -73,7 +73,7 @@ export default function CategoryPage() {
     useEffect(() => {
         const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIdx = startIdx + ITEMS_PER_PAGE;
-        setCategory(allCategories.slice(startIdx, endIdx)); // Update to fetch the correct slice from your actual data source
+        setCategory(allCategories.slice(startIdx, endIdx));
     }, [currentPage, allCategories]);
 
     
