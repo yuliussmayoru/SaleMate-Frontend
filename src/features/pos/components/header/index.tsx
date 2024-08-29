@@ -6,7 +6,7 @@ export function PosHeader({ cashierName, date, cashierStatus, ...rest}: HeaderPr
     return (
         <div>
             {/* Header */}
-            <header className="bg-[#9A97DA] flex items-center justify-between p-2 text-white">
+            <header className="bg-[#9A97DA] flex items-center justify-between p-2 text-white" {...rest}>
                 <div className="flex">
                     <SaleMateLogo width={80} className="ml-5"/>
                     <div className="text-center m-2"><p>{cashierName}</p></div>

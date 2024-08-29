@@ -1,6 +1,6 @@
-import { ButtonHTMLAttributes } from "react"
+import { HTMLAttributes } from "react"
 
-export type selectedListProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type selectedListProps = HTMLAttributes<HTMLDivElement> & {
     quantity?: number
     productName?: string
     price?: number
