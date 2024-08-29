@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cart, OrderHome, OrderMenu, PosHeader, SelectedOrderLists } from '@/src/features/pos'
+import { Cart, OrderHome, OrderMenu, PosHeader } from '@/src/features/pos'
 import { Button } from '@/src/features';
 
 export function OrderWrapper() {
