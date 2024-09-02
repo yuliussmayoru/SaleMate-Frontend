@@ -7,7 +7,7 @@ export default function Document() {
         <title>Salemate | your business partner</title>
         <link rel="icon" href="/favicon.png" />
       </Head>
-      <body>
+      <body className="m-0">
         <Main />
         <NextScript />
       </body>

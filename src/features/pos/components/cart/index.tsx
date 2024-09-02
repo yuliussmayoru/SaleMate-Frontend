@@ -2,7 +2,7 @@ import { Button } from "@/src/features";
 
 export function Cart() {
     return (
-        <div className="flex-1 bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-screen">
+        <div className="flex-1 bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-[100svh] mb-0">
             <div>
                 <div className="flex text-xl font-semibold">
                     <Button className="bg-[#FFA3A3]">
