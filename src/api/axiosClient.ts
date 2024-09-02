@@ -9,18 +9,17 @@ export const axiosInstance = axios.create({
     baseURL : baseUrl,
     headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
     },
 });
 
 console.log(axiosInstance)
 axiosInstance.interceptors.request.use(
     (config) => {
-        // const auth = Cookies.get(token);
-        const token = localStorage.getItem('authToken');
+        const auth = Cookies.get(token);
+        // const token = localStorage.getItem('authToken');
 
-        if (token) { config.headers.Authorization = `Bearer ${token}`;
-        console.log('Token is saved:', token);
+        if (auth) { config.headers.Authorization = `Bearer ${auth}`;
+        console.log('Token is saved:', auth);
         }  else {
             console.warn("token not found")
         } 

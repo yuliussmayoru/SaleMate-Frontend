@@ -1,16 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { Button, Card, Input } from '../../../base';
-import { TransactionContext } from '@/src/context';
+import { useTransactionContext } from '@/src/context';
 import { InputCustomerModalProps } from './type';
 
 export function InputCustomerModal({ onClose }: InputCustomerModalProps) { // Include onSave prop
-  const context = useContext(TransactionContext);
 
-  if (!context) {
-    throw new Error('TransactionContext must be used within a TransactionProvider');
-  }
-
-  const { setCustomerName, setCustomerSaved } = context;
+  const { setCustomerName, setCustomerSaved } = useTransactionContext();
 
   const [inputValue, setInputValue] = useState('');
 
