@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import Cookies from "js-cookie";
+import { token } from "@/src/config";
 
 export function PinForm() {
     const [pin, setPin] = useState('');
@@ -38,8 +40,12 @@ export function PinForm() {
 
             if (response.ok) {
               // On successful login, redirect to the /superadmin page
+                const data = await response.json();
+                const {access_token} = data.data.data
+                Cookies.set(token, access_token)
+                console.log ('data: ', data)
                 console.log('Login successful, redirecting...');  
-                router.push('/superadmin');
+                router.push('/pos/pos-home');
             } else {
                 const errorData = await response.json();
                 console.error('Login failed:', errorData.message);

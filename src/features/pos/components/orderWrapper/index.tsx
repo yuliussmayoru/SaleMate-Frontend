@@ -1,16 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Cart, OrderHome, OrderMenu, PosHeader } from '@/src/features/pos';
 import { InputCustomerModal } from '../inputCustomerModal';
-import { TransactionContext } from '@/src/context';
+import { TransactionContext, useTransactionContext } from '@/src/context';
 
 export function OrderWrapper() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const context = useContext(TransactionContext);
-    if (!context) {
-      throw new Error ('TransactionContext must be used within a TransactionProvider');
-    }
-    const { customerName, isCustomerSaved, setCustomerSaved } = context
+    
+    const { customerName, isCustomerSaved, setCustomerSaved } = useTransactionContext()
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -23,9 +19,10 @@ export function OrderWrapper() {
     useEffect(() => {
         if (isCustomerSaved) {
             handleCloseModal(); // Close the modal when the customer is saved
-            setCustomerSaved(false); // Reset the saved status for future use
         }
     }, [isCustomerSaved, setCustomerSaved]);
+
+    console.log(isCustomerSaved)
 
     return (
         <div className="bg-gray-100 h-screen overflow-hidden">

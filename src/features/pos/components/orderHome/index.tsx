@@ -1,18 +1,12 @@
 import React, { useContext, useState } from "react";
 import { HomeNotes, OrderCard} from "../";
 import { Button } from "../../../base";
-import { TransactionContext } from "@/src/context";
+import { TransactionContext, useTransactionContext } from "@/src/context";
 import { InputCustomerModal } from "../inputCustomerModal";
 
 export function OrderHome() {
-
-  const context = useContext(TransactionContext);
-
-  if (!context) {
-    throw new Error('TransactionContext must be used within a TransactionProvider');
-  }
   
-  const { setOrderType } = context;
+  const { setOrderType } = useTransactionContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleOrderType = (orderType: string) => {
