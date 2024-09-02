@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { HomeNotes, OrderCard} from "../";
 import { Button } from "../../../base";
+import { TransactionContext } from "@/src/context";
+import { InputCustomerModal } from "../inputCustomerModal";
 
 export function OrderHome() {
+
+  const context = useContext(TransactionContext);
+
+  if (!context) {
+    throw new Error('TransactionContext must be used within a TransactionProvider');
+  }
+  
+  const { setOrderType } = context;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOrderType = (orderType: string) => {
+    setOrderType(orderType);
+    setIsModalOpen(true);
+  }
+
     return(
         <div>
             {/* Saved Order */}
@@ -26,16 +43,25 @@ export function OrderHome() {
                 <p className='text-xl'>New Order</p>
               </div>
               <div className='flex space-x-4'>
-                <Button className="bg-[#F38C55] flex-1 p-12 rounded-lg shadow-md text-white text-lg">
+                <Button
+                    className="bg-[#F38C55] flex-1 p-12 rounded-lg shadow-md text-white text-lg"
+                    onClick={() => handleOrderType('retail')}    
+                >
                   Retail
                 </Button>
-                <Button className="bg-[#88C34A] flex-1 p-12 rounded-lg shadow-md text-white text-lg">
+                <Button
+                  className="bg-[#88C34A] flex-1 p-12 rounded-lg shadow-md text-white text-lg"
+                  onClick={() => handleOrderType('takeaway')}  
+                >
                   Take Away
                 </Button>
               </div>
             </div>
             {/* Notes */}
             <HomeNotes />
+
+             {/* Customer Modal */}
+             {isModalOpen && <InputCustomerModal onClose={() => setIsModalOpen(false)} />}
         </div>
     )
 }
