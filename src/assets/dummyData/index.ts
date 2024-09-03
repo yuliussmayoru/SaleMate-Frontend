@@ -11,11 +11,11 @@ export interface Staff {
 }
 
 export interface ProductCategory {
-    id: string,
-    store: string,
-    storeId: string,
-    category: string,
-    tax: string,
+    product_category_id: number,
+    store_name: string,
+    store_id: number,
+    category_name: string,
+    tax_value: number,
 }
 
 export interface Product {
@@ -323,78 +323,78 @@ export interface DriverPartnerReport {
 //     }
 // ]
 
-export const dummyProductCategory: ProductCategory[] = [
-    {
-        id: "1",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Activewears",
-        tax: "10",
-    },
-    {
-        id: "2",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Bottoms",
-        tax: "10",
-    },
-    {
-        id: "3",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Bottoms",
-        tax: "10",
-    },
-    {
-        id: "4",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Jackets",
-        tax: "10",
-    },
-    {
-        id: "5",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Tops",
-        tax: "10",
-    },
-    {
-        id: "6",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Jackets",
-        tax: "10",
-    },
-    {
-        id: "7",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Bottoms",
-        tax: "10",
-    },
-    {
-        id: "8",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Jackets",
-        tax: "10",
-    },
-    {
-        id: "9",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Denim Tops",
-        tax: "10",
-    },
-    {
-        id: "10",
-        store: "Dago, Bandung",
-        storeId: "BDG01",
-        category: "Jackets",
-        tax: "10",
-    }
-]
+// export const dummyProductCategory: ProductCategory[] = [
+//     {
+//         id: "1",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Activewears",
+//         tax: "10",
+//     },
+//     {
+//         id: "2",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Bottoms",
+//         tax: "10",
+//     },
+//     {
+//         id: "3",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Bottoms",
+//         tax: "10",
+//     },
+//     {
+//         id: "4",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Jackets",
+//         tax: "10",
+//     },
+//     {
+//         id: "5",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Tops",
+//         tax: "10",
+//     },
+//     {
+//         id: "6",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Jackets",
+//         tax: "10",
+//     },
+//     {
+//         id: "7",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Bottoms",
+//         tax: "10",
+//     },
+//     {
+//         id: "8",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Jackets",
+//         tax: "10",
+//     },
+//     {
+//         id: "9",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Denim Tops",
+//         tax: "10",
+//     },
+//     {
+//         id: "10",
+//         store: "Dago, Bandung",
+//         storeId: "BDG01",
+//         category: "Jackets",
+//         tax: "10",
+//     }
+// ]
 
 // export const dummyDriverPartners: DriverPartner[] = [
 //     {
