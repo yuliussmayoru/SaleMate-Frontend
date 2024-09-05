@@ -1,11 +1,20 @@
+import { useTransactionContext } from "@/src/context";
 import { Button } from "@/src/features";
 
 export function Cart() {
+
+  const { setCustomerName, setCustomerSaved, customerName } = useTransactionContext();
+  const handlerBack = () => {
+    setCustomerName("")
+    setCustomerSaved(false)
+  };
+
     return (
-        <div className="flex-1 bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-screen">
+        <div className="flex-1 bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-[100svh] mb-0">
             <div>
                 <div className="flex text-xl font-semibold">
-                    <Button className="bg-[#FFA3A3]">
+                    <Button 
+                        onClick={handlerBack} className="bg-[#FFA3A3]">
                         Back
                     </Button>
                     <div className="w-full text-center">
@@ -18,7 +27,7 @@ export function Cart() {
                 </div>
                 <div>
                     <Button className="bg-[#d7d5fd] text-gray-500 w-full rounded-lg mt-4">
-                        <p className="text-[#8766EF]">Customer Name</p>
+                        <p className="text-[#8766EF]">Customer Name: {customerName}</p>
                     </Button>
                 </div>
                 <div className="flex">
