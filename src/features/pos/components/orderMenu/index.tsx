@@ -4,36 +4,13 @@ import { CategoryProductButton } from "../categoryProductButton";
 import { ProductCard } from "../productCard";
 import { axiosInstance } from "@/src/api/axiosClient";
 import { useTransactionContext } from "@/src/context";
-
-const dummyProducts = [
-    {
-        productName : "Product 1",
-        price : 100,
-        img: "/@/assets/dummyData/product-image.png"
-    },
-    {
-        productName : "Product 2",
-        price : 100,
-        img: "/@/assets/dummyData/product-image.png"
-    },
-    {
-        productName : "Product 3",
-        price : 100,
-        img: "/@/assets/dummyData/product-image.png"
-    },
-    {
-        productName : "Product 4",
-        price : 100,
-        img: "/@/assets/dummyData/product-image.png"
-    },
-]
-
+import { ProductProps } from "./type";
 
 export function OrderMenu() {
 
     const { setDetailProduct } = useTransactionContext();
     
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState<ProductProps[]>([]);
     const [category, setCategories] = useState([]);
 
     const getProducts = async () => {
@@ -44,7 +21,8 @@ export function OrderMenu() {
                     limit: 10
                 }
             });
-            setProducts(response.data);
+
+            setProducts(response.data.data);
         } catch (err) {
             console.error("failed to fetch products", err);
         }
@@ -79,13 +57,14 @@ export function OrderMenu() {
                     productCategoryName="Category 1" 
                 />
             </div>
-            <div className="mt-4">
-                {dummyProducts.map((product, index) => (
+            <div className="mt-4 grid grid-cols-6 gap-4">
+                
+                {products.map((product, index) => (
                     <ProductCard
                         key={index}
-                        productImage={product.img}
-                        productName={product.productName}
-                        price={product.price}
+                        productImage={'/img/default-product-image.webp'}
+                        productName={product.product_name}
+                        price={product.product_price}
                         onClick={() => handleAddProduct(product)}
                     />
                 ))}
