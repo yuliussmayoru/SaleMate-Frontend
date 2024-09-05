@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export function AddProductModal({ onClose }: AddProductModalProps) {
 
-    const { setProduct } = useTransactionContext();
+    const { setDetailProduct } = useTransactionContext();
     
     const [InputValue, setInputValue ] = useState('')
     return (

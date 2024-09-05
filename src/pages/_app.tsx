@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { TransactionContextProvider } from "../context";
 import { SidebarProvider } from "../features/dashboard/SideBar/sidebarContext";
 import "../styles/globals.css";
@@ -5,10 +6,19 @@ import type { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SidebarProvider>
-      <TransactionContextProvider>
-        <Component {...pageProps} />
-      </TransactionContextProvider>
-    </SidebarProvider>
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+      </Head>
+      <SidebarProvider>
+        <TransactionContextProvider>
+          <Component {...pageProps} />
+        </TransactionContextProvider>
+      </SidebarProvider>
+    </>
+    
   )
 }

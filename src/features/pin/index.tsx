@@ -41,7 +41,7 @@ export function PinForm() {
             if (response.ok) {
               // On successful login, redirect to the /superadmin page
                 const data = await response.json();
-                const {access_token} = data.data.data
+                const {access_token} = data.data
                 Cookies.set(token, access_token)
                 console.log ('data: ', data)
                 console.log('Login successful, redirecting...');  
