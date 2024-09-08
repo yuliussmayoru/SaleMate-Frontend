@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { TransactionContextProps } from "./type";
+import { DetailProductProps, TransactionContextProps } from "./type";
 
 export const TransactionContext = createContext<TransactionContextProps | undefined>(undefined);
 
@@ -15,7 +15,13 @@ export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
     
     const [product, setProduct] = useState<Array<any>>([]);
 
-    const [ detailProduct, setDetailProduct] = useState<any>({});
+    const [ detailProduct, setDetailProduct] = useState<DetailProductProps>({
+        product_category_id: 0,
+        product_name: "",
+        product_price: 0,
+        product_image: "",
+        product_id: 0
+    });
 
 
 
