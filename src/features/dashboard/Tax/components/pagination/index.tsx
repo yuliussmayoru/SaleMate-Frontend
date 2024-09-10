@@ -1,7 +1,6 @@
 import { PaginationProps } from "./types";
 
 export default function Pagination({ currentPage, totalPages, handlePageChange }: PaginationProps) {
-    // Generate an array of page numbers based on totalPages
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
     
     return (

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { axiosInstance } from '@/src/api/axiosClient';
 import { Tax } from '@/src/assets';
 
@@ -29,12 +29,15 @@ export const useTaxPageHooks = () => {
     const fetchTaxes = async (page = 1) => {
         try {
             const response = await axiosInstance.get(`/tax`, {
-                params: { page, limit: 5 },
+                params: { page, limit: 10 },
             });
+
+            const { taxes } = response.data.data;
+            const { meta } = response.data.data;
             
-            setTaxes(response.data.data.data);
-            setTotalPages(parseInt(response.data.meta['Total Pages']));
-            setCurrentPage(parseInt(response.data.meta['Current Page']))
+            setTaxes(taxes);
+            setTotalPages(parseInt(meta['Total Pages']));
+            setCurrentPage(parseInt(meta['Current Page']))
         } catch (error) {
             console.error('Error fetching taxes', error);
         } finally {
@@ -44,7 +47,7 @@ export const useTaxPageHooks = () => {
 
     useEffect(() => {
         fetchTaxes(currentPage);
-    }, [currentPage, fetchTaxes]);
+    }, [currentPage]);
 
     const handleModalOpen = (type: any, tax: Tax) => {
         if(type === 'add') {

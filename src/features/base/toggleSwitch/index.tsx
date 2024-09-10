@@ -15,7 +15,7 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange, label })
           <div className={`w-20 h-10 rounded-xl shadow-inner transition-colors ${checked ? 'bg-green-500' : 'bg-red-500'}`}>
             <span
               className={`absolute left-2 top-1/2 transition transform ease-in-out duration-150 -translate-y-1/2 text-white font-bold ${
-                checked ? 'text-green-100' : 'left-11 text-red-100'
+                checked ? 'text-green-100' : 'left-[2.8rem] text-red-100'
               }`}
             >
               {checked ? 'ON' : 'OFF'}
