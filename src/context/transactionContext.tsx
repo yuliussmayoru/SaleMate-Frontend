@@ -15,7 +15,7 @@ export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
     
     const [product, setProduct] = useState<Array<any>>([]);
 
-    const [ detailProduct, setDetailProduct] = useState<any>({});
+    const [detailProduct, setDetailProduct] = useState<any>({});
 
 
 

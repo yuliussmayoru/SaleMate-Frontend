@@ -1,18 +1,21 @@
 import { PaginationProps } from "./types";
 
-export default function Pagination({currentPage, totalPages, handlePageChange}: PaginationProps) {
-
+export default function Pagination({ currentPage, totalPages, handlePageChange }: PaginationProps) {
+    // Generate an array of page numbers based on totalPages
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
-
+    
     return (
         <div className="flex items-center gap-2">
-            <svg 
-                onClick={() => handlePageChange(currentPage - 1)}
+            {/* Previous Button */}
+            <svg
+                onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
                 className={`cursor-pointer stroke-gray-3 ${currentPage === 1 ? 'opacity-10 cursor-not-allowed' : ''}`}
                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             >
                 <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            
+            {/* Page Number Buttons */}
             {pageNumbers.map((number) => (
                 <button
                     key={number}
@@ -22,8 +25,10 @@ export default function Pagination({currentPage, totalPages, handlePageChange}: 
                     {number}
                 </button>
             ))}
-            <svg 
-                onClick={() => handlePageChange(currentPage + 1)}
+            
+            {/* Next Button */}
+            <svg
+                onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
                 className={`cursor-pointer stroke-gray-3 ${currentPage === totalPages ? 'opacity-10 cursor-not-allowed' : ''}`}
                 width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
             >
@@ -31,4 +36,4 @@ export default function Pagination({currentPage, totalPages, handlePageChange}: 
             </svg>
         </div>
     );
-};
+}

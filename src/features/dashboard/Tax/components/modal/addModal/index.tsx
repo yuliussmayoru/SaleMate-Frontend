@@ -2,7 +2,15 @@ import { Button, CancelButton, Modal } from "@/src/features";
 import ToggleSwitch from "@/src/features/base/toggleSwitch";
 import { addModalProps } from "./types";
 
-export default function AddModal({isAddModalOpen, handleModalClose, handleConfirmAdd, errors, formData, setFormData, handleInputChange, isSecondModalOpen}: addModalProps) {
+export default function AddModal({
+    isAddModalOpen, 
+    handleModalClose, 
+    handleConfirmAdd, 
+    errors, formData, 
+    setFormData, 
+    handleInputChange, 
+    isSecondModalOpen,
+}: addModalProps) {
     return (
         <div>
             <Modal isOpen={isAddModalOpen} onClose={handleModalClose} onConfirm={handleConfirmAdd}>
@@ -38,20 +46,21 @@ export default function AddModal({isAddModalOpen, handleModalClose, handleConfir
                         <label>Tax Value (%)</label>
                         {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
                         <input
-                            type="number"
-                            name="tax_value"
-                            placeholder="Enter tax value"
-                            value={formData.tax_value}
-                            onChange={handleInputChange}
-                            className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
-                        />
+                        type="number"
+                        name="tax_value"
+                        min="0"
+                        max="100"
+                        placeholder="Enter tax value"
+                        value={formData.tax_value}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
+                    />
 
+                        <label>Tax Status</label>   
                         <div className="flex space-x-16">
                             <ToggleSwitch
                                 checked={formData.tax_status}
                                 onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
-                                label="Status"
-
                             />
                         </div>
                     </form>
@@ -85,11 +94,11 @@ export default function AddModal({isAddModalOpen, handleModalClose, handleConfir
                             <span className="text-sm text-gray-3">You can update or delete this data later</span>
                         </div>
                         <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
-                            <div className="flex flex-row gap-4 justify-start">
+                            {/* <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Tax Id</h2>
                                 <span>:</span>
                                 <p>{formData.tax_id}</p> 
-                            </div>
+                            </div> */}
 
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Name</h2>
@@ -109,7 +118,7 @@ export default function AddModal({isAddModalOpen, handleModalClose, handleConfir
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Status</h2>
                                 <span>:</span>
-                                <p>{formData.tax_status}</p> 
+                                <p>{formData.tax_status ? "ON" : "OFF"}</p> 
                             </div>
                         </div>
                         <Button
