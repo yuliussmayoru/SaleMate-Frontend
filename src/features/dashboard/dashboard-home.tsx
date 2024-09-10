@@ -1,3 +1,6 @@
+// import { GetServerSideProps } from "next";
+// import { getSession } from 'next-auth/react';
+
 export default function DashboardHome() {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center text-purple-1 pt-80">
@@ -16,3 +19,9 @@ export default function DashboardHome() {
         </div>
     );
 }
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//     const session = await getSession(context);
+
+
+// }

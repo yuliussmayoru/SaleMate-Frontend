@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/src/features";
+import React from "react";
+import { Button, Pagination } from "@/src/features";
 import Loader from "../../../base/Loader";
 import { AddModal, EditModal, DeleteModal, ProductCategoryTable } from "./components";
 import { useProductCategoryPageHooks } from "./hooks"
-
-const ITEMS_PER_PAGE = 6    ;
+import { axiosInstance } from "@/src/api/axiosClient";
+import NavigationBar from "./components/navigation";
 
 export default function CategoryPage() {
     const {
         productCategory,
         currentPage,
         totalPages,
+        totalItems,
         isAddModalOpen,
         isSecondModalOpen,
         isEditModalOpen,
@@ -30,26 +31,76 @@ export default function CategoryPage() {
         validateForm,
         } = useProductCategoryPageHooks();
     
-    const handleConfirmAdd = () => {
-        setIsAddModalOpen(false);
-        setIsSecondModalOpen(true);
+    const fetchUserStoreId = async () => {
+        try {
+            const response = await axiosInstance.get('/user?page=1&limit=10');
+            const userData = response.data.data[0];
+            const storeId = userData?.store?.[0]?.store_id;
+            return storeId;
+        } catch (error) {
+            console.error("Error fetching user data", error);
+            return null;
+        }
     };
 
-    const handleConfirmEdit = () => {
-        // Edit staff logic here
-        handleModalClose();
+    const handleConfirmAdd = async () => {
+        if (!validateForm()) return;
+
+        try {
+            const storeId = await fetchUserStoreId(); // Fetch the store ID
+            if (!storeId) {
+                console.error("Store ID not found");
+                return;
+            }
+
+            const { product_category_id, ...dataToSend } = formData;
+            console.log("Sending data:", dataToSend);
+
+            const response = await axiosInstance.post(`/products/product-category?storeId=${storeId}`, dataToSend);
+            
+            const newCategoryId = response.data.data.product_category_id;
+            setFormData({
+                ...formData,
+                product_category_id: newCategoryId // Update formData with the new category ID
+            });
+            await fetchProductCategory();
+
+            handleModalClose(); 
+            setIsAddModalOpen(false); 
+            setIsSecondModalOpen(true); 
+        } catch (error) {
+            console.error("Error adding product category", error);
+        }
     };
 
-    const handleConfirmDelete = () => {
-        // Delete staff logic here
-        handleModalClose();
+    const handleConfirmEdit = async () => {
+        try {
+            const { product_category_id, ...dataToSend } = formData;
+            if (selectedProductCategory) {
+                await axiosInstance.patch(`/products/product-category?category_id=${selectedProductCategory.product_category_id}`, dataToSend);
+                await fetchProductCategory(); 
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error("Error editing product category", error);
+        }
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            if (selectedProductCategory) {
+                await axiosInstance.delete(`/products/product-category/${selectedProductCategory.product_category_id}`); 
+                await fetchProductCategory();
+                handleModalClose();
+            }
+        } catch (error) {
+            console.error("Error deleting product category", error);
+        }
     };
     
-    // HANDLE PAGE AND GENERATE PAGE
-    const handlePageChange = (newPage: number) => {
-        if (newPage > 0 && newPage <= totalPages) {
-            setCurrentPage(newPage);
-        }
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        fetchProductCategory(page);
     };
 
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -67,57 +118,10 @@ export default function CategoryPage() {
                     </div>
 
                     {/* Navigation Box */}
-                    <div className="p-6 border bg-white border-gray-6 rounded-[10px] shadow-md mb-6">
-                        <h3 className="text-xl font-bold text-gray-2 mb-2">Navigation</h3>
-                        <div className="grid grid-cols-3 gap-2 mb-6">
-                            <div className="text-center">
-                                <p className="text-sm font-bold text-gray-2">Total Store(s)</p>
-                                <p className="text-3xl font-bold text-gray-2">1</p>
-                                <p className="text-sm font-light text-gray-2">No latest update</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-sm font-bold text-gray-2">Total Store Id(s)</p>
-                                <p className="text-3xl font-bold text-gray-2">1</p>
-                                <p className="text-sm font-light text-gray-2">No latest update</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-sm font-bold text-gray-2">Total Category(s)</p>
-                                <p className="text-3xl font-bold text-gray-2">30</p>
-                                <p className="text-sm font-light text-gray-2">Latest Update: 16 Jul 24 by Adm - Christopher</p>
-                            </div>
-                        </div>
-                        <div className="mb-6">
-                            <div className="flex items-center space-x-4">
-                                <div className="flex-1">
-                                    <p className="text-sm font-bold text-gray-2 mb-2">What are you looking for?</p>
-                                    <input 
-                                        type="text" 
-                                        placeholder="Search for Store, Store Id, Category, etc" 
-                                        className="border rounded p-2 w-full text-sm" 
-                                    />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-2 mb-2">Store</p>
-                                    <select className="border rounded p-2 w-full text-gray-2 text-sm" title="store">
-                                        <option value=" all">All</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-2 mb-2">Store Id</p>
-                                    <select className="border rounded p-2 w-full text-gray-2 text-sm" title="store id">
-                                        <option value="all">All</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <p className="text-sm font-bold text-gray-2 mb-2">Category</p>
-                                    <select className="border rounded p-2 w-full text-gray-2 text-sm" title="category">
-                                        <option value="all">All</option>
-                                    </select>
-                                </div>
-                                <button className="bg-[#a4be6a] text-white font-bold py-2 px-4 rounded text-sm mt-5">Search</button>
-                            </div>
-                        </div>
-                    </div>
+                    <NavigationBar
+                        loading={loading}
+                        totalItems={totalItems}
+                    />
 
                     {/* Category Data Box */}
                     <div className="p-4 bg-white border border-gray-6 rounded-[10px] shadow-md">
@@ -125,46 +129,23 @@ export default function CategoryPage() {
                         <h2 className="text-xl text-gray-2 font-semibold">Category Data</h2>
                         
                         {/* PAGE */}
-                        <div className="flex items-center gap-2">
-                            <svg 
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                className={`cursor-pointer stroke-gray-3 ${currentPage === 1 ? 'opacity-10 cursor-not-allowed' : ''}`}
-                                width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path d="M15.75 19.5L8.25 12L15.75 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                            {pageNumbers.map((number) => (
-                                <button
-                                    key={number}
-                                    onClick={() => handlePageChange(number)}
-                                    className={`w-6 h-6 flex items-center justify-center rounded ${number === currentPage ? 'bg-orange-2 text-white' : 'bg-gray-6 hover:bg-gray-5'}`}
-                                >
-                                    {number}
-                                </button>
-                            ))}
-                            <svg 
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                className={`cursor-pointer stroke-gray-3 ${currentPage === totalPages ? 'opacity-10 cursor-not-allowed' : ''}`}
-                                width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path d="M8.25 4.5L15.75 12L8.25 19.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </div>   
+                        <Pagination 
+                            currentPage={currentPage} 
+                            totalPages={totalPages} 
+                            handlePageChange={handlePageChange}
+                        />  
                     </div>
 
                     {loading ? (
                         <Loader />
                     ) : (
-
                     <div>
                         <ProductCategoryTable 
                             productCategories={productCategory}
                             handleModalOpen={handleModalOpen}
                         />
                     </div>
-
                     )}
-                
                 </div>
             </div>
 

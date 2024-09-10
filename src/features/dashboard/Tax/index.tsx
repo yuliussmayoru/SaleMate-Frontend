@@ -1,7 +1,8 @@
 import { axiosInstance } from "@/src/api/axiosClient";
 import { Button } from "@/src/features";
 import Loader from "../../base/Loader";
-import { AddModal, EditModal, DeleteModal, Pagination, TaxTable } from "./components";
+import { AddModal, EditModal, DeleteModal, TaxTable } from "./components";
+import { Pagination } from "@/src/features"
 import { useTaxPageHooks } from "./hooks";
 
 export default function TaxPage() { 

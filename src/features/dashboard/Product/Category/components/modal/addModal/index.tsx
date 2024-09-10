@@ -19,10 +19,10 @@ export default function AddModal({
                     </div>
                     <form className="w-full text-center mb-6">
                         <label>Category</label>
-                        {errors.tax_name && <p className="text-red-600 text-sm">{errors.category_name}</p>}
+                        {errors.category_name && <p className="text-red-600 text-sm">{errors.category_name}</p>}
                         <input
                             type="text"
-                            name="category"
+                            name="category_name"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             placeholder="e.g. Activewears"
                             value={formData.category_name} 
@@ -70,6 +70,7 @@ export default function AddModal({
                                 <span>:</span>
                                 <p>{formData.category_name}</p> 
                             </div>
+                            
                         </div>
                         <Button
                             onClick={handleModalClose}

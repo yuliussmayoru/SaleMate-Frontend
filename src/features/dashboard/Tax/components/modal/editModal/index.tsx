@@ -46,12 +46,11 @@ export default function EditModal({isEditModalOpen, handleModalClose, formData, 
                     />
                     {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
 
-                    <div className="flex space-x-16">
+                    <label>Tax Status</label>   
+                    <div className="flex w-full justify-center">
                         <ToggleSwitch
                             checked={formData.tax_status}
                             onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
-                            label="Status"
-
                         />
                     </div>
                 </form>

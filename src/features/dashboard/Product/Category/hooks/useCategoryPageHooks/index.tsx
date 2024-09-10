@@ -6,6 +6,7 @@ export const useProductCategoryPageHooks = () => {
     const [productCategory, setProductCategory] = useState<ProductCategory[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(1);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -30,7 +31,8 @@ export const useProductCategoryPageHooks = () => {
             
             setProductCategory(productCategory);
             setTotalPages(parseInt(meta['Total Pages']));
-            setCurrentPage(parseInt(meta['Current Page']))
+            setCurrentPage(parseInt(meta['Current Page']));
+            setTotalItems(parseInt(meta['Total Items']));
         } catch (error) {
             console.error('Error fetching taxes', error);
         } finally {
@@ -94,6 +96,7 @@ export const useProductCategoryPageHooks = () => {
         productCategory,
         currentPage,
         totalPages,
+        totalItems,
         isAddModalOpen,
         isSecondModalOpen,
         isEditModalOpen,

@@ -57,7 +57,7 @@ export default function AddModal({
                     />
 
                         <label>Tax Status</label>   
-                        <div className="flex space-x-16">
+                        <div className="flex w-full justify-center">
                             <ToggleSwitch
                                 checked={formData.tax_status}
                                 onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
@@ -94,11 +94,6 @@ export default function AddModal({
                             <span className="text-sm text-gray-3">You can update or delete this data later</span>
                         </div>
                         <div className="text-gray-1 w-full flex flex-col mb-6 gap-6">
-                            {/* <div className="flex flex-row gap-4 justify-start">
-                                <h2 className="w-1/4 font-bold text-gray-3">Tax Id</h2>
-                                <span>:</span>
-                                <p>{formData.tax_id}</p> 
-                            </div> */}
 
                             <div className="flex flex-row gap-4 justify-start">
                                 <h2 className="w-1/4 font-bold text-gray-3">Name</h2>
