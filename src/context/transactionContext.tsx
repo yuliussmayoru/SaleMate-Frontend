@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useContext, useState } from "react";
-import { DetailProductProps, TransactionContextProps } from "./type";
+import { DetailProductProps, SelectedProductProps, TransactionContextProps } from "./type";
 
 export const TransactionContext = createContext<TransactionContextProps | undefined>(undefined);
 
@@ -23,7 +23,13 @@ export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
         product_id: 0
     });
 
+    const [selectedProducts, setSelectedProducts] = useState<SelectedProductProps[]>([]);
 
+    const removeProduct = (product_id: number) => {
+        setSelectedProducts(prevProducts =>
+            prevProducts.filter((product) => product.product_id !== product_id)
+        )
+    }
 
     const value = {
         state, setState,
@@ -31,7 +37,9 @@ export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
         customerName, setCustomerName,
         isCustomerSaved, setCustomerSaved,
         product, setProduct,
-        detailProduct, setDetailProduct
+        detailProduct, setDetailProduct,
+        selectedProducts, setSelectedProducts,
+        removeProduct
     };
 
     return (

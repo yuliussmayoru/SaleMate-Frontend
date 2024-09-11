@@ -53,7 +53,7 @@ export function OrderMenu() {
             product_image: '/img/default-product-image.webp',
             product_name: product.product_name,
             product_price: product.product_price,
-            product_id: product.id,
+            product_id: product.product_id,
             product_category_id: product.product_category_id
         })
         setIsModalOpen(true);
@@ -80,7 +80,7 @@ export function OrderMenu() {
             </div>
             <div className="mt-4 grid grid-cols-6 gap-2 overflow-y-auto max-h-[calc(70vh-4rem)]">
                 
-                {dummyProducts.map((product, index) => (
+                {products.map((product, index) => (
                     <ProductCard
                         key={index}
                         productImage={'/img/default-product-image.webp'}

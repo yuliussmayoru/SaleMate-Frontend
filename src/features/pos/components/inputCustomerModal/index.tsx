@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Card, Input } from '../../../base';
 import { useTransactionContext } from '@/src/context';
 import { InputCustomerModalProps } from './type';

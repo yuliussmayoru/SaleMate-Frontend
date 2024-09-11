@@ -11,6 +11,16 @@ export type TransactionContextProps = {
     setProduct: React.Dispatch<React.SetStateAction<Array<any>>>;
     detailProduct: DetailProductProps;
     setDetailProduct: React.Dispatch<React.SetStateAction<DetailProductProps>>;
+    selectedProducts: SelectedProductProps[];
+    setSelectedProducts: React.Dispatch<React.SetStateAction<SelectedProductProps[]>>;
+    removeProduct: (product_id: number) => void;
+}
+
+export type SelectedProductProps = {
+    product_id: number;
+    product_name: string;
+    product_price: number;
+    product_quantity: number;
 }
 
 export type DetailProductProps = {

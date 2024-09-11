@@ -1,14 +1,17 @@
 import { useTransactionContext } from "@/src/context";
-import { Button } from "@/src/features";
+import { Button, SelectedOrderLists } from "@/src/features";
+import Product from "@/src/pages/dashboard/product";
 
 export function Cart() {
 
-  const { setCustomerName, setCustomerSaved, customerName } = useTransactionContext();
+  const { setCustomerName, setCustomerSaved, customerName, selectedProducts, removeProduct } = useTransactionContext();
   const handlerBack = () => {
     setCustomerName("")
     setCustomerSaved(false)
   };
 
+
+  const subtotal = selectedProducts.reduce((total, product) => total + (product.product_price * product.product_quantity), 0)
     return (
         <div className="flex-1 bg-white p-4 rounded-lg shadow-md flex flex-col justify-between h-[100svh] mb-0">
             <div>
@@ -42,8 +45,16 @@ export function Cart() {
                 </div>
             </div>
 
-          <div className="text-center text-gray-400">
-            Add new order or Continue from saved order
+          <div className="text-center text-black-400 flex flex-col justify-start h-full">
+            {selectedProducts.map((product) => (
+              <SelectedOrderLists 
+                quantity={product.product_quantity}
+                productName={product.product_name}
+                price={product.product_price * product.product_quantity}
+                onRemove={() => removeProduct(product.product_id)}
+              />
+            ))}
+            
           </div>
           <div>
             <div className="text-left text-gray-500 space-y-1">
