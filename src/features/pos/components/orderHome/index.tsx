@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { HomeNotes, OrderCard} from "../";
 import { Button } from "../../../base";
-import { TransactionContext, useTransactionContext } from "@/src/context";
+import { useTransactionContext } from "@/src/context";
 import { InputCustomerModal } from "../inputCustomerModal";
 
 export function OrderHome() {
@@ -38,14 +38,14 @@ export function OrderHome() {
               </div>
               <div className='flex space-x-4'>
                 <Button
-                    className="bg-[#F38C55] flex-1 p-12 rounded-lg shadow-md text-white text-lg"
-                    onClick={() => handleOrderType('retail')}    
+                    className="bg-[#F38C55] flex-1 p-12 rounded-lg shadow-md text-white text-lg hover:bg-[#F38C26] hover:text-white hover:scale-105 hover:translate-y-[-2px]"
+                    onClick={() => handleOrderType('Order')}    
                 >
-                  Retail
+                  Order
                 </Button>
                 <Button
-                  className="bg-[#88C34A] flex-1 p-12 rounded-lg shadow-md text-white text-lg"
-                  onClick={() => handleOrderType('takeaway')}  
+                  className="bg-[#88C34A] flex-1 p-12 rounded-lg shadow-md text-white text-lg hover:bg-[#88C31A] hover:text-white hover:scale-105 hover:translate-y-[-2px]"
+                  onClick={() => handleOrderType('Takeaway')}  
                 >
                   Take Away
                 </Button>
