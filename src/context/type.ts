@@ -1,8 +1,14 @@
 export type TransactionContextProps = {
+    username: string;
+    setUsername: React.Dispatch<React.SetStateAction<string>>
     state: string;
     setState: React.Dispatch<React.SetStateAction<string>>;
     orderType: string;
     setOrderType: React.Dispatch<React.SetStateAction<string>>;
+    orderTime: string;
+    setOrderTime: React.Dispatch<React.SetStateAction<string>>;
+    orderDate: string;
+    setOrderDate: React.Dispatch<React.SetStateAction<string>>;
     customerName: string;
     setCustomerName: React.Dispatch<React.SetStateAction<string>>
     isCustomerSaved: boolean;

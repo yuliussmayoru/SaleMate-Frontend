@@ -2,7 +2,7 @@ import { OrderCardProps } from "./type";
 
 export function OrderCard({orderId, date, customerName, itemCount, ...rest}: OrderCardProps) {
     return (
-        <button {...rest}>
+        <button {...rest} className="hover:scale-105 hover:translate-y-[-2px]">
             <div className="bg-orange-400 p-4 rounded-lg text-white max-w-[150px]">
                 <div className="text-center">
                     <div className="text-sm">{orderId}</div>
