@@ -123,7 +123,7 @@ export function OrderMenu() {
                 />
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 flex gap-2">
                 {categories.map((category) => (
                     <CategoryProductButton
                         key={category.product_category_id}
@@ -131,6 +131,16 @@ export function OrderMenu() {
                         productCategoryName={category.product_category_name} // Assuming each category has a name
                     />
                 ))}
+
+                <CategoryProductButton 
+                    productCategoryName="All Products"
+                />
+                <CategoryProductButton 
+                    productCategoryName="Main"
+                />
+                <CategoryProductButton 
+                    productCategoryName="Beverages"
+                />
             </div>
 
             <div className="mt-4 grid grid-cols-6 gap-2 overflow-y-auto max-h-[calc(70vh-4rem)]">
