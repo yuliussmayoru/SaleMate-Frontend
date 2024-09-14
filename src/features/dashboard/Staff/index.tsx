@@ -346,6 +346,7 @@ export default function StaffPage() {
                     <label>Role</label>
                     <select 
                         name="role"
+                        title="role"
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                         value={formData.role}                    
                         onChange={handleRoleChange}
@@ -457,6 +458,7 @@ export default function StaffPage() {
                         <label>Role</label>
                         <select 
                             name="role"
+                            title="role"
                             className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                             value={formData.role}                    
                             onChange={handleRoleChange}
