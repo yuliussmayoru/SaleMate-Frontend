@@ -1,4 +1,4 @@
-import { ButtonProps } from "../button/type";
+import { ButtonProps } from "../Button/type";
 import { twMerge } from "tailwind-merge";
 
 export function Button(props: ButtonProps) {

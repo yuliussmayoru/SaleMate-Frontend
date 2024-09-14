@@ -33,7 +33,7 @@ export default function MainProductPage() {
                             {/* Product Category Navigation */}
                             <div className="p-6 border bg-white border-gray-6 rounded-[10px] shadow-md mb-6">
                                 <h3 className="text-xl font-bold mb-4">Product Category Navigation</h3>
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 gap-4">
                                     <div className="text-center">
                                         <p className="text-sm font-bold">Total Store(s)</p>
                                         <p className="text-3xl font-bold">1</p>
@@ -43,11 +43,6 @@ export default function MainProductPage() {
                                         <p className="text-sm font-bold">Total Store Id(s)</p>
                                         <p className="text-3xl font-bold">1</p>
                                         <p className="text-sm font-light">No latest update</p>
-                                    </div>
-                                    <div className="text-center">
-                                        <p className="text-sm font-bold">Total Category(s)</p>
-                                        <p className="text-3xl font-bold">30</p>
-                                        <p className="text-sm font-light">Latest Update: 16 Jul 24 by Adm - Christopher</p>
                                     </div>
                                 </div>
                                 <div className="flex justify-end mt-4">

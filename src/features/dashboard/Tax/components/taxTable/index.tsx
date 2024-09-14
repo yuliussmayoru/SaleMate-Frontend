@@ -1,7 +1,6 @@
 import React from 'react';
 import { TaxTableProps } from './types';
 
-
 export default function TaxTable({ taxes = [], handleModalOpen }: TaxTableProps) {
     
     return (
@@ -18,7 +17,7 @@ export default function TaxTable({ taxes = [], handleModalOpen }: TaxTableProps)
                     </tr>
                 </thead>
                 <tbody className="text-gray-1">
-                    {Array.isArray(taxes) && taxes.length > 0 ? (  // Ensure taxes is an array and has elements
+                    {Array.isArray(taxes) && taxes.length > 0 ? (
                         taxes.map((tax) => (
                         <tr key={tax.tax_id} className="even:bg-gray-6">
                             <td className="">{tax.tax_id}</td>
