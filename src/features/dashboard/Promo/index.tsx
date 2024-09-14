@@ -168,7 +168,6 @@ export default function PromoPage() {
                 await axiosInstance.delete(`/promos/${selectedPromo.promo_id}`);
                 await refreshPromos();
                 handleModalClose();
-                // fetchTaxes(); 
             }
         } catch (error) {
             console.error('Error deleting promo', error);

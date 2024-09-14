@@ -26,10 +26,18 @@ export interface Product {
     product_price: number,
     cost_of_good_sold: number,
     product_code: number,
-    product_image: any,
+    product_image: null,
     created_at: string,
     updated_at: string,
-    isDelete: boolean,
+    deleted_at: null,
+    product_category: {
+        product_category_id: number,
+        store_id: number,
+        category_name: string,
+        created_at: string,
+        updated_at: string,
+        deleted_at: null
+    }
 }
 
 export interface DriverPartner {

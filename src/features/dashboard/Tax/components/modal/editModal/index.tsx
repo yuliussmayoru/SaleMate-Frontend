@@ -1,4 +1,4 @@
-import { Button, Modal, } from "@/src/features";
+import { Button, CancelButton, Modal, } from "@/src/features";
 import ToggleSwitch from "@/src/features/base/toggleSwitch";
 import { editModalProps } from "./types";
 
@@ -20,7 +20,6 @@ export default function EditModal({isEditModalOpen, handleModalClose, formData, 
                         onChange={handleInputChange}
                         className="border border-gray-300 p-2 mb-4 drop-shadow-md w-full rounded-[10px]"
                     />
-                    {errors.tax_name && <p className="text-red-600 text-sm">{errors.tax_name}</p>}
 
                     <label>Type</label>
                     <select
@@ -33,12 +32,13 @@ export default function EditModal({isEditModalOpen, handleModalClose, formData, 
                         <option value="VAT">VAT</option>
                         <option value="Service">Service</option>
                     </select>
-                    {errors.tax_type && <p className="text-red-600 text-sm">{errors.tax_type}</p>}
 
                     <label>Tax Value (%)</label>
                     <input
                         type="number"
                         name="tax_value"
+                        min="0"
+                        max="100"
                         placeholder="Enter tax value"
                         value={formData.tax_value}
                         onChange={handleInputChange}
@@ -46,16 +46,20 @@ export default function EditModal({isEditModalOpen, handleModalClose, formData, 
                     />
                     {errors.tax_value && <p className="text-red-600 text-sm">{errors.tax_value}</p>}
 
-                    <div className="flex space-x-16">
+                    <label>Tax Status</label>   
+                    <div className="flex w-full justify-center">
                         <ToggleSwitch
                             checked={formData.tax_status}
                             onChange={() => setFormData({ ...formData, tax_status: !formData.tax_status })}
-                            label="Status"
-
                         />
                     </div>
                 </form>
                 <div className="flex justify-between w-full mt-4 gap-2">
+                    <CancelButton
+                        onClick={handleModalClose}
+                    >
+                        Cancel
+                    </CancelButton>
                     <Button
                         onClick={handleConfirmEdit}
                     >

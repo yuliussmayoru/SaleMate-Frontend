@@ -1,5 +1,5 @@
 import SideBar from '../dashboard/SideBar'
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { useSidebar } from './SideBar/sidebarContext';
 
 interface LayoutProps {

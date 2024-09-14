@@ -4,7 +4,7 @@ import { SelectedProductProps, useTransactionContext } from "@/src/context";
 import { useState } from "react";
 import Image from "next/image";
 
-export function AddProductModal({ onClose }: AddProductModalProps) {
+export function AddProductModal({ onClose, handleSave, handleInputChange }: AddProductModalProps) {
 
     const { detailProduct, selectedProducts, setSelectedProducts } = useTransactionContext();
 
@@ -117,6 +117,7 @@ export function AddProductModal({ onClose }: AddProductModalProps) {
                         </div>
                             
                     </div>
+
                     <div className="flex justify-around mt-4">
                         <Button
                             className="bg-red-500 text-white mr-4 hover:bg-red-600 active:bg-red-700 h-[80px]"
@@ -134,6 +135,6 @@ export function AddProductModal({ onClose }: AddProductModalProps) {
                     </div>
                 </form>
             </Card>
-      </div>
+        </div>
     )
 }
