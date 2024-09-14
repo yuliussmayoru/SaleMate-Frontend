@@ -6,15 +6,15 @@ import { useEffect, useState } from "react";
 export function Cart() {
 
   const { 
-    setCustomerName, 
-    setCustomerSaved, 
+    isCustomerSaved,
     customerName, 
     selectedProducts, 
     removeProduct, 
     orderType,
     orderTime,
     orderDate,
-    username
+    username,
+    clearOrder
    } = useTransactionContext();
 
   const [vat, setVat] = useState(0);
@@ -38,8 +38,7 @@ export function Cart() {
   }, []);
 
   const handlerBack = () => {
-    setCustomerName("")
-    setCustomerSaved(false)
+    clearOrder();
   };
 
 
@@ -63,7 +62,9 @@ export function Cart() {
                         <p>Order Id</p>
                         <p>000000</p>
                     </div> 
-                    <Button className="bg-[#FFD875] hover:bg-[#FFD875] hover:scale-105 hover:translate-y-[-2px]">
+                    <Button
+                        className={`bg-[#FFD875] hover:bg-[#FFD875] hover:scale-105 hover:translate-y-[-2px] ${isCustomerSaved ? 'disabled' : ''}`}
+                        disabled={isCustomerSaved}>
                         Save
                     </Button>
                 </div>
