@@ -15,7 +15,7 @@ export function OrderHome() {
   }
 
     return(
-        <div>
+        <div className="flex flex-col">
             {/* Saved Order */}
           
             <div className="bg-white p-4 rounded-lg shadow-md space-y-4 m-4">
@@ -50,9 +50,14 @@ export function OrderHome() {
                   Take Away
                 </Button>
               </div>
+
+              {/* Notes */}
+              <div className="h-[150px] bg-white p-4 rounded-lg shadow-md mt-4 flex justify-center align-middle">
+                <HomeNotes />
+              </div>
             </div>
-            {/* Notes */}
-            <HomeNotes />
+           
+            
 
              {/* Customer Modal */}
              {isModalOpen && <InputCustomerModal onClose={() => setIsModalOpen(false)} />}
