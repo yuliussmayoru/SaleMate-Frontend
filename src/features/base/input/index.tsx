@@ -1,5 +1,6 @@
 import { twMerge } from "tailwind-merge";
 import { InputProps } from "./type";
+import React, { useState } from "react";
 
 export function Input(props: InputProps) {
   const { inputClassName, containerClassName, labelClassName, label, inputContainerClassName, rightNode, rightNodeClick, ...rest } =
