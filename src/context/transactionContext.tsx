@@ -5,9 +5,15 @@ export const TransactionContext = createContext<TransactionContextProps | undefi
 
 export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
 
+    const [username, setUsername] = useState<string>("");
+
     const [state, setState] = useState("initial Value")
 
     const [orderType, setOrderType] = useState<string>("")
+
+    const [orderTime, setOrderTime] = useState<string>("")
+
+    const [orderDate, setOrderDate] = useState<string>("")
 
     const [customerName, setCustomerName] = useState<string>("")
 
@@ -32,8 +38,11 @@ export function TransactionContextProvider({children}: PropsWithChildren<{}>) {
     }
 
     const value = {
+        username, setUsername,
         state, setState,
         orderType, setOrderType,
+        orderTime, setOrderTime,
+        orderDate, setOrderDate,
         customerName, setCustomerName,
         isCustomerSaved, setCustomerSaved,
         product, setProduct,
